@@ -79,7 +79,9 @@ export function PainelPericias({
               const mod = modificadores[p.atributoBase] ?? 0
               const bonus =
                 bonusPorTipo(p.tipo, nivel) +
-                ("bonusCustomizado" in p ? (p.bonusCustomizado ?? 0) : 0)
+                (typeof (p as Pericia).bonusCustomizado === "number"
+                  ? (p as Pericia).bonusCustomizado
+                  : 0)
               const total = mod + bonus
 
               return (

@@ -1,10 +1,15 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { PartyMonitor } from "@/components/mestre/PartyMonitor"
 import { InitiativeTracker } from "@/components/mestre/InitiativeTracker"
 import { FichaModal } from "@/components/mestre/FichaModal"
 import { QuickBestiary } from "@/components/mestre/QuickBestiary"
 import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
 import { LogCombate } from "@/components/mestre/LogCombate"
+import {
+  carregarSessao,
+  salvarSessao,
+  SESSAO_INICIAL,
+} from "@/lib/sessaoDb"
 import type {
   PartyMember,
   InitiativeEntry,
@@ -17,40 +22,66 @@ import { Eye, FileText, Link2 } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function useMestreState() {
-  const [membros, setMembros] = useState<PartyMember[]>([
-    {
-      id: "1",
-      nome: "Jogador 1",
-      nivel: 5,
-      grau: "3º",
-      pvAtual: 35,
-      pvMax: 40,
-      peAtual: 20,
-      peMax: 25,
-      defesa: 14,
-      energiaTemporaria: false,
-      condicoes: [],
-    },
-    {
-      id: "2",
-      nome: "Jogador 2",
-      nivel: 4,
-      grau: "4º",
-      pvAtual: 28,
-      pvMax: 30,
-      peAtual: 18,
-      peMax: 20,
-      defesa: 12,
-      energiaTemporaria: true,
-      condicoes: ["Sangramento"],
-    },
-  ])
-
-  const [entradas, setEntradas] = useState<InitiativeEntry[]>([])
-  const [turnoAtual, setTurnoAtual] = useState(0)
-  const [maldicoes, setMaldicoes] = useState<Maldicao[]>([])
-  const [log, setLog] = useState<LogEntry[]>([])
+  const [membros, setMembros] = useState<PartyMember[]>(SESSAO_INICIAL.membros)
+  const [entradas, setEntradas] = useState<InitiativeEntry[]>(SESSAO_INICIAL.entradas)
+  const [turnoAtual, setTurnoAtual] = useState(SESSAO_INICIAL.turnoAtual)
+  const [maldicoes, setMaldicoes] = useState<Maldicao[]>(SESSAO_INICIAL.maldicoes)
+  const [log, setLog] = useState<LogEntry[]>(SESSAO_INICIAL.log)
   const [modoPanico, setModoPanico] = useState(false)
+  const [carregado, setCarregado] = useState(false)
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    async function init() {
+      const sessao = await carregarSessao()
+      if (cancelled) return
+      if (sessao) {
+        setMembros(sessao.membros as PartyMember[])
+        setEntradas(sessao.entradas as InitiativeEntry[])
+        setTurnoAtual(sessao.turnoAtual)
+        setMaldicoes(sessao.maldicoes as Maldicao[])
+        setLog(sessao.log as LogEntry[])
+      }
+      setCarregado(true)
+    }
+    init()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const stateRef = useRef({ membros, entradas, turnoAtual, maldicoes, log })
+  stateRef.current = { membros, entradas, turnoAtual, maldicoes, log }
+
+  useEffect(() => {
+    if (!carregado) return
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(() => {
+      const s = stateRef.current
+      salvarSessao({
+        membros: s.membros,
+        entradas: s.entradas,
+        turnoAtual: s.turnoAtual,
+        maldicoes: s.maldicoes,
+        log: s.log,
+      })
+      saveTimeoutRef.current = null
+    }, 1500)
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+        const s = stateRef.current
+        salvarSessao({
+          membros: s.membros,
+          entradas: s.entradas,
+          turnoAtual: s.turnoAtual,
+          maldicoes: s.maldicoes,
+          log: s.log,
+        })
+      }
+    }
+  }, [carregado, membros, entradas, turnoAtual, maldicoes, log])
 
   const addLog = useCallback(
     (entry: Omit<LogEntry, "id" | "timestamp">) => {

@@ -68,3 +68,4 @@ export async function excluirFicha(id: string): Promise<boolean> {
   if (error) throw error
   return true
 }
+

@@ -37,7 +37,7 @@ Web app responsivo para gerenciar fichas de personagem do RPG **Feiticeiros & Ma
 ## Configuração Supabase
 
 1. Crie um projeto em [supabase.com](https://supabase.com)
-2. No **SQL Editor**, execute o conteúdo de `supabase/schema.sql`
+2. No **SQL Editor**, execute o conteúdo de `supabase/schema.sql` (cria tabelas `fichas` e `sessao_mestre`)
 3. Em **Settings > API**, copie a **Project URL** e a **anon public** key
 4. Crie um arquivo `.env` na raiz (use `.env.example` como base):
 

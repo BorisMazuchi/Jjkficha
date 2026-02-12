@@ -74,14 +74,13 @@ export function PainelPericias({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {lista.map(
-            (p) => {
+          {lista
+            .filter((p): p is Pericia => p != null)
+            .map((p) => {
               const mod = modificadores[p.atributoBase] ?? 0
+              const bonusCustom = (p as Pericia).bonusCustomizado
               const bonus =
-                bonusPorTipo(p.tipo, nivel) +
-                (typeof (p as Pericia).bonusCustomizado === "number"
-                  ? (p as Pericia).bonusCustomizado
-                  : 0)
+                bonusPorTipo(p.tipo, nivel) + (typeof bonusCustom === "number" ? bonusCustom : 0)
               const total = mod + bonus
 
               return (

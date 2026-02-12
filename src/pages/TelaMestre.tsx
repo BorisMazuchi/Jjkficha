@@ -26,7 +26,7 @@ function useMestreState() {
   const [entradas, setEntradas] = useState<InitiativeEntry[]>(SESSAO_INICIAL.entradas)
   const [turnoAtual, setTurnoAtual] = useState(SESSAO_INICIAL.turnoAtual)
   const [maldicoes, setMaldicoes] = useState<Maldicao[]>(SESSAO_INICIAL.maldicoes)
-  const [log, setLog] = useState<LogEntry[]>(SESSAO_INICIAL.log)
+  const [log, setLog] = useState<LogEntry[]>([])
   const [modoPanico, setModoPanico] = useState(false)
   const [carregado, setCarregado] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -41,7 +41,7 @@ function useMestreState() {
         setEntradas(sessao.entradas as InitiativeEntry[])
         setTurnoAtual(sessao.turnoAtual)
         setMaldicoes(sessao.maldicoes as Maldicao[])
-        setLog(sessao.log)
+        setLog(sessao.log as LogEntry[])
       }
       setCarregado(true)
     }

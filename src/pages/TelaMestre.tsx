@@ -12,7 +12,7 @@ import type {
   Condicao,
 } from "@/types/mestre"
 import { cn } from "@/lib/utils"
-import { Eye, LayoutGrid, FileText, Link2 } from "lucide-react"
+import { Eye, FileText, Link2 } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function useMestreState() {

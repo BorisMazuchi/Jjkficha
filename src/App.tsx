@@ -18,7 +18,6 @@ import type {
   Pericia,
   FerramentaAmaldicada,
   AptidaoAmaldicada,
-  Grau,
 } from "@/types/ficha"
 
 const ATRIBUTO_PARA_MOD: Record<string, string> = {
@@ -98,13 +97,13 @@ function App() {
   const [ferramentas, setFerramentas] = useState<FerramentaAmaldicada[]>([])
   const [fichaId, setFichaId] = useState<string | null>(null)
 
-  const dadosParaSupabase: FichaDados = useMemo(
-    () => ({
+  const dadosParaSupabase = useMemo(
+    (): FichaDados => ({
       cabecalho,
-      atributos,
+      atributos: { ...atributos },
       bonusDefesaClasse,
       recursos,
-      aptidoes,
+      aptidoes: { ...aptidoes },
       tecnicasInatas,
       habilidadesClasse,
       pericias,
@@ -124,11 +123,26 @@ function App() {
   )
 
   const carregarFichaNoApp = (d: FichaDados) => {
-    setCabecalho(d.cabecalho)
-    setAtributos(d.atributos as Atributos)
+    setCabecalho({
+      ...d.cabecalho,
+      grau: (d.cabecalho.grau || "4º") as import("@/types/ficha").Grau,
+    })
+    setAtributos({
+      forca: d.atributos.forca ?? 10,
+      destreza: d.atributos.destreza ?? 10,
+      constituicao: d.atributos.constituicao ?? 10,
+      inteligencia: d.atributos.inteligencia ?? 10,
+      sabedoria: d.atributos.sabedoria ?? 10,
+      carisma: d.atributos.carisma ?? 10,
+    })
     setBonusDefesaClasse(d.bonusDefesaClasse ?? 0)
     setRecursos(d.recursos)
-    setAptidoes(d.aptidoes as AptidoesAmaldicadas)
+    setAptidoes({
+      Aura: d.aptidoes.Aura ?? 0,
+      Controle: d.aptidoes.Controle ?? 0,
+      Fluxo: d.aptidoes.Fluxo ?? 0,
+      Potência: d.aptidoes["Potência"] ?? 0,
+    })
     setTecnicasInatas((d.tecnicasInatas ?? []) as Habilidade[])
     setHabilidadesClasse((d.habilidadesClasse ?? []) as Habilidade[])
     setPericias((d.pericias ?? PERICIAS_INICIAIS) as Pericia[])
@@ -172,19 +186,28 @@ function App() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-6 p-4 pb-12">
-        <CabecalhoFicha dados={cabecalho} onChange={setCabecalho} />
+        <CabecalhoFicha
+          dados={cabecalho}
+          onChange={(d) => setCabecalho((prev) => ({ ...prev, ...d }))}
+        />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <AtributosDefesa
             atributos={atributos}
             bonusDefesaClasse={bonusDefesaClasse}
-            onChange={setAtributos}
+            onChange={(d) => setAtributos((prev) => ({ ...prev, ...d }))}
             onBonusDefesaChange={setBonusDefesaClasse}
           />
-          <RecursosBarra recursos={recursos} onChange={setRecursos} />
+          <RecursosBarra
+            recursos={recursos}
+            onChange={(d) => setRecursos((prev) => ({ ...prev, ...d }))}
+          />
         </div>
 
-        <AptidoesAmaldicadasComponent aptidoes={aptidoes} onChange={setAptidoes} />
+        <AptidoesAmaldicadasComponent
+          aptidoes={aptidoes}
+          onChange={(d) => setAptidoes((prev) => ({ ...prev, ...d }))}
+        />
 
         <CalculadoraRaioNegro
           aptidoes={aptidoes}

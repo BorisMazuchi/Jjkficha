@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import type { Pericia, TipoPericia } from "@/types/ficha"
 import { cn } from "@/lib/utils"
 
@@ -78,7 +77,9 @@ export function PainelPericias({
           {lista.map(
             (p) => {
               const mod = modificadores[p.atributoBase] ?? 0
-              const bonus = bonusPorTipo(p.tipo, nivel) + (p.bonusCustomizado ?? 0)
+              const bonus =
+                bonusPorTipo(p.tipo, nivel) +
+                ("bonusCustomizado" in p ? (p.bonusCustomizado ?? 0) : 0)
               const total = mod + bonus
 
               return (

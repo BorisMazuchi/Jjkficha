@@ -21,7 +21,6 @@ function BarraRecurso({
   temporario,
   onAtualChange,
   onMaxChange,
-  onTemporarioChange,
   cor,
 }: {
   label: string
@@ -30,7 +29,6 @@ function BarraRecurso({
   temporario: number
   onAtualChange: (v: number) => void
   onMaxChange: (v: number) => void
-  onTemporarioChange: (v: number) => void
   cor: "pv" | "pe"
 }) {
   const totalEfetivo = atual + temporario
@@ -102,7 +100,6 @@ export function RecursosBarra({ recursos, onChange }: RecursosBarraProps) {
           temporario={recursos.vidaTemporaria}
           onAtualChange={(v) => onChange({ pvAtual: v })}
           onMaxChange={(v) => onChange({ pvMax: v })}
-          onTemporarioChange={(v) => onChange({ vidaTemporaria: v })}
           cor="pv"
         />
         <BarraRecurso
@@ -112,11 +109,42 @@ export function RecursosBarra({ recursos, onChange }: RecursosBarraProps) {
           temporario={recursos.energiaTemporaria}
           onAtualChange={(v) => onChange({ peAtual: v })}
           onMaxChange={(v) => onChange({ peMax: v })}
-          onTemporarioChange={(v) => onChange({ energiaTemporaria: v })}
           cor="pe"
         />
         <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
           <Label className="text-amber-400/90">Regra v2.5 - Temporários</Label>
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="vidaTemp" className="text-sm">Vida temp:</Label>
+              <Input
+                id="vidaTemp"
+                type="number"
+                min={0}
+                value={recursos.vidaTemporaria}
+                onChange={(e) =>
+                  onChange({
+                    vidaTemporaria: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="h-8 w-16"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="energiaTemp" className="text-sm">Energia temp:</Label>
+              <Input
+                id="energiaTemp"
+                type="number"
+                min={0}
+                value={recursos.energiaTemporaria}
+                onChange={(e) =>
+                  onChange({
+                    energiaTemporaria: parseInt(e.target.value) || 0,
+                  })
+                }
+                className="h-8 w-16"
+              />
+            </div>
+          </div>
           <p className="text-xs text-slate-400">
             Se o valor temporário exceder metade do máximo, será destacado em
             amarelo como aviso.

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { PartyMonitor } from "@/components/mestre/PartyMonitor"
 import { InitiativeTracker } from "@/components/mestre/InitiativeTracker"
+import { FichaModal } from "@/components/mestre/FichaModal"
 import { QuickBestiary } from "@/components/mestre/QuickBestiary"
 import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
 import { LogCombate } from "@/components/mestre/LogCombate"
@@ -162,6 +163,7 @@ function useMestreState() {
 
 export function TelaMestre() {
   const state = useMestreState()
+  const [fichaModalMembro, setFichaModalMembro] = useState<PartyMember | null>(null)
 
   return (
     <div
@@ -238,6 +240,7 @@ export function TelaMestre() {
           <PartyMonitor
             membros={state.membros}
             onUpdateMembro={state.updateMembro}
+            onAbrirFicha={(m) => setFichaModalMembro(m)}
           />
         </section>
 
@@ -342,6 +345,17 @@ export function TelaMestre() {
           <LogCombate log={state.log} onRolagem={state.addLog} />
         </section>
       </main>
+
+      <FichaModal
+        isOpen={fichaModalMembro != null}
+        onClose={() => setFichaModalMembro(null)}
+        membroNome={fichaModalMembro?.nome ?? ""}
+        fichaIdInicial={fichaModalMembro?.fichaId}
+        membroId={fichaModalMembro?.id}
+        onVincularFicha={(membroId, fichaId) => {
+          state.updateMembro(membroId, { fichaId })
+        }}
+      />
     </div>
   )
 }

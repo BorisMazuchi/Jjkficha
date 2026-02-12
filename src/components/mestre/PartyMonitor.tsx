@@ -1,15 +1,17 @@
 import { cn } from "@/lib/utils"
 import type { PartyMember } from "@/types/mestre"
-import { Shield, Zap, Plus, Minus } from "lucide-react"
+import { Shield, Zap, Plus, Minus, FileText } from "lucide-react"
 
 interface PartyMonitorProps {
   membros: PartyMember[]
   onUpdateMembro: (id: string, dados: Partial<PartyMember>) => void
+  onAbrirFicha?: (membro: PartyMember) => void
 }
 
 export function PartyMonitor({
   membros,
   onUpdateMembro,
+  onAbrirFicha,
 }: PartyMonitorProps) {
   return (
     <div className="space-y-2">
@@ -19,7 +21,12 @@ export function PartyMonitor({
       </h3>
       <div className="flex gap-3 overflow-x-auto pb-2">
         {membros.map((m) => (
-          <PartyCard key={m.id} membro={m} onUpdate={(d) => onUpdateMembro(m.id, d)} />
+          <PartyCard
+            key={m.id}
+            membro={m}
+            onUpdate={(d) => onUpdateMembro(m.id, d)}
+            onAbrirFicha={onAbrirFicha ? () => onAbrirFicha(m) : undefined}
+          />
         ))}
       </div>
     </div>
@@ -29,9 +36,11 @@ export function PartyMonitor({
 function PartyCard({
   membro,
   onUpdate,
+  onAbrirFicha,
 }: {
   membro: PartyMember
   onUpdate: (d: Partial<PartyMember>) => void
+  onAbrirFicha?: () => void
 }) {
   const pvPct = membro.pvMax > 0 ? (membro.pvAtual / membro.pvMax) * 100 : 0
   const pePct = membro.peMax > 0 ? (membro.peAtual / membro.peMax) * 100 : 0
@@ -50,9 +59,19 @@ function PartyCard({
         membro.energiaTemporaria && "ring-1 ring-amber-400/40"
       )}
     >
-      <div className="mb-2 flex items-center justify-between">
-        <span className="truncate font-medium text-slate-100">{membro.nome}</span>
-        <span className="text-xs text-slate-500">Nv.{membro.nivel} {membro.grau}</span>
+      <div className="mb-2 flex items-center justify-between gap-1">
+        <span className="min-w-0 flex-1 truncate font-medium text-slate-100">{membro.nome}</span>
+        <span className="shrink-0 text-xs text-slate-500">Nv.{membro.nivel} {membro.grau}</span>
+        {onAbrirFicha && (
+          <button
+            type="button"
+            onClick={onAbrirFicha}
+            className="shrink-0 rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
+            title="Abrir ficha do jogador"
+          >
+            <FileText className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="space-y-2">

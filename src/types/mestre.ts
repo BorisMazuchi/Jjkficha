@@ -10,6 +10,8 @@ export interface PartyMember {
   defesa: number
   energiaTemporaria: boolean
   condicoes: string[]
+  /** ID da ficha no Supabase, para o mestre abrir a ficha completa */
+  fichaId?: string | null
 }
 
 export interface InitiativeEntry {

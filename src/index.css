@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-dark: #1a1a2e;
+  --color-card: #16213e;
+  --color-accent-red: #e94560;
+  --color-accent-purple: #8832ff;
+  --color-neon-purple: #a855f7;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Rajdhani', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #1a1a2e;
+  color: #e2e8f0;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling - tema Jujutsu Kaisen */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #16213e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8832ff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}

@@ -39,6 +39,16 @@ export interface SessaoMestreDados {
   }[]
 }
 
+export interface SessaoCarregada extends Omit<SessaoMestreDados, "log"> {
+  log: {
+    id: string
+    timestamp: Date
+    tipo: string
+    texto: string
+    alvo?: string
+  }[]
+}
+
 export const SESSAO_INICIAL: SessaoMestreDados = {
   membros: [],
   entradas: [],
@@ -47,7 +57,7 @@ export const SESSAO_INICIAL: SessaoMestreDados = {
   log: [],
 }
 
-export async function carregarSessao(): Promise<SessaoMestreDados | null> {
+export async function carregarSessao(): Promise<SessaoCarregada | null> {
   if (!supabase) return null
   const { data, error } = await supabase
     .from("sessao_mestre")
@@ -64,16 +74,16 @@ export async function carregarSessao(): Promise<SessaoMestreDados | null> {
       ...e,
       timestamp: new Date(e.timestamp),
     })),
-  } as SessaoMestreDados
+  }
 }
 
-export async function salvarSessao(dados: SessaoMestreDados): Promise<boolean> {
+export async function salvarSessao(dados: SessaoCarregada): Promise<boolean> {
   if (!supabase) return false
-  const paraSalvar = {
+  const paraSalvar: SessaoMestreDados = {
     ...dados,
     log: dados.log.map((e) => ({
       ...e,
-      timestamp: e.timestamp instanceof Date ? e.timestamp.toISOString() : e.timestamp,
+      timestamp: typeof e.timestamp === "string" ? e.timestamp : e.timestamp.toISOString(),
     })),
   }
   const { data: existing } = await supabase

@@ -41,7 +41,7 @@ function useMestreState() {
         setEntradas(sessao.entradas as InitiativeEntry[])
         setTurnoAtual(sessao.turnoAtual)
         setMaldicoes(sessao.maldicoes as Maldicao[])
-        setLog(sessao.log as LogEntry[])
+        setLog(sessao.log)
       }
       setCarregado(true)
     }

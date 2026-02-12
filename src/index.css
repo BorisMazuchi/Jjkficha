@@ -44,3 +44,17 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #a855f7;
 }
+
+/* Modo de Pânico - Expansão de Domínio */
+@keyframes dominio-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(244, 63, 94, 0.4);
+  }
+}
+
+.modo-panico-active {
+  animation: dominio-pulse 2s ease-in-out infinite;
+}

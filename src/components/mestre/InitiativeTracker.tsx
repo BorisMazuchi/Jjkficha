@@ -1,0 +1,113 @@
+import { useState } from "react"
+import { cn } from "@/lib/utils"
+import type { InitiativeEntry } from "@/types/mestre"
+import { GripVertical, User, Ghost } from "lucide-react"
+
+interface InitiativeTrackerProps {
+  entradas: InitiativeEntry[]
+  turnoAtual: number
+  onReorder: (entradas: InitiativeEntry[]) => void
+  onTurnoChange: (index: number) => void
+}
+
+export function InitiativeTracker({
+  entradas,
+  turnoAtual,
+  onReorder,
+  onTurnoChange,
+}: InitiativeTrackerProps) {
+  const [dragOver, setDragOver] = useState<number | null>(null)
+  const [dragged, setDragged] = useState<number | null>(null)
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDragged(index)
+    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData("text/plain", String(index))
+    e.dataTransfer.setData("application/json", JSON.stringify(entradas[index]))
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    setDragOver(index)
+  }
+
+  const handleDragLeave = () => setDragOver(null)
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault()
+    const fromIndex = parseInt(e.dataTransfer.getData("text/plain"), 10)
+    setDragOver(null)
+    setDragged(null)
+    if (fromIndex === toIndex || isNaN(fromIndex)) return
+    const novo = [...entradas]
+    const [removido] = novo.splice(fromIndex, 1)
+    novo.splice(toIndex, 0, removido)
+    onReorder(novo)
+    const novoTurno = fromIndex < toIndex
+      ? (turnoAtual === fromIndex ? toIndex - 1 : turnoAtual > fromIndex && turnoAtual <= toIndex ? turnoAtual - 1 : turnoAtual)
+      : (turnoAtual === fromIndex ? toIndex : turnoAtual >= toIndex && turnoAtual < fromIndex ? turnoAtual + 1 : turnoAtual)
+    onTurnoChange(Math.max(0, Math.min(novoTurno, novo.length - 1)))
+  }
+
+  const handleDragEnd = () => {
+    setDragged(null)
+    setDragOver(null)
+  }
+
+  return (
+    <div className="flex h-full flex-col">
+      <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+        Rastreador de Iniciativa
+      </h3>
+      <div className="flex-1 space-y-1 overflow-y-auto">
+        {entradas.map((e, i) => (
+          <div
+            key={e.id}
+            draggable
+            onDragStart={(ev) => handleDragStart(ev, i)}
+            onDragOver={(ev) => handleDragOver(ev, i)}
+            onDragLeave={handleDragLeave}
+            onDrop={(ev) => handleDrop(ev, i)}
+            onDragEnd={handleDragEnd}
+            onClick={() => onTurnoChange(i)}
+            className={cn(
+              "flex cursor-grab items-center gap-2 rounded-lg border px-2 py-2 transition-all active:cursor-grabbing",
+              turnoAtual === i
+                ? "border-cyan-500 bg-cyan-500/20 shadow-lg shadow-cyan-500/20"
+                : "border-slate-700/80 bg-slate-800/50 hover:border-slate-600",
+              dragOver === i && "border-amber-500 bg-amber-500/10",
+              dragged === i && "opacity-50"
+            )}
+          >
+            <GripVertical className="h-4 w-4 shrink-0 text-slate-500" />
+            <span className="text-lg font-bold text-slate-400">
+              {i + 1}.
+            </span>
+            {e.tipo === "jogador" ? (
+              <User className="h-4 w-4 shrink-0 text-cyan-400" />
+            ) : (
+              <Ghost className="h-4 w-4 shrink-0 text-red-400" />
+            )}
+            <span className="min-w-0 flex-1 truncate font-medium">
+              {e.nome}
+            </span>
+            {e.pvMax != null && (
+              <span className="text-xs text-slate-500">
+                {e.pvAtual ?? 0}/{e.pvMax}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() =>
+          onTurnoChange(turnoAtual >= entradas.length - 1 ? 0 : turnoAtual + 1)
+        }
+        className="mt-2 rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-400 hover:bg-cyan-500/20"
+      >
+        Próximo turno →
+      </button>
+    </div>
+  )
+}

@@ -12,6 +12,7 @@ import {
   pixelParaPosicao,
   estaDentroDoGrid,
   encontrarTokensEmPosicao,
+  calcularCelulasNoCone,
 } from '@/lib/vttUtils'
 
 interface GridCanvasProps {
@@ -35,6 +36,7 @@ interface GridCanvasProps {
 
 export function GridCanvas({
   tokens,
+  grid,
   medicoes,
   zoom,
   pan,
@@ -246,7 +248,7 @@ function desenharFundo(ctx: CanvasRenderingContext2D, width: number, height: num
 
 function desenharGrid(
   ctx: CanvasRenderingContext2D,
-  grid: GridCell[][],
+  _grid: GridCell[][],
   gridSize: number,
   zoom: number,
   pan: { x: number; y: number },
@@ -426,7 +428,7 @@ function desenharMedicoes(
       }
       case 'cone': {
         if (med.destino) {
-          const cellsCone = calcularCelulasNoConе(med.origem, med.destino, med.tamanho)
+          const cellsCone = calcularCelulasNoCone(med.origem, med.destino, med.tamanho)
           ctx.fillStyle = 'rgba(251, 191, 36, 0.1)'
           for (const cell of cellsCone) {
             const pixelCell = posicaoParaPixel(cell, gridSize, zoom, pan)

@@ -92,7 +92,7 @@ export function criarGridVazio(largura: number, altura: number): GridCell[][] {
  * Calcula todas as células em um cone a partir de uma origem e direção
  * Ângulo de abertura: 60 graus (padrão) ou 90 graus
  */
-export function calcularCelulasNoConе(
+export function calcularCelulasNoCone(
   origem: Position,
   destino: Position,
   tamanho: number, // em metros

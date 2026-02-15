@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 import { GridCanvas } from '@/components/vtt/GridCanvas'
 import { ToolbarVTT, ZoomControls, LayerControls, TokenInfo } from '@/components/vtt/VTTControls'
 import type { Token, GridCell, Measurement, Position, Ferramenta } from '@/types/vtt'
-import { criarGridVazio, gerarCorAleatoria } from '@/lib/vttUtils'
+import { criarGridVazio } from '@/lib/vttUtils'
 
 export function TabuleiroCombate() {
   // Estado do tabuleiro
@@ -40,6 +40,7 @@ export function TabuleiroCombate() {
   const [ehMestre] = useState(true) // TODO: pegar do contexto
   const [mostrarCoord, setMostrarCoord] = useState(false)
   const [mostrarGrid, setMostrarGrid] = useState(true)
+  const [pan] = useState({ x: 0, y: 0 })
 
   const [camadas, setCamadas] = useState({
     mapa: true,

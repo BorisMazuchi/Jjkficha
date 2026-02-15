@@ -10,12 +10,7 @@ import type {
 import {
   posicaoParaPixel,
   pixelParaPosicao,
-  calcularDistanciaGrid,
   estaDentroDoGrid,
-  calcularCelulasNoCilindro,
-  calcularCelulasNoConе,
-  calcularCelulasNaLinha,
-  calcularCelulasNoCubo,
   encontrarTokensEmPosicao,
 } from '@/lib/vttUtils'
 
@@ -40,7 +35,6 @@ interface GridCanvasProps {
 
 export function GridCanvas({
   tokens,
-  grid,
   medicoes,
   zoom,
   pan,
@@ -53,7 +47,6 @@ export function GridCanvas({
   mostrarGrid,
   onTokenMove,
   onTokenSelect,
-  onMedicaoCreate,
   onCellToggle,
 }: GridCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)

@@ -154,8 +154,7 @@ export function calcularCelulasNoCilindro(
  */
 export function calcularCelulasNaLinha(
   origem: Position,
-  destino: Position,
-  largura: number = 1 // em células
+  destino: Position
 ): Position[] {
   const celulas: Position[] = []
   const dx = destino.x - origem.x

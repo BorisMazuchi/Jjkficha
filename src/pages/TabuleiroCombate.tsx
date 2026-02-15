@@ -1,7 +1,7 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { GridCanvas } from '@/components/vtt/GridCanvas'
 import { ToolbarVTT, ZoomControls, LayerControls, TokenInfo } from '@/components/vtt/VTTControls'
-import type { Token, GridCell, Measurement, Position, Ferramenta, Camada } from '@/types/vtt'
+import type { Token, GridCell, Measurement, Position, Ferramenta } from '@/types/vtt'
 import { criarGridVazio, gerarCorAleatoria } from '@/lib/vttUtils'
 
 export function TabuleiroCombate() {
@@ -35,7 +35,6 @@ export function TabuleiroCombate() {
   const [grid, setGrid] = useState<GridCell[][]>(criarGridVazio(30, 30))
   const [medicoes, setMedicoes] = useState<Measurement[]>([])
   const [zoom, setZoom] = useState(1)
-  const [pan, setPan] = useState({ x: 0, y: 0 })
   const [ferramenta, setFerramenta] = useState<Ferramenta>('select')
   const [tokenSelecionado, setTokenSelecionado] = useState<string | null>(null)
   const [ehMestre] = useState(true) // TODO: pegar do contexto
@@ -95,21 +94,6 @@ export function TabuleiroCombate() {
     []
   )
 
-  const handleCriarToken = useCallback((nome: string) => {
-    const novoToken: Token = {
-      id: Math.random().toString(36),
-      nome,
-      tipo: 'npc',
-      posicao: { x: 10, y: 10 },
-      tamanho: 1,
-      cor: gerarCorAleatoria(),
-      visivel: true,
-      pv: { atual: 20, max: 20 },
-      condicoes: [],
-    }
-    setTokens((prev) => [...prev, novoToken])
-  }, [])
-
   const handleDeletarToken = useCallback((tokenId: string) => {
     setTokens((prev) => prev.filter((t) => t.id !== tokenId))
     setTokenSelecionado(null)
@@ -138,7 +122,7 @@ export function TabuleiroCombate() {
   )
 
   // Atalhos de teclado
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Delete' && tokenSelecionado) {
         handleDeletarToken(tokenSelecionado)

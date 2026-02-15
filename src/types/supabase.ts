@@ -26,6 +26,31 @@ export interface FichaDados {
     energiaTemporaria: number
   }
   aptidoes: Record<string, number>
+  // Novos campos da Fase 1
+  especializacao?: {
+    especializacao: string
+    pvPorNivel: number
+    pePorNivel: number
+    empolgacao?: number
+    estoqueInvocacoes?: unknown[]
+    usaEstamina?: boolean
+  }
+  xp?: {
+    xpAtual: number
+    xpProximoNivel: number
+  }
+  integridade?: {
+    atual: number
+    max: number
+  }
+  tecnicaAmaldicada?: {
+    id: string
+    nome: string
+    descricao: string
+    funcionamentoBasico: string
+    feiticos: unknown[]
+  }
+  // Campos existentes
   tecnicasInatas: unknown[]
   habilidadesClasse: unknown[]
   pericias: unknown[]

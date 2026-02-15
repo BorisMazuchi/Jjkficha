@@ -60,3 +60,13 @@ export interface FerramentaAmaldicada {
   dano: string
   propriedades: string
 }
+// Re-exportar tipos de especializacao para compatibilidade
+export type {
+  Especializacao,
+  DadosEspecializacao,
+  XPData,
+  IntegridadeAlma,
+  TecnicaAmaldicada,
+  EstoqueInvocacao,
+  Feitico,
+} from "./especializacao"

@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from "react"
 import { GridCanvas } from "@/components/vtt/GridCanvas"
+import { InitiativeGrid } from "@/components/vtt/InitiativeGrid"
 import {
   ToolbarVTT,
   ZoomControls,
@@ -13,6 +14,7 @@ import type {
   Position,
   Ferramenta,
 } from "@/types/vtt"
+import type { InitiativeEntry } from "@/types/mestre"
 import { criarGridVazio } from "@/lib/vttUtils"
 import { cn } from "@/lib/utils"
 import { LayoutGrid } from "lucide-react"
@@ -46,11 +48,23 @@ const TOKENS_INICIAIS: Token[] = [
 interface TabuleiroContentProps {
   /** Quando true, layout compacto para embed no grid da Tela do Mestre */
   embedded?: boolean
+  /** Quando embedded: entradas do rastreador de iniciativa (grid mostra só esses personagens) */
+  entradas?: InitiativeEntry[]
+  /** Índice do turno ativo (círculo destacado) */
+  turnoAtual?: number
+  /** Callback ao mover uma entrada no grid */
+  onMoveEntry?: (id: string, pos: { x: number; y: number }) => void
+  /** Callback ao clicar em uma entrada (opcional: definir como turno ativo) */
+  onSelectTurn?: (index: number) => void
   className?: string
 }
 
 export function TabuleiroContent({
   embedded = false,
+  entradas = [],
+  turnoAtual = 0,
+  onMoveEntry,
+  onSelectTurn,
   className,
 }: TabuleiroContentProps) {
   const [tokens, setTokens] = useState<Token[]>(TOKENS_INICIAIS)
@@ -182,6 +196,11 @@ export function TabuleiroContent({
   )
 
   if (embedded) {
+    const usaIniciativa =
+      Array.isArray(entradas) &&
+      entradas.length >= 0 &&
+      typeof onMoveEntry === "function"
+
     return (
       <div
         className={cn(
@@ -192,78 +211,27 @@ export function TabuleiroContent({
         <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-700/80 bg-slate-800/60 px-3 py-2">
           <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
             <LayoutGrid className="h-4 w-4" />
-            Tabuleiro
+            Rastreador de Iniciativa
           </h3>
-          <div className="flex items-center gap-2">
-            <ToolbarVTT
-              ferramentaAtiva={ferramenta}
-              onFerramentaChange={setFerramenta}
-              horizontal
-            />
-            <div className="flex items-center gap-1 text-xs text-slate-500">
-              <button
-                type="button"
-                onClick={() => setMostrarGrid((g) => !g)}
-                className="rounded px-1.5 py-0.5 hover:bg-slate-700"
-              >
-                Grid {mostrarGrid ? "On" : "Off"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setMostrarCoord((c) => !c)}
-                className="rounded px-1.5 py-0.5 hover:bg-slate-700"
-              >
-                Coord
-              </button>
-            </div>
-          </div>
         </div>
         <div className="flex min-h-0 flex-1">
           <div className="relative min-h-[320px] flex-1 overflow-hidden">
-            {canvasArea}
-          </div>
-          <div className="w-52 shrink-0 space-y-3 border-l border-slate-700/80 bg-slate-800/40 p-3 overflow-y-auto">
-            <TokenInfo token={tokenAtivo} />
-            {tokenAtivo && (
-              <div className="space-y-2 rounded-lg border border-slate-700/60 bg-slate-800/60 p-2 text-xs">
-                {tokenAtivo.pv && (
-                  <div>
-                    <label className="text-slate-500">Dano</label>
-                    <div className="mt-1 flex gap-1">
-                      {[5, 10, 20].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => handleAplicarDano(tokenAtivo.id, d)}
-                          className="flex-1 rounded bg-red-500/20 py-0.5 text-red-400 hover:bg-red-500/30"
-                        >
-                          -{d}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleDeletarToken(tokenAtivo.id)}
-                  className="w-full rounded bg-red-500/20 py-1 text-red-400 hover:bg-red-500/30"
-                >
-                  Remover token
-                </button>
-              </div>
+            {usaIniciativa ? (
+              <InitiativeGrid
+                entradas={entradas}
+                turnoAtual={turnoAtual}
+                onMoveEntry={onMoveEntry}
+                onSelectTurn={onSelectTurn}
+                className="h-full"
+              />
+            ) : (
+              <>
+                {canvasArea}
+                <div className="absolute bottom-2 right-2">
+                  <ZoomControls zoom={zoom} onZoomChange={setZoom} />
+                </div>
+              </>
             )}
-            <LayerControls
-              camadas={camadas}
-              camadaAtiva="tokens"
-              ehMestre={ehMestre}
-              onToggleLayer={(camada) =>
-                setCamadas((prev) => ({
-                  ...prev,
-                  [camada]: !prev[camada as keyof typeof camadas],
-                }))
-              }
-              onSelectLayer={() => {}}
-            />
           </div>
         </div>
       </div>

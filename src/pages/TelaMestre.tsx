@@ -457,7 +457,18 @@ export function TelaMestre() {
               : "border-cyan-900/60"
           )}
         >
-          <TabuleiroContent embedded className="h-full min-h-[360px]" />
+          <TabuleiroContent
+            embedded
+            className="h-full min-h-[360px]"
+            entradas={state.entradas}
+            turnoAtual={state.turnoAtual}
+            onMoveEntry={(id, pos) => {
+              state.setEntradas((prev) =>
+                prev.map((e) => (e.id === id ? { ...e, posicao: pos } : e))
+              )
+            }}
+            onSelectTurn={state.setTurnoAtual}
+          />
         </section>
 
         {state.maldicoes.filter((m) => m.origemBestiario).length > 0 && (

@@ -23,6 +23,7 @@ export interface SessaoMestreDados {
     pvAtual?: number
     pvMax?: number
     imagemUrl?: string
+    posicao?: { x: number; y: number }
   }[]
   turnoAtual: number
   maldicoes: {

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import type { XPData, IntegridadeAlma } from "@/types/especializacao"
+import { calcularEstadoAlma } from "@/lib/estadosAlma"
 import { Award, Heart } from "lucide-react"
 
 // Tabela de XP necessário por nível (progressão padrão d20)
@@ -188,6 +189,36 @@ export function XPIntegridade({
               className="h-3"
             />
           </div>
+
+          {(() => {
+            const estadoInfo = calcularEstadoAlma(
+              integridadeAtualizada.atual,
+              integridadeAtualizada.max
+            )
+            if (!estadoInfo) return null
+            return (
+              <div
+                className="rounded-lg border border-slate-600 bg-slate-800/50 px-3 py-2 text-xs"
+                title={estadoInfo.descricao}
+              >
+                <span className="font-medium text-[var(--color-neon-purple)]">
+                  Estado da alma: {estadoInfo.estado}
+                </span>
+                {" — "}
+                <span className="text-slate-400">
+                  {estadoInfo.percentual.toFixed(0)}%
+                </span>
+                {estadoInfo.penalidadeTestes !== 0 && (
+                  <div className="mt-1 text-slate-300">
+                    {estadoInfo.penalidadeTestes} em testes; custo PE +{estadoInfo.custoExtraPE}
+                    {estadoInfo.desvantagem && "; desvantagem em todos os testes"}
+                    {estadoInfo.condicoesAplicadas.length > 0 &&
+                      `; ${estadoInfo.condicoesAplicadas.join(", ")}`}
+                  </div>
+                )}
+              </div>
+            )
+          })()}
 
           <div className="rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
             <p className="text-xs text-slate-300">

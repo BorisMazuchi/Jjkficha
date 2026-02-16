@@ -180,6 +180,7 @@ export function FichaPersonagem() {
         especializacao: especializacao.especializacao,
         pvPorNivel: especializacao.pvPorNivel,
         pePorNivel: especializacao.pePorNivel,
+        dadosVida: especializacao.dadosVida,
         empolgacao: especializacao.empolgacao,
         estoqueInvocacoes: especializacao.estoqueInvocacoes,
         usaEstamina: especializacao.usaEstamina,
@@ -198,6 +199,7 @@ export function FichaPersonagem() {
             nome: tecnicaAmaldicada.nome,
             descricao: tecnicaAmaldicada.descricao,
             funcionamentoBasico: tecnicaAmaldicada.funcionamentoBasico,
+            expansaoDominio: tecnicaAmaldicada.expansaoDominio,
             imagem: tecnicaAmaldicada.imagem,
             feiticos: tecnicaAmaldicada.feiticos,
           }
@@ -251,6 +253,7 @@ export function FichaPersonagem() {
         especializacao: d.especializacao.especializacao as any,
         pvPorNivel: d.especializacao.pvPorNivel,
         pePorNivel: d.especializacao.pePorNivel,
+        dadosVida: (d.especializacao as { dadosVida?: string }).dadosVida,
         empolgacao: d.especializacao.empolgacao,
         estoqueInvocacoes: d.especializacao.estoqueInvocacoes as any,
         usaEstamina: d.especializacao.usaEstamina,

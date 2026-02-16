@@ -6,10 +6,22 @@ export type Especializacao =
   | "Suporte"
   | "Restringido"
 
+/** Tamanho do dado de vida por especialização (Livro v2.5 — Cap. 2, p.20-21). 1 dado por nível. */
+export const DADO_VIDA_POR_ESP: Record<Especializacao, number> = {
+  "Lutador": 10,
+  "Especialista em Combate": 10,
+  "Especialista em Técnica": 8,
+  "Controlador": 8,
+  "Suporte": 8,
+  "Restringido": 10,
+}
+
 export interface DadosEspecializacao {
   especializacao: Especializacao
   pvPorNivel: number // Base de PV por nível da classe
   pePorNivel: number // Base de PE por nível (ou Estamina para Restringido)
+  /** Dados de vida para descanso (ex.: "2d10"). Se não definido, deriva de nivel + especialização. */
+  dadosVida?: string
   // Campos específicos por especialização
   empolgacao?: number // Lutador
   estoqueInvocacoes?: EstoqueInvocacao[] // Controlador
@@ -41,6 +53,8 @@ export interface TecnicaAmaldicada {
   nome: string
   descricao: string
   funcionamentoBasico: string // Texto livre da técnica
+  /** Nome ou descrição da Expansão de Domínio (Cap. 12); opcional */
+  expansaoDominio?: string
   /** URL ou data URL da imagem da técnica inata (aceita GIF) */
   imagem?: string
   feiticos: Feitico[]

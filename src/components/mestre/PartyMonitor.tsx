@@ -1,6 +1,8 @@
+import { useState } from "react"
 import { cn } from "@/lib/utils"
 import type { PartyMember } from "@/types/mestre"
-import { Shield, Zap, Plus, Minus, FileText, UserPlus, Trash2 } from "lucide-react"
+import { calcularEstadoAlma } from "@/lib/estadosAlma"
+import { Shield, Zap, Plus, Minus, FileText, UserPlus, Trash2, Heart, Coffee, Focus, Scan, Move, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface PartyMonitorProps {
@@ -9,6 +11,9 @@ interface PartyMonitorProps {
   onAddMembro?: () => void
   onRemoveMembro?: (id: string) => void
   onAbrirFicha?: (membro: PartyMember) => void
+  onDescanso?: () => void
+  /** Adicionar invocação (Shikigami/Corpo) do Controlador à iniciativa */
+  onAddInvocacaoToIniciativa?: (membroId: string, invocacao: { id: string; nome: string; pvAtual: number; pvMax: number }) => void
 }
 
 export function PartyMonitor({
@@ -17,6 +22,8 @@ export function PartyMonitor({
   onAddMembro,
   onRemoveMembro,
   onAbrirFicha,
+  onDescanso,
+  onAddInvocacaoToIniciativa,
 }: PartyMonitorProps) {
   return (
     <div className="space-y-2">
@@ -25,18 +32,32 @@ export function PartyMonitor({
           <Shield className="h-4 w-4" />
           Party Monitor
         </h3>
-        {onAddMembro && (
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={onAddMembro}
-            className="border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
-          >
-            <UserPlus className="mr-1.5 h-4 w-4" />
-            Adicionar jogador
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {onDescanso && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={onDescanso}
+              className="border-amber-500/50 text-amber-400 hover:bg-amber-500/20"
+            >
+              <Coffee className="mr-1.5 h-4 w-4" />
+              Descanso
+            </Button>
+          )}
+          {onAddMembro && (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={onAddMembro}
+              className="border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
+            >
+              <UserPlus className="mr-1.5 h-4 w-4" />
+              Adicionar jogador
+            </Button>
+          )}
+        </div>
       </div>
       {membros.length === 0 && (
         <p className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-bg-elevated)]/50 py-6 text-center text-sm text-[var(--color-text-muted)]">
@@ -51,6 +72,7 @@ export function PartyMonitor({
             onUpdate={(d) => onUpdateMembro(m.id, d)}
             onAbrirFicha={onAbrirFicha ? () => onAbrirFicha(m) : undefined}
             onRemove={onRemoveMembro ? () => onRemoveMembro(m.id) : undefined}
+            onAddInvocacaoToIniciativa={onAddInvocacaoToIniciativa}
           />
         ))}
       </div>
@@ -63,12 +85,15 @@ function PartyCard({
   onUpdate,
   onAbrirFicha,
   onRemove,
+  onAddInvocacaoToIniciativa,
 }: {
   membro: PartyMember
   onUpdate: (d: Partial<PartyMember>) => void
   onAbrirFicha?: () => void
   onRemove?: () => void
+  onAddInvocacaoToIniciativa?: (membroId: string, invocacao: { id: string; nome: string; pvAtual: number; pvMax: number }) => void
 }) {
+  const [showInvocacoes, setShowInvocacoes] = useState(false)
   const pvPct = membro.pvMax > 0 ? (membro.pvAtual / membro.pvMax) * 100 : 0
   const pePct = membro.peMax > 0 ? (membro.peAtual / membro.peMax) * 100 : 0
 
@@ -172,7 +197,7 @@ function PartyCard({
         </div>
         <div>
           <div className="mb-0.5 flex justify-between text-xs">
-            <span className="text-slate-400">PE</span>
+            <span className="text-slate-400">{membro.usaEstamina ? "Estamina" : "PE"}</span>
             <button
               type="button"
               onClick={() => onUpdate({ energiaTemporaria: !membro.energiaTemporaria })}
@@ -180,7 +205,7 @@ function PartyCard({
                 "flex items-center gap-0.5 transition-colors",
                 membro.energiaTemporaria ? "text-amber-400" : "text-violet-400 hover:text-amber-400/70"
               )}
-              title={membro.energiaTemporaria ? "Energia Amaldiçada Temporária (clique para remover)" : "Clique para marcar Energia Temporária"}
+              title={membro.energiaTemporaria ? "Energia Amaldiçada Temporária (clique para remover)" : membro.usaEstamina ? "Estamina (Restringido)" : "Clique para marcar Energia Temporária"}
             >
               {membro.peAtual}/{membro.peMax}
               <Zap
@@ -217,10 +242,75 @@ function PartyCard({
             />
           </div>
         </div>
-        <div className="flex items-center gap-1 text-xs text-slate-400">
-          <Shield className="h-3 w-3" />
-          <span>Defesa: {membro.defesa}</span>
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <span className="flex items-center gap-1">
+            <Shield className="h-3 w-3" />
+            Defesa: {membro.defesa}
+          </span>
+          <span className="flex items-center gap-0.5">
+            Inic.+
+            <input
+              type="number"
+              value={membro.bonusIniciativa ?? ""}
+              onChange={(e) => onUpdate({ bonusIniciativa: e.target.value === "" ? undefined : parseInt(e.target.value) || 0 })}
+              placeholder="0"
+              className="w-8 rounded border-0 bg-slate-800/50 px-0.5 py-0.5 text-center text-slate-300 outline-none focus:ring-1 focus:ring-[var(--color-accent-purple)]/50"
+            />
+          </span>
         </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="flex items-center gap-1 text-slate-400">
+            <Move className="h-3 w-3" />
+            <input
+              type="number"
+              min={0}
+              value={membro.movimento ?? ""}
+              onChange={(e) => onUpdate({ movimento: e.target.value === "" ? undefined : parseInt(e.target.value) || 0 })}
+              placeholder="m"
+              className="w-10 rounded border-0 bg-slate-800/50 px-1 py-0.5 text-slate-300 outline-none focus:ring-1 focus:ring-[var(--color-accent-purple)]/50"
+            />
+            m
+          </span>
+          <span className="flex items-center gap-0.5 text-slate-400">
+            <ShieldCheck className="h-3 w-3" title="Cobertura" />
+            {(["meia", "total"] as const).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => onUpdate({ cobertura: membro.cobertura === c ? undefined : c })}
+                className={cn(
+                  "rounded px-1 py-0.5 text-[10px]",
+                  membro.cobertura === c ? "bg-amber-500/30 text-amber-300" : "text-slate-500 hover:bg-slate-600/50"
+                )}
+              >
+                {c === "meia" ? "Meia" : "Total"}
+              </button>
+            ))}
+          </span>
+          <button
+            type="button"
+            onClick={() => onUpdate({ emFlanco: !membro.emFlanco })}
+            className={cn(
+              "rounded px-1 py-0.5 text-[10px]",
+              membro.emFlanco ? "bg-[var(--color-accent-purple)]/30 text-[var(--color-neon-purple)]" : "text-slate-500 hover:bg-slate-600/50"
+            )}
+            title="Em flanco"
+          >
+            Flanco
+          </button>
+        </div>
+        {membro.integridadeMax != null && membro.integridadeMax > 0 && (
+          <div
+            className="flex items-center gap-1 text-xs text-slate-400"
+            title={calcularEstadoAlma(membro.integridadeAtual ?? 0, membro.integridadeMax)?.descricao}
+          >
+            <Heart className="h-3 w-3 text-[var(--color-neon-purple)]" />
+            <span>
+              Alma: {calcularEstadoAlma(membro.integridadeAtual ?? 0, membro.integridadeMax)?.estado ?? "—"} (
+              {membro.integridadeAtual ?? 0}/{membro.integridadeMax})
+            </span>
+          </div>
+        )}
         <div className="flex items-center justify-between gap-1 text-xs">
           <span className="text-slate-400">Exaustão:</span>
           <div className="flex items-center gap-0.5">
@@ -258,6 +348,59 @@ function PartyCard({
             </button>
           </div>
         </div>
+        <div className="flex items-center gap-1 text-xs">
+          <Focus className="h-3 w-3 text-slate-500" title="Concentração (Cap. 12)" />
+          <input
+            type="text"
+            value={membro.concentrandoEm ?? ""}
+            onChange={(e) => onUpdate({ concentrandoEm: e.target.value.trim() || undefined })}
+            placeholder="Concentrando em..."
+            className="min-w-0 flex-1 truncate rounded border-0 bg-slate-800/50 px-1.5 py-0.5 text-slate-300 placeholder:text-slate-500 outline-none focus:ring-1 focus:ring-[var(--color-accent-purple)]/50"
+          />
+        </div>
+        {membro.dominioNome && (
+          <div className="flex items-center gap-1.5 text-xs">
+            <Scan className="h-3 w-3 text-slate-500" title="Expansão de Domínio (Cap. 12)" />
+            <span className="min-w-0 truncate text-slate-400">{membro.dominioNome}</span>
+            <button
+              type="button"
+              onClick={() => onUpdate({ dominioAtivo: !membro.dominioAtivo })}
+              className={cn(
+                "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+                membro.dominioAtivo
+                  ? "bg-[var(--color-accent-purple)]/40 text-[var(--color-neon-purple)]"
+                  : "bg-slate-700/60 text-slate-500 hover:bg-slate-600/60"
+              )}
+            >
+              {membro.dominioAtivo ? "Ativo" : "Inativo"}
+            </button>
+          </div>
+        )}
+        {membro.invocoes && membro.invocoes.length > 0 && onAddInvocacaoToIniciativa && (
+          <div className="text-xs">
+            <button
+              type="button"
+              onClick={() => setShowInvocacoes((v) => !v)}
+              className="text-[var(--color-neon-purple)]/90 hover:underline"
+            >
+              {showInvocacoes ? "Ocultar invocações" : "Adicionar à iniciativa"}
+            </button>
+            {showInvocacoes && (
+              <div className="mt-1 flex flex-wrap gap-0.5">
+                {membro.invocoes.map((inv) => (
+                  <button
+                    key={inv.id}
+                    type="button"
+                    onClick={() => onAddInvocacaoToIniciativa(membro.id, inv)}
+                    className="rounded bg-slate-600/60 px-1.5 py-0.5 text-[10px] text-slate-200 hover:bg-slate-500/60"
+                  >
+                    {inv.nome}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         {membro.condicoes.length > 0 && (
           <div className="flex flex-wrap gap-0.5">
             {membro.condicoes.map((c) => (

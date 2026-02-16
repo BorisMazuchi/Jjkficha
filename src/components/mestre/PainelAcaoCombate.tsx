@@ -4,28 +4,11 @@ import { Input } from "@/components/ui/input"
 import type { InitiativeEntry, Maldicao, PartyMember, LogEntry } from "@/types/mestre"
 import { Swords, Target, Dices, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { rolarExpressao } from "@/lib/dados"
 
-const DANO_EXPR_REGEX = /(\d+)d(\d+)([+-]\d+)?/i
-
-function rolarExpressao(expressao: string): { total: number; texto: string } | null {
-  const match = expressao.trim().match(DANO_EXPR_REGEX)
-  if (!match) return null
-  const qtd = parseInt(match[1], 10)
-  const faces = parseInt(match[2], 10)
-  const mod = match[3] ? parseInt(match[3], 10) : 0
-  let total = 0
-  const rolls: number[] = []
-  for (let i = 0; i < qtd; i++) {
-    const r = Math.floor(Math.random() * faces) + 1
-    rolls.push(r)
-    total += r
-  }
-  total += mod
-  const texto =
-    mod !== 0
-      ? `${qtd}d${faces}${mod >= 0 ? "+" : ""}${mod}: [${rolls.join(", ")}] = ${total}`
-      : `${qtd}d${faces}: [${rolls.join(", ")}] = ${total}`
-  return { total, texto }
+/** Sequência de ataques: a cada 2 ataques no mesmo alvo, Defesa -1 (máx -5 em 10 ataques). Cap. 12, p.310 */
+export function penalidadeSequencia(nAtaques: number): number {
+  return Math.min(Math.floor(nAtaques / 2), 5)
 }
 
 export interface PainelAcaoCombateProps {
@@ -33,11 +16,15 @@ export interface PainelAcaoCombateProps {
   turnoAtual: number
   maldicoes: Maldicao[]
   membros: PartyMember[]
-  onAplicarDano: (alvo: InitiativeEntry, valor: number, atacanteNome: string) => void
+  /** Mapa alvoId -> quantidade de ataques seguidos (reset no turno do alvo) */
+  sequenciaAtaques?: Record<string, number>
+  onAplicarDano: (alvo: InitiativeEntry, valor: number, atacanteNome: string, tipoDano?: string) => void
   onAplicarCura: (alvo: InitiativeEntry, valor: number) => void
   addLog: (entry: Omit<LogEntry, "id" | "timestamp">) => void
   onFerimentoComplexo?: (alvoNome: string, valorD10: number, textoEfeito: string) => void
   onPortasDaMorte?: (alvoNome: string) => void
+  /** Quando marcado, o dano aplicado também reduz Integridade da Alma e PV máx (Cap. 12) */
+  onAplicarDanoAlma?: (alvo: InitiativeEntry, valor: number) => void
 }
 
 const TABELA_FERIMENTOS: { roll: number; texto: string }[] = [
@@ -53,16 +40,38 @@ const TABELA_FERIMENTOS: { roll: number; texto: string }[] = [
   { roll: 10, texto: "10: Perde ambos os braços — Não segura objetos; Destreza -4." },
 ]
 
+const TIPOS_DANO = [
+  "",
+  "Cortante",
+  "Perfurante",
+  "Impacto",
+  "Alma",
+  "Energia Reversa",
+  "Energético",
+  "Ácido",
+  "Congelante",
+  "Chocante",
+  "Queimante",
+  "Sônico",
+  "Psíquico",
+  "Radiante",
+  "Necrótico",
+  "Venenoso",
+] as const
+
 export function PainelAcaoCombate({
   entradas,
   turnoAtual,
   maldicoes,
   membros,
+  sequenciaAtaques = {},
   onAplicarDano,
   onAplicarCura,
   addLog,
   onFerimentoComplexo,
+  onAplicarDanoAlma,
 }: PainelAcaoCombateProps) {
+  const [danoNaAlma, setDanoNaAlma] = useState(false)
   const atacanteIndex = entradas.length > 0 ? Math.min(turnoAtual, entradas.length - 1) : -1
 
   const [atacanteOverride, setAtacanteOverride] = useState<number | null>(null)
@@ -98,8 +107,16 @@ export function PainelAcaoCombate({
   const [curaValor, setCuraValor] = useState<number>(0)
   const [pendenteFerimento, setPendenteFerimento] = useState<{ alvoNome: string; pvMax: number } | null>(null)
   const [pendentePortas, setPendentePortas] = useState<string | null>(null)
+  const [tipoDano, setTipoDano] = useState<string>("")
 
   const expressaoDano = acaoSelecionada.dano || (opcoesAtaque.length <= 1 ? danoCustomExpr : "")
+  const nSequenciaAlvo = alvoId ? sequenciaAtaques[alvoId] ?? 0 : 0
+  const defesaPenalidade = penalidadeSequencia(nSequenciaAlvo)
+  const defesaAlvo =
+    alvoEntry?.tipo === "jogador"
+      ? membros.find((m) => m.id === alvoEntry.id)?.defesa ?? 10
+      : maldicoes.find((m) => m.id === alvoEntry?.id)?.defesa ?? 10
+  const defesaEfetiva = defesaAlvo - defesaPenalidade
 
   const rolarDano = () => {
     const expr = expressaoDano || danoCustomExpr
@@ -121,7 +138,10 @@ export function PainelAcaoCombate({
     if (!alvoEntry || danoAplicar < 0) return
     const valor = Math.max(0, danoAplicar)
     const nomeAtacante = atacanteAtual?.nome ?? "?"
-    onAplicarDano(alvoEntry, valor, nomeAtacante)
+    onAplicarDano(alvoEntry, valor, nomeAtacante, tipoDano || undefined)
+    if (danoNaAlma && alvoEntry.tipo === "jogador" && onAplicarDanoAlma) {
+      onAplicarDanoAlma(alvoEntry, valor)
+    }
 
     if (alvoEntry.tipo === "jogador" && pvMaxAlvo >= 50) {
       const metade = Math.floor(pvMaxAlvo / 2)
@@ -236,7 +256,35 @@ export function PainelAcaoCombate({
             </option>
           ))}
         </select>
+        {alvoId && nSequenciaAlvo > 0 && (
+          <p className="mt-1 text-[10px] text-amber-400/90">
+            Sequência: {nSequenciaAlvo} ataques → Defesa -{defesaPenalidade} (efetiva {defesaEfetiva})
+          </p>
+        )}
+        {membroAlvo?.concentrandoEm && (
+          <p className="mt-1 text-[10px] text-violet-400/90" title="Dano pode quebrar concentração (Cap. 12)">
+            Concentrando em: {membroAlvo.concentrandoEm}
+          </p>
+        )}
       </div>
+
+      {/* Tipo de dano (para log e resistências) */}
+      {!modoCura && (
+        <div>
+          <label className="mb-1 block text-xs text-[var(--color-text-muted)]">Tipo de dano</label>
+          <select
+            value={tipoDano}
+            onChange={(e) => setTipoDano(e.target.value)}
+            className="w-full rounded border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2 py-1 text-sm text-[var(--color-text)]"
+          >
+            {TIPOS_DANO.map((t) => (
+              <option key={t || "vazio"} value={t}>
+                {t || "(nenhum)"}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Dano / Cura */}
       <div className="flex flex-wrap items-end gap-2">
@@ -261,6 +309,18 @@ export function PainelAcaoCombate({
               />
               <label htmlFor="critico-acao" className="text-xs text-[var(--color-text-muted)]">Crítico</label>
             </div>
+            {onAplicarDanoAlma && alvoId && membroAlvo && (membroAlvo.integridadeMax ?? 0) > 0 && (
+              <div className="flex items-center gap-1" title="Reduz também Integridade da Alma e PV máx (Cap. 12)">
+                <input
+                  type="checkbox"
+                  id="dano-alma"
+                  checked={danoNaAlma}
+                  onChange={(e) => setDanoNaAlma(e.target.checked)}
+                  className="rounded border-[var(--color-border)]"
+                />
+                <label htmlFor="dano-alma" className="text-xs text-violet-300/90">Dano na alma</label>
+              </div>
+            )}
             {(expressaoDano || danoCustomExpr) && (
               <Button
                 type="button"

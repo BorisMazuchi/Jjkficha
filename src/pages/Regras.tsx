@@ -22,9 +22,6 @@ export function Regras() {
               <ExternalLink className="h-5 w-5 shrink-0" />
               Abrir Livro de Regras (PDF)
             </a>
-            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-              Abre o PDF em nova aba. Coloque o arquivo em <code className="rounded bg-[var(--color-bg-elevated)] px-1">public/livro-regras.pdf</code> se ainda não estiver.
-            </p>
           </div>
         )}
         <div className="min-h-[400px]">

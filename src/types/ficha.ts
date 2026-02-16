@@ -34,6 +34,8 @@ export interface Recursos {
   energiaTemporaria: number
   /** Integridade da Alma atual (máx = pvMax, Livro v2.5) */
   integridadeAtual?: number
+  /** Deslocamento em metros (Cap. 12) */
+  movimento?: number
 }
 
 export interface AptidoesAmaldicadas {

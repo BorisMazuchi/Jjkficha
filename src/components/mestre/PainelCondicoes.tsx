@@ -1,25 +1,14 @@
 import { useState } from "react"
-import type { PartyMember, Condicao } from "@/types/mestre"
+import type { PartyMember } from "@/types/mestre"
+import {
+  CONDICOES_POR_GRUPO,
+  ehCondicaoOutro,
+  type GrupoCondicao,
+} from "@/lib/condicoesRegras"
 import { cn } from "@/lib/utils"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, ChevronDown, ChevronRight, BookOpen } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-
-const CONDICOES_DISPONIVEIS: Condicao[] = [
-  "Atordoado",
-  "Sangramento",
-  "Vontade Quebrada",
-  "Enfraquecido",
-  "Cego",
-  "Surdo",
-  "Paralisado",
-  "Petrificado",
-]
-
-/** Condições customizadas são armazenadas como "Outro: Nome" */
-function ehOutro(condicao: string): boolean {
-  return condicao.startsWith("Outro:")
-}
 
 interface PainelCondicoesProps {
   membros: PartyMember[]
@@ -34,6 +23,14 @@ export function PainelCondicoes({
 }: PainelCondicoesProps) {
   const [outroMembroId, setOutroMembroId] = useState<string | null>(null)
   const [outroNome, setOutroNome] = useState("")
+  const [grupoAberto, setGrupoAberto] = useState<Record<string, GrupoCondicao | null>>({})
+
+  const toggleGrupo = (membroId: string, grupo: GrupoCondicao) => {
+    setGrupoAberto((prev) => ({
+      ...prev,
+      [membroId]: prev[membroId] === grupo ? null : grupo,
+    }))
+  }
 
   const aplicarOutro = (membroId: string) => {
     const nome = outroNome.trim()
@@ -46,10 +43,14 @@ export function PainelCondicoes({
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
+      <h3 className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <AlertTriangle className="h-4 w-4" />
         Painel de Condições
       </h3>
+      <p className="mb-3 text-[10px] text-slate-500">
+        <BookOpen className="mr-0.5 inline h-3 w-3" />
+        Livro v2.5 — Cap. 12, p.317–319
+      </p>
 
       <div className="space-y-4 overflow-y-auto">
         {membros.map((m) => (
@@ -60,27 +61,56 @@ export function PainelCondicoes({
             <div className="mb-2 text-sm font-medium text-slate-200">
               {m.nome}
             </div>
-            <div className="flex flex-wrap gap-1">
-              {CONDICOES_DISPONIVEIS.map((c) => {
-                const ativo = m.condicoes.includes(c)
-                return (
+
+            {(Object.keys(CONDICOES_POR_GRUPO) as GrupoCondicao[]).map((grupo) => {
+              const condicoes = CONDICOES_POR_GRUPO[grupo]
+              const aberto = grupoAberto[m.id] === grupo
+              return (
+                <div key={grupo} className="mb-1">
                   <button
-                    key={c}
                     type="button"
-                    onClick={() =>
-                      ativo ? onRemoveCondicao(m.id, c) : onAddCondicao(m.id, c)
-                    }
-                    className={cn(
-                      "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-                      ativo
-                        ? "bg-amber-500/30 text-amber-400 ring-1 ring-amber-500/50"
-                        : "bg-slate-700/50 text-slate-500 hover:bg-slate-600/50 hover:text-slate-400"
-                    )}
+                    onClick={() => toggleGrupo(m.id, grupo)}
+                    className="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-xs font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-300"
                   >
-                    {c}
+                    {aberto ? (
+                      <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+                    )}
+                    {grupo}
                   </button>
-                )
-              })}
+                  {aberto && (
+                    <div className="ml-2 mt-1 flex flex-wrap gap-1 border-l border-slate-700/80 pl-2">
+                      {condicoes.map((c) => {
+                        const ativo = m.condicoes.includes(c.nome)
+                        return (
+                          <button
+                            key={c.nome}
+                            type="button"
+                            title={`${c.descricao} (Livro ${c.pagina})`}
+                            onClick={() =>
+                              ativo
+                                ? onRemoveCondicao(m.id, c.nome)
+                                : onAddCondicao(m.id, c.nome)
+                            }
+                            className={cn(
+                              "rounded px-2 py-0.5 text-xs font-medium transition-colors",
+                              ativo
+                                ? "bg-amber-500/30 text-amber-400 ring-1 ring-amber-500/50"
+                                : "bg-slate-700/50 text-slate-500 hover:bg-slate-600/50 hover:text-slate-400"
+                            )}
+                          >
+                            {c.nome}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+            <div className="mt-2 flex flex-wrap gap-1">
               <button
                 type="button"
                 onClick={() => setOutroMembroId(m.id)}
@@ -126,9 +156,9 @@ export function PainelCondicoes({
                 </Button>
               </div>
             )}
-            {m.condicoes.filter(ehOutro).length > 0 && (
+            {m.condicoes.filter(ehCondicaoOutro).length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
-                {m.condicoes.filter(ehOutro).map((c) => (
+                {m.condicoes.filter(ehCondicaoOutro).map((c) => (
                   <button
                     key={c}
                     type="button"

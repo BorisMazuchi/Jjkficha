@@ -23,6 +23,7 @@ export function FichaMaldicaoModal({
   const [grau, setGrau] = useState(maldicao.grau ?? "")
   const [defesa, setDefesa] = useState<string>(String(maldicao.defesa ?? ""))
   const [descricao, setDescricao] = useState(maldicao.descricao ?? "")
+  const [resistencias, setResistencias] = useState((maldicao as Maldicao & { resistencias?: string }).resistencias ?? "")
   const [imagens, setImagens] = useState<string[]>(maldicao.imagens ?? [])
   const [urlImagem, setUrlImagem] = useState("")
   const [ataques, setAtaques] = useState<AtaqueMaldicao[]>(maldicao.ataques ?? [])
@@ -36,6 +37,7 @@ export function FichaMaldicaoModal({
       setGrau(maldicao.grau ?? "")
       setDefesa(maldicao.defesa != null ? String(maldicao.defesa) : "")
       setDescricao(maldicao.descricao ?? "")
+      setResistencias((maldicao as Maldicao & { resistencias?: string }).resistencias ?? "")
       setImagens(maldicao.imagens ?? [])
       setAtaques(maldicao.ataques ?? [])
       setFeiticos(maldicao.feiticos ?? [])
@@ -109,6 +111,7 @@ export function FichaMaldicaoModal({
       grau: grau || undefined,
       defesa: defesaNum !== undefined && !Number.isNaN(defesaNum) ? defesaNum : undefined,
       descricao: descricao || undefined,
+      resistencias: resistencias.trim() || undefined,
       imagens: imagens.length ? imagens : undefined,
       ataques: ataques.length ? ataques : undefined,
       feiticos: feiticos.length ? feiticos : undefined,
@@ -186,13 +189,22 @@ export function FichaMaldicaoModal({
           </div>
 
           <div>
+            <label className="mb-1 block text-xs text-slate-400">Resistências (tipos de dano)</label>
+            <Input
+              value={resistencias}
+              onChange={(e) => setResistencias(e.target.value)}
+              className="w-full border-slate-600 bg-slate-800 text-sm text-slate-200"
+              placeholder="Ex: Cortante, Fogo — Livro v2.5 Cap. 12"
+            />
+          </div>
+          <div>
             <label className="mb-1 block text-xs text-slate-400">Descrição / notas</label>
             <textarea
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               rows={2}
               className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-200"
-              placeholder="Resumo da maldição, resistências, etc."
+              placeholder="Resumo da maldição, etc."
             />
           </div>
 

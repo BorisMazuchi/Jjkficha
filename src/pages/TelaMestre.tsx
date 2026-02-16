@@ -9,6 +9,7 @@ import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
 import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
 import { PainelAcaoCombate } from "@/components/mestre/PainelAcaoCombate"
+import { DescansoModal } from "@/components/mestre/DescansoModal"
 import { DiceRoller } from "@/components/DiceRoller"
 import {
   carregarSessao,
@@ -35,6 +36,7 @@ function useMestreState() {
   const [maldicoes, setMaldicoes] = useState<Maldicao[]>(SESSAO_INICIAL.maldicoes)
   const [log, setLog] = useState<LogEntry[]>([])
   const [votos, setVotos] = useState<VotoRestricao[]>(SESSAO_INICIAL.votos as VotoRestricao[])
+  const [sequenciaAtaques, setSequenciaAtaques] = useState<Record<string, number>>(SESSAO_INICIAL.sequenciaAtaques ?? {})
   const [modoPanico, setModoPanico] = useState(false)
   const [carregado, setCarregado] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -50,6 +52,7 @@ function useMestreState() {
         setTurnoAtual(sessao.turnoAtual)
         setMaldicoes(sessao.maldicoes as Maldicao[])
         setLog(sessao.log as LogEntry[])
+        setSequenciaAtaques((sessao as { sequenciaAtaques?: Record<string, number> }).sequenciaAtaques ?? {})
         setVotos(
           (sessao.votos ?? []).map((v) => ({
             ...v,
@@ -66,8 +69,8 @@ function useMestreState() {
     }
   }, [])
 
-  const stateRef = useRef({ membros, entradas, turnoAtual, maldicoes, log, votos })
-  stateRef.current = { membros, entradas, turnoAtual, maldicoes, log, votos }
+  const stateRef = useRef({ membros, entradas, turnoAtual, maldicoes, log, votos, sequenciaAtaques })
+  stateRef.current = { membros, entradas, turnoAtual, maldicoes, log, votos, sequenciaAtaques }
 
   useEffect(() => {
     if (!carregado) return
@@ -80,6 +83,7 @@ function useMestreState() {
         turnoAtual: s.turnoAtual,
         maldicoes: s.maldicoes,
         log: s.log,
+        sequenciaAtaques: s.sequenciaAtaques,
         votos: s.votos,
       })
       saveTimeoutRef.current = null
@@ -94,11 +98,12 @@ function useMestreState() {
           turnoAtual: s.turnoAtual,
           maldicoes: s.maldicoes,
           log: s.log,
+          sequenciaAtaques: s.sequenciaAtaques,
           votos: s.votos,
         })
       }
     }
-  }, [carregado, membros, entradas, turnoAtual, maldicoes, log, votos])
+  }, [carregado, membros, entradas, turnoAtual, maldicoes, log, votos, sequenciaAtaques])
 
   const addLog = useCallback(
     (entry: Omit<LogEntry, "id" | "timestamp">) => {
@@ -118,21 +123,26 @@ function useMestreState() {
     const jogadores: InitiativeEntry[] = membros.map((m) => ({
       id: m.id,
       nome: m.nome,
-      tipo: "jogador",
+      tipo: "jogador" as const,
       pvAtual: m.pvAtual,
       pvMax: m.pvMax,
       imagemUrl: m.imagemUrl ?? undefined,
+      surpresa: false,
+      bonusIniciativa: m.bonusIniciativa,
     }))
     const maldiEntradas: InitiativeEntry[] = maldicoes.map((m) => ({
       id: m.id,
       nome: m.nome,
-      tipo: "maldicao",
+      tipo: "maldicao" as const,
       pvAtual: m.pvAtual,
       pvMax: m.pvMax,
       imagemUrl: m.imagens?.[0],
+      surpresa: false,
+      bonusIniciativa: undefined,
     }))
     setEntradas([...jogadores, ...maldiEntradas])
     setTurnoAtual(0)
+    setSequenciaAtaques({})
     addLog({ tipo: "info", texto: "Iniciativa sincronizada" })
   }, [membros, maldicoes, addLog])
 
@@ -150,6 +160,7 @@ function useMestreState() {
                   pvAtual: dados.pvAtual ?? e.pvAtual,
                   pvMax: dados.pvMax ?? e.pvMax,
                   ...(dados.imagemUrl !== undefined ? { imagemUrl: dados.imagemUrl ?? undefined } : {}),
+                  ...(dados.bonusIniciativa !== undefined ? { bonusIniciativa: dados.bonusIniciativa } : {}),
                 }
               : e
           )
@@ -255,6 +266,7 @@ type AbaMobile = "party" | "iniciativa" | "bestiario" | "paineis"
 export function TelaMestre() {
   const state = useMestreState()
   const [fichaModalMembro, setFichaModalMembro] = useState<PartyMember | null>(null)
+  const [descansoAberto, setDescansoAberto] = useState(false)
   const [fichaBestiarioAberta, setFichaBestiarioAberta] = useState<Maldicao | null>(null)
   const [abaMobile, setAbaMobile] = useState<AbaMobile>("party")
   const location = useLocation()
@@ -399,6 +411,20 @@ export function TelaMestre() {
             onAddMembro={state.addMembro}
             onRemoveMembro={state.removeMembro}
             onAbrirFicha={(m) => setFichaModalMembro(state.membros.find((x) => x.id === m.id) ?? m)}
+            onDescanso={() => setDescansoAberto(true)}
+            onAddInvocacaoToIniciativa={(membroId, invocacao) => {
+              state.setEntradas((prev) => [
+                ...prev,
+                {
+                  id: `inv-${membroId}-${invocacao.id}`,
+                  nome: invocacao.nome,
+                  tipo: "maldicao" as const,
+                  pvAtual: invocacao.pvAtual,
+                  pvMax: invocacao.pvMax,
+                  surpresa: false,
+                },
+              ])
+            }}
           />
         </section>
 
@@ -416,7 +442,11 @@ export function TelaMestre() {
             entradas={entradasComFotos}
             turnoAtual={state.turnoAtual}
             onReorder={state.setEntradas}
-            onTurnoChange={state.setTurnoAtual}
+            onTurnoChange={(index) => {
+              state.setTurnoAtual(index)
+              const id = state.entradas[index]?.id
+              if (id) state.setSequenciaAtaques((prev) => ({ ...prev, [id]: 0 }))
+            }}
             onRemove={(id) => {
               const idx = state.entradas.findIndex((e) => e.id === id)
               if (idx === -1) return
@@ -428,6 +458,21 @@ export function TelaMestre() {
                 if (t === idx) return Math.min(t, newLen - 1)
                 return t
               })
+            }}
+            onSurpresaChange={(id, surpresa) => {
+              state.setEntradas((prev) =>
+                prev.map((e) => (e.id === id ? { ...e, surpresa } : e))
+              )
+            }}
+            onRolarIniciativa={() => {
+              const comRoll = state.entradas.map((e) => ({
+                entry: e,
+                roll: Math.floor(Math.random() * 20) + 1 + (e.bonusIniciativa ?? 0),
+              }))
+              comRoll.sort((a, b) => b.roll - a.roll)
+              state.setEntradas(comRoll.map((x) => x.entry))
+              state.setTurnoAtual(0)
+              state.addLog({ tipo: "info", texto: "Iniciativa rolada (d20 + bônus)" })
             }}
           />
         </section>
@@ -450,10 +495,11 @@ export function TelaMestre() {
                 {
                   id: m.id,
                   nome: m.nome,
-                  tipo: "maldicao",
+                  tipo: "maldicao" as const,
                   pvAtual: m.pvAtual,
                   pvMax: m.pvMax,
                   imagemUrl: m.imagens?.[0],
+                  surpresa: false,
                 },
               ])
               state.addLog({
@@ -552,10 +598,11 @@ export function TelaMestre() {
                                 {
                                   id: m.id,
                                   nome: m.nome,
-                                  tipo: "maldicao",
+                                  tipo: "maldicao" as const,
                                   pvAtual: m.pvAtual,
                                   pvMax: m.pvMax,
                                   imagemUrl: m.imagens?.[0],
+                                  surpresa: false,
                                 },
                               ])
                               state.addLog({ tipo: "info", texto: `${m.nome} adicionado à iniciativa` })
@@ -689,7 +736,12 @@ export function TelaMestre() {
                 turnoAtual={state.turnoAtual}
                 maldicoes={state.maldicoes}
                 membros={state.membros}
-                onAplicarDano={(alvo, valor, atacanteNome) => {
+                sequenciaAtaques={state.sequenciaAtaques}
+                onAplicarDano={(alvo, valor, atacanteNome, tipoDano) => {
+                  state.setSequenciaAtaques((prev) => ({
+                    ...prev,
+                    [alvo.id]: (prev[alvo.id] ?? 0) + 1,
+                  }))
                   if (alvo.tipo === "jogador") {
                     const m = state.membros.find((x) => x.id === alvo.id)
                     if (m) {
@@ -712,7 +764,9 @@ export function TelaMestre() {
                   }
                   state.addLog({
                     tipo: "dano",
-                    texto: atacanteNome ? `${atacanteNome} → -${valor} PV` : `-${valor} PV`,
+                    texto: atacanteNome
+                      ? `${atacanteNome} → -${valor} PV${tipoDano ? ` (${tipoDano})` : ""}`
+                      : `-${valor} PV${tipoDano ? ` (${tipoDano})` : ""}`,
                     alvo: alvo.nome,
                   })
                 }}
@@ -725,6 +779,29 @@ export function TelaMestre() {
                     }
                   }
                   state.addLog({ tipo: "cura", texto: `+${valor} PV`, alvo: alvo.nome })
+                }}
+                onAplicarDanoAlma={(alvo, valor) => {
+                  if (alvo.tipo !== "jogador") return
+                  const m = state.membros.find((x) => x.id === alvo.id)
+                  if (!m) return
+                  const novaIntegridade = Math.max(0, (m.integridadeAtual ?? m.integridadeMax ?? 0) - valor)
+                  const novoPvMax = Math.max(0, (m.pvMax ?? 0) - valor)
+                  const novoPvAtual = Math.min(novoPvMax, m.pvAtual)
+                  state.updateMembro(alvo.id, {
+                    integridadeAtual: novaIntegridade,
+                    pvMax: novoPvMax,
+                    pvAtual: novoPvAtual,
+                  })
+                  state.setEntradas((prev) =>
+                    prev.map((e) =>
+                      e.id === alvo.id ? { ...e, pvMax: novoPvMax, pvAtual: novoPvAtual } : e
+                    )
+                  )
+                  state.addLog({
+                    tipo: "dano",
+                    texto: `Dano na alma: -${valor} Integridade/PV máx`,
+                    alvo: alvo.nome,
+                  })
                 }}
                 addLog={state.addLog}
               />
@@ -788,9 +865,29 @@ export function TelaMestre() {
           if (!cabecalho) return
           const nome = (cabecalho as { nomePersonagem?: string }).nomePersonagem
           const imagemUrl = (cabecalho as { imagemPersonagem?: string }).imagemPersonagem
+          const recursos = dados?.recursos as { pvAtual?: number; pvMax?: number; peAtual?: number; peMax?: number; integridadeAtual?: number; movimento?: number } | undefined
+          const integridade = dados?.integridade as { atual?: number; max?: number } | undefined
+          const integridadeMax = integridade?.max ?? recursos?.pvMax
+          const integridadeAtual = integridade?.atual ?? recursos?.integridadeAtual
+          const especializacao = dados?.especializacao as { dadosVida?: string; usaEstamina?: boolean; estoqueInvocacoes?: { id: string; nome: string; tipo: string; pvAtual: number; pvMax: number }[] } | undefined
+          const tecnica = dados?.tecnicaAmaldicada as { expansaoDominio?: string } | undefined
+          const invocoes = especializacao?.estoqueInvocacoes?.map((i) => ({
+            id: i.id,
+            nome: i.nome,
+            tipo: i.tipo,
+            pvAtual: i.pvAtual,
+            pvMax: i.pvMax,
+          }))
           state.updateMembro(membroId, {
             ...(nome ? { nome } : {}),
             ...(imagemUrl !== undefined ? { imagemUrl } : {}),
+            ...(recursos ? { pvAtual: recursos.pvAtual, pvMax: recursos.pvMax, peAtual: recursos.peAtual, peMax: recursos.peMax, ...(recursos.movimento != null ? { movimento: recursos.movimento } : {}) } : {}),
+            ...(integridadeMax != null ? { integridadeMax } : {}),
+            ...(integridadeAtual != null ? { integridadeAtual } : {}),
+            ...(especializacao?.dadosVida != null ? { dadosVida: especializacao.dadosVida } : {}),
+            ...(especializacao?.usaEstamina != null ? { usaEstamina: especializacao.usaEstamina } : {}),
+            ...(tecnica?.expansaoDominio != null ? { dominioNome: tecnica.expansaoDominio } : {}),
+            ...(invocoes != null ? { invocoes } : {}),
           })
           setFichaModalMembro((prev) =>
             prev && prev.id === membroId
@@ -798,6 +895,14 @@ export function TelaMestre() {
               : prev
           )
         }}
+      />
+
+      <DescansoModal
+        isOpen={descansoAberto}
+        onClose={() => setDescansoAberto(false)}
+        membros={state.membros}
+        onUpdateMembro={state.updateMembro}
+        addLog={state.addLog}
       />
 
       {fichaBestiarioAberta && (

@@ -8,8 +8,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import type { DadosEspecializacao, Especializacao } from "@/types/especializacao"
-import { Swords, Target, Flame, Ghost, Heart, Shield } from "lucide-react"
+import type { DadosEspecializacao, Especializacao, EstoqueInvocacao } from "@/types/especializacao"
+import { DADO_VIDA_POR_ESP } from "@/types/especializacao"
+import { Swords, Target, Flame, Ghost, Heart, Shield, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 const ESPECIALIZACOES: { value: Especializacao; label: string; icon: typeof Swords; descricao: string }[] = [
   {
@@ -158,11 +161,24 @@ export function EspecializacaoComponent({
                 </div>
                 <div className="rounded border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 p-2 text-sm">
                   <div className="font-medium text-[var(--color-neon-purple)]">Recursos Calculados (Nível {nivel}):</div>
-                  <div className="mt-1 flex gap-4">
+                  <div className="mt-1 flex flex-wrap gap-4">
                     <span className="text-[#e94560]">PV Máx: {pvCalculado}</span>
                     <span className="text-[var(--color-neon-purple)]">
                       {dados.usaEstamina ? "Estamina" : "PE"} Máx: {peCalculado}
                     </span>
+                    <span className="text-slate-300">
+                      Dados de vida: {dados.dadosVida ?? `${nivel}d${DADO_VIDA_POR_ESP[dados.especializacao]}`}
+                    </span>
+                  </div>
+                  <div className="mt-2">
+                    <Label htmlFor="dadosVida" className="text-xs text-slate-400">Override (ex.: 2d10)</Label>
+                    <Input
+                      id="dadosVida"
+                      placeholder={`Padrão: ${nivel}d${DADO_VIDA_POR_ESP[dados.especializacao]}`}
+                      value={dados.dadosVida ?? ""}
+                      onChange={(e) => onChange({ dadosVida: e.target.value.trim() || undefined })}
+                      className="mt-0.5 h-8 w-32 text-sm"
+                    />
                   </div>
                 </div>
               </div>
@@ -190,30 +206,122 @@ export function EspecializacaoComponent({
           </div>
         )}
 
-        {/* Botão para gerenciar invocações (Controlador) */}
+        {/* Estoque de Invocações (Controlador) */}
         {dados.especializacao === "Controlador" && (
-          <div className="rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label className="text-[var(--color-neon-purple)]">Estoque de Invocações</Label>
-                <p className="text-xs text-slate-400">
-                  {(dados.estoqueInvocacoes || []).length} Shikigamis/Corpos criados
-                </p>
-              </div>
-              <button
-                type="button"
-                className="rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1 text-sm text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
-                onClick={() => {
-                  // TODO: Abrir modal de gerenciamento de invocações
-                  alert("Gerenciamento de Invocações será implementado em breve")
-                }}
-              >
-                Gerenciar
-              </button>
-            </div>
-          </div>
+          <InvocacoesManager
+            estoque={dados.estoqueInvocacoes ?? []}
+            onChange={(estoqueInvocacoes) => onChange({ estoqueInvocacoes })}
+          />
         )}
       </CardContent>
     </Card>
+  )
+}
+
+function InvocacoesManager({
+  estoque,
+  onChange,
+}: {
+  estoque: EstoqueInvocacao[]
+  onChange: (estoque: EstoqueInvocacao[]) => void
+}) {
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const editing = estoque.find((i) => i.id === editingId)
+
+  const addNew = () => {
+    const novo: EstoqueInvocacao = {
+      id: crypto.randomUUID(),
+      nome: "Nova invocação",
+      tipo: "Shikigami",
+      pvMax: 20,
+      pvAtual: 20,
+      descricao: "",
+      habilidades: [],
+    }
+    onChange([...estoque, novo])
+    setEditingId(novo.id)
+  }
+
+  const updateOne = (id: string, data: Partial<EstoqueInvocacao>) => {
+    onChange(
+      estoque.map((i) => (i.id === id ? { ...i, ...data } : i))
+    )
+  }
+
+  const removeOne = (id: string) => {
+    onChange(estoque.filter((i) => i.id !== id))
+    if (editingId === id) setEditingId(null)
+  }
+
+  const setHabilidades = (id: string, text: string) => {
+    const arr = text.split("\n").map((s) => s.trim()).filter(Boolean)
+    updateOne(id, { habilidades: arr })
+  }
+
+  return (
+    <div className="rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <Label className="text-[var(--color-neon-purple)]">Estoque de Invocações</Label>
+        <Button type="button" size="sm" variant="outline" className="border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)]" onClick={addNew}>
+          <Plus className="mr-1 h-4 w-4" />
+          Adicionar
+        </Button>
+      </div>
+      <div className="space-y-2">
+        {estoque.map((inv) =>
+          editingId === inv.id ? (
+            <div key={inv.id} className="rounded border border-slate-600 bg-slate-800/60 p-2 text-sm space-y-2">
+              <Input
+                placeholder="Nome"
+                value={inv.nome}
+                onChange={(e) => updateOne(inv.id, { nome: e.target.value })}
+                className="h-8"
+              />
+              <div className="flex gap-2">
+                <select
+                  value={inv.tipo}
+                  onChange={(e) => updateOne(inv.id, { tipo: e.target.value as "Shikigami" | "Corpo Amaldiçoado" })}
+                  className="rounded border border-slate-600 bg-slate-800 px-2 py-1 text-xs"
+                >
+                  <option value="Shikigami">Shikigami</option>
+                  <option value="Corpo Amaldiçoado">Corpo Amaldiçoado</option>
+                </select>
+                <Label className="flex items-center gap-1 text-xs">PV <Input type="number" min={1} value={inv.pvAtual} onChange={(e) => updateOne(inv.id, { pvAtual: parseInt(e.target.value) || 0 })} className="h-7 w-14" /></Label>
+                <span className="text-slate-500">/</span>
+                <Input type="number" min={1} value={inv.pvMax} onChange={(e) => updateOne(inv.id, { pvMax: parseInt(e.target.value) || 0 })} className="h-7 w-16" />
+              </div>
+              <textarea
+                placeholder="Descrição"
+                value={inv.descricao}
+                onChange={(e) => updateOne(inv.id, { descricao: e.target.value })}
+                className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1 text-xs min-h-[60px]"
+              />
+              <textarea
+                placeholder="Habilidades (uma por linha)"
+                value={inv.habilidades.join("\n")}
+                onChange={(e) => setHabilidades(inv.id, e.target.value)}
+                className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1 text-xs min-h-[50px]"
+              />
+              <div className="flex gap-1">
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEditingId(null)}>Concluir</Button>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs text-red-400 border-red-500/50" onClick={() => removeOne(inv.id)}><Trash2 className="h-3 w-3" /></Button>
+              </div>
+            </div>
+          ) : (
+            <div key={inv.id} className="flex items-center justify-between rounded border border-slate-600/60 bg-slate-800/40 px-2 py-1.5">
+              <div>
+                <span className="font-medium text-slate-200">{inv.nome}</span>
+                <span className="ml-1.5 text-xs text-slate-500">({inv.tipo})</span>
+                <span className="ml-1.5 text-xs text-red-400">{inv.pvAtual}/{inv.pvMax} PV</span>
+              </div>
+              <div className="flex gap-0.5">
+                <button type="button" onClick={() => setEditingId(inv.id)} className="rounded p-1 text-slate-400 hover:bg-slate-600/50 hover:text-slate-200 text-xs">Editar</button>
+                <button type="button" onClick={() => removeOne(inv.id)} className="rounded p-1 text-slate-400 hover:bg-red-500/20 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+              </div>
+            </div>
+          )
+        )}
+      </div>
+    </div>
   )
 }

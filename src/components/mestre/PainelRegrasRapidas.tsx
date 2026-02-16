@@ -3,6 +3,7 @@ import { BookOpen, AlertTriangle, Skull } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const ABA_CD = "CDs"
+const ABA_ACOES = "Ações"
 const ABA_DANO = "Dano"
 const ABA_FERIMENTOS = "Ferimentos"
 const ABA_EXAUSTAO = "Exaustão"
@@ -92,20 +93,31 @@ const CONJURACAO_RITUAL = [
   { titulo: "Falha", texto: "Falha no teste pode consumir recursos parcialmente ou causar efeitos colaterais (consulte o livro)." },
 ] as const
 
-type AbaRegras = typeof ABA_CD | typeof ABA_DANO | typeof ABA_FERIMENTOS | typeof ABA_EXAUSTAO | typeof ABA_RITUAL
+/** Ações de combate (Livro v2.5 — Cap. 12, p.300-304) */
+const ACOES_COMBATE = [
+  { nome: "Ação de movimento", desc: "Deslocar até o deslocamento; interagir com objeto; abrir porta; levantar do chão (metade do deslocamento)." },
+  { nome: "Ação comum", desc: "Ataque; conjurar feitiço; usar item; Esconder; Ajudar; Disparada; etc." },
+  { nome: "Ação livre", desc: "Comunicação breve; soltar objeto; terminar concentração (opcional)." },
+  { nome: "Reação", desc: "Uma por rodada, fora do seu turno: contra-ataque, interromper movimento, escudo, etc." },
+  { nome: "Ataque", desc: "Um ataque com arma ou ataque desarmado; ou múltiplos ataques se a classe permitir (cada um -2 no próximo)." },
+  { nome: "Concentração", desc: "Manter efeito ativo; ao sofrer dano, TR Constituição (CD 10 ou metade do dano, maior); falha = efeito termina." },
+] as const
+
+type AbaRegras = typeof ABA_CD | typeof ABA_ACOES | typeof ABA_DANO | typeof ABA_FERIMENTOS | typeof ABA_EXAUSTAO | typeof ABA_RITUAL
 
 export function PainelRegrasRapidas() {
   const [aba, setAba] = useState<AbaRegras>(ABA_CD)
 
   return (
     <div className="flex h-full flex-col rounded-lg border border-slate-700/80 bg-slate-900/50 p-3">
-      <h3 className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
+      <h3 className="mb-1 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <BookOpen className="h-4 w-4" />
         Regras rápidas
       </h3>
+      <p className="mb-2 text-[10px] text-slate-500">Livro v2.5 — Cap. 12 (combate), p.300-319</p>
 
       <div className="mb-2 flex flex-wrap gap-1 rounded border border-slate-600 bg-slate-800/80 p-0.5">
-        {([ABA_CD, ABA_DANO, ABA_FERIMENTOS, ABA_EXAUSTAO, ABA_RITUAL] as const).map((a) => (
+        {([ABA_CD, ABA_ACOES, ABA_DANO, ABA_FERIMENTOS, ABA_EXAUSTAO, ABA_RITUAL] as const).map((a) => (
           <button
             key={a}
             type="button"
@@ -133,6 +145,21 @@ export function PainelRegrasRapidas() {
               >
                 <span className="text-slate-300">{row.nivel}</span>
                 <span className={cn("font-mono font-bold", row.cor)}>{row.valor}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {aba === ABA_ACOES && (
+          <div className="space-y-2">
+            <p className="text-slate-400">Ações de combate (Cap. 12, p.300-304)</p>
+            {ACOES_COMBATE.map((a) => (
+              <div
+                key={a.nome}
+                className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5"
+              >
+                <div className="font-medium text-amber-300">{a.nome}</div>
+                <div className="mt-0.5 text-slate-300">{a.desc}</div>
               </div>
             ))}
           </div>

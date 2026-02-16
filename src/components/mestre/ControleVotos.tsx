@@ -97,13 +97,16 @@ export function ControleVotos({
           Votos de restrição
         </h3>
         <span className="text-xs text-slate-500">
-          {votos.filter((v) => v.ativo).length} ativo(s)
+          {votos.filter((v) => v.ativo).length} ativo(s) — Peso: Leve / Médio / Pesado / Extremo (Cap. 14)
         </span>
       </button>
 
       {expandido && (
         <>
           <div className="mb-2 space-y-2 overflow-y-auto">
+            <p className="mb-1 text-[10px] text-slate-500">
+              Livro v2.5 — Cap. 14: efeitos por peso (Leve, Médio, Pesado, Extremo). Defina benefício e malefício conforme o livro.
+            </p>
             {votos.length === 0 && (
               <p className="text-xs text-slate-500">
                 Nenhum voto registrado. Adicione para listar benefício e malefício mecânico.

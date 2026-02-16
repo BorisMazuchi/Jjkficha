@@ -125,6 +125,21 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
           />
           <p className="mt-1 text-xs text-slate-500">Gaste PE para usar técnicas e feitiços. Restringidos usam Estamina (mesmo campo).</p>
         </div>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="movimento" className="text-sm">Movimento (m)</Label>
+          <Input
+            id="movimento"
+            type="number"
+            min={0}
+            value={recursos.movimento ?? ""}
+            onChange={(e) =>
+              onChange({ movimento: e.target.value === "" ? undefined : parseInt(e.target.value) || 0 })
+            }
+            placeholder="Ex: 9"
+            className="h-8 w-20"
+          />
+          <span className="text-xs text-slate-500">Cap. 12 — deslocamento por rodada</span>
+        </div>
 
         {mostrarIntegridade && (
           <div className="space-y-2 rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">

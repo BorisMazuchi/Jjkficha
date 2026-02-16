@@ -16,6 +16,18 @@ export interface SessaoMestreDados {
     nivelExaustao?: number
     fichaId?: string | null
     imagemUrl?: string | null
+    integridadeAtual?: number
+    integridadeMax?: number
+    dadosVida?: string
+    concentrandoEm?: string
+    dominioNome?: string
+    dominioAtivo?: boolean
+    invocoes?: { id: string; nome: string; tipo: string; pvAtual: number; pvMax: number }[]
+    movimento?: number
+    cobertura?: "meia" | "total"
+    emFlanco?: boolean
+    usaEstamina?: boolean
+    bonusIniciativa?: number
   }[]
   entradas: {
     id: string
@@ -25,6 +37,8 @@ export interface SessaoMestreDados {
     pvMax?: number
     imagemUrl?: string
     posicao?: { x: number; y: number }
+    surpresa?: boolean
+    bonusIniciativa?: number
   }[]
   turnoAtual: number
   maldicoes: {
@@ -39,6 +53,7 @@ export interface SessaoMestreDados {
     origemBestiario?: boolean
     ataques?: { id: string; nome: string; dano: string; tipo?: string; descricao?: string }[]
     feiticos?: { id: string; nome: string; custoPE: number; descricao?: string; alcance?: string }[]
+    resistencias?: string
   }[]
   log: {
     id: string
@@ -47,6 +62,8 @@ export interface SessaoMestreDados {
     texto: string
     alvo?: string
   }[]
+  /** alvoId -> quantidade de ataques seguidos (Cap. 12, p.310); reset no turno do alvo */
+  sequenciaAtaques?: Record<string, number>
   votos: {
     id: string
     dono: string
@@ -74,6 +91,7 @@ export const SESSAO_INICIAL: SessaoMestreDados = {
   turnoAtual: 0,
   maldicoes: [],
   log: [],
+  sequenciaAtaques: {},
   votos: [],
 }
 

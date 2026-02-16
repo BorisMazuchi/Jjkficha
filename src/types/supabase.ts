@@ -28,6 +28,7 @@ export interface FichaDados {
     vidaTemporaria: number
     energiaTemporaria: number
     integridadeAtual?: number
+    movimento?: number
   }
   aptidoes: Record<string, number>
   // Novos campos da Fase 1
@@ -35,6 +36,7 @@ export interface FichaDados {
     especializacao: string
     pvPorNivel: number
     pePorNivel: number
+    dadosVida?: string
     empolgacao?: number
     estoqueInvocacoes?: unknown[]
     usaEstamina?: boolean
@@ -52,6 +54,7 @@ export interface FichaDados {
     nome: string
     descricao: string
     funcionamentoBasico: string
+    expansaoDominio?: string
     imagem?: string
     feiticos: unknown[]
   }

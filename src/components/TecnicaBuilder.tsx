@@ -149,6 +149,19 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
               ser moldadas em armas ou usadas para prender inimigos."
             </p>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="expansaoDominio">Expansão de Domínio (opcional)</Label>
+            <Input
+              id="expansaoDominio"
+              placeholder="Ex: Cemitério das Sombras"
+              value={tecnicaAtual.expansaoDominio ?? ""}
+              onChange={(e) =>
+                atualizarTecnica({ expansaoDominio: e.target.value.trim() || undefined })
+              }
+              className="text-sm"
+            />
+            <p className="text-xs text-slate-500">Livro v2.5 — Cap. 12. Nome ou breve descrição do domínio.</p>
+          </div>
 
           <ImagePicker
             label="Imagem da técnica (URL ou arquivo — aceita GIF)"

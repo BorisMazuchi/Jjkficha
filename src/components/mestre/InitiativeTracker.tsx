@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import type { InitiativeEntry } from "@/types/mestre"
-import { GripVertical, User, Ghost, Trash2 } from "lucide-react"
+import { GripVertical, User, Ghost, Trash2, Dices, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface InitiativeTrackerProps {
@@ -10,6 +10,8 @@ interface InitiativeTrackerProps {
   onReorder: (entradas: InitiativeEntry[]) => void
   onTurnoChange: (index: number) => void
   onRemove?: (id: string) => void
+  onSurpresaChange?: (id: string, surpresa: boolean) => void
+  onRolarIniciativa?: () => void
 }
 
 export function InitiativeTracker({
@@ -18,6 +20,8 @@ export function InitiativeTracker({
   onReorder,
   onTurnoChange,
   onRemove,
+  onSurpresaChange,
+  onRolarIniciativa,
 }: InitiativeTrackerProps) {
   const [dragOver, setDragOver] = useState<number | null>(null)
   const [dragged, setDragged] = useState<number | null>(null)
@@ -63,9 +67,23 @@ export function InitiativeTracker({
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="section-title mb-2">
-        Rastreador de Iniciativa
-      </h3>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <h3 className="section-title">
+          Rastreador de Iniciativa
+        </h3>
+        {onRolarIniciativa && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="border-amber-500/50 text-amber-400 hover:bg-amber-500/20"
+            onClick={onRolarIniciativa}
+          >
+            <Dices className="mr-1 h-4 w-4" />
+            Rolar iniciativa
+          </Button>
+        )}
+      </div>
       <div className="flex-1 space-y-1 overflow-y-auto">
         {entradas.map((e, i) => (
           <div
@@ -105,6 +123,19 @@ export function InitiativeTracker({
             <span className="min-w-0 flex-1 truncate font-medium">
               {e.nome}
             </span>
+            {onSurpresaChange && (
+              <button
+                type="button"
+                onClick={(ev) => { ev.stopPropagation(); onSurpresaChange(e.id, !e.surpresa) }}
+                className={cn(
+                  "shrink-0 rounded p-0.5",
+                  e.surpresa ? "bg-amber-500/40 text-amber-300" : "text-slate-500 hover:bg-slate-600/50"
+                )}
+                title={e.surpresa ? "Surpresa (não age no 1º round)" : "Marcar surpresa"}
+              >
+                <AlertTriangle className="h-4 w-4" />
+              </button>
+            )}
             {e.pvMax != null && (
               <span className="text-xs text-slate-500">
                 {e.pvAtual ?? 0}/{e.pvMax}

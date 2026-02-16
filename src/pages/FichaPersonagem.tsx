@@ -20,7 +20,7 @@ import type {
   AptidaoAmaldicada,
 } from "@/types/ficha"
 import { Link } from "react-router-dom"
-import { LayoutGrid } from "lucide-react"
+import { LayoutGrid, Info } from "lucide-react"
 
 const ATRIBUTO_PARA_MOD: Record<string, string> = {
   FOR: "forca",
@@ -215,11 +215,36 @@ export function FichaPersonagem() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-6 p-4 pb-12">
-        <CabecalhoFicha
-          dados={cabecalho}
-          onChange={(d) => setCabecalho((prev) => ({ ...prev, ...d }))}
-        />
+        <div
+          className="flex gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 px-4 py-3 text-sm text-slate-300"
+          role="status"
+        >
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-cyan-400" />
+          <div>
+            <p className="font-medium text-cyan-200">Como preencher a ficha</p>
+            <p className="mt-1 text-slate-400">
+              Preencha na ordem: <strong>dados básicos</strong> (nome, nível, grau) →{" "}
+              <strong>atributos e defesa</strong> → <strong>recursos</strong> (PV, PE, Integridade) →{" "}
+              <strong>aptidões</strong> → <strong>perícias</strong> (escolha Treinamento ou Especialização) →{" "}
+              <strong>habilidades e inventário</strong>. Os valores em roxo são calculados automaticamente.
+            </p>
+          </div>
+        </div>
 
+        <section aria-labelledby="sec-cabecalho">
+          <h2 id="sec-cabecalho" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            1. Dados do personagem
+          </h2>
+          <CabecalhoFicha
+            dados={cabecalho}
+            onChange={(d) => setCabecalho((prev) => ({ ...prev, ...d }))}
+          />
+        </section>
+
+        <section aria-labelledby="sec-atributos-recursos">
+          <h2 id="sec-atributos-recursos" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            2. Atributos, defesa e recursos
+          </h2>
         <div className="grid gap-6 lg:grid-cols-2">
           <AtributosDefesa
             atributos={atributos}
@@ -236,7 +261,12 @@ export function FichaPersonagem() {
             onChange={(d) => setRecursos((prev) => ({ ...prev, ...d }))}
           />
         </div>
+        </section>
 
+        <section aria-labelledby="sec-aptidoes">
+          <h2 id="sec-aptidoes" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            3. Aptidões amaldiçadas
+          </h2>
         <AptidoesAmaldicadasComponent
           aptidoes={aptidoes}
           onChange={(d) => setAptidoes((prev) => ({ ...prev, ...d }))}
@@ -248,14 +278,24 @@ export function FichaPersonagem() {
           onAptidaoSelecionada={setAptidaoRaioNegro}
           onAumentarAptidao={aumentarAptidaoRaioNegro}
         />
+        </section>
 
+        <section aria-labelledby="sec-pericias">
+          <h2 id="sec-pericias" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            4. Perícias
+          </h2>
         <PainelPericias
           pericias={pericias}
           nivel={cabecalho.nivel}
           modificadores={modificadoresPericia}
           onChange={setPericias}
         />
+        </section>
 
+        <section aria-labelledby="sec-habilidades">
+          <h2 id="sec-habilidades" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            5. Habilidades e técnicas
+          </h2>
         <HabilidadesTecnicas
           tecnicasInatas={tecnicasInatas}
           habilidadesClasse={habilidadesClasse}
@@ -263,8 +303,14 @@ export function FichaPersonagem() {
           onTecnicasChange={setTecnicasInatas}
           onHabilidadesChange={setHabilidadesClasse}
         />
+        </section>
 
+        <section aria-labelledby="sec-inventario">
+          <h2 id="sec-inventario" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+            6. Inventário amaldiçado
+          </h2>
         <InventarioAmaldicado ferramentas={ferramentas} onChange={setFerramentas} />
+        </section>
       </main>
     </div>
   )

@@ -67,10 +67,15 @@ export function PainelPericias({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Painel de Atributos e Perícias</CardTitle>
-        <p className="text-xs text-slate-400">
-          Marque Treinamento (+Nível) ou Especialização (+2×Nível)
+        <CardTitle>Perícias</CardTitle>
+        <p className="mt-1 text-sm text-slate-400">
+          Cada perícia usa o <strong>modificador do atributo</strong> (ex.: Acrobacia usa DES). Escolha o tipo de treino para somar bônus ao teste: <strong>—</strong> nenhum, <strong>T</strong> Treinamento (+nível), <strong>E</strong> Especialização (+2×nível). O total (atributo + bônus) é o que você soma no d20.
         </p>
+        <div className="mt-2 flex gap-4 text-xs text-slate-500">
+          <span><strong className="text-slate-400">—</strong> Nenhum</span>
+          <span><strong className="text-slate-400">T</strong> Treinamento (+{nivel})</span>
+          <span><strong className="text-slate-400">E</strong> Especialização (+{nivel * 2})</span>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">

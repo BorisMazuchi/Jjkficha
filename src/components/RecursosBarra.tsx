@@ -95,34 +95,42 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recursos (Barra de Status)</CardTitle>
-        <p className="text-xs text-slate-400">Livro v2.5 — PE ou Estamina (Restringido)</p>
+        <CardTitle>Recursos em combate</CardTitle>
+        <p className="mt-1 text-sm text-slate-400">
+          Acompanhe <strong>PV</strong> (vida), <strong>PE</strong> (energia amaldiçada; personagens Restringidos usam <strong>Estamina</strong>) e <strong>Integridade da Alma</strong>. Use as barras para ver o estado de um jeito rápido.
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <BarraRecurso
-          label="Pontos de Vida (PV)"
-          atual={recursos.pvAtual}
-          max={recursos.pvMax}
-          temporario={recursos.vidaTemporaria}
-          onAtualChange={(v) => onChange({ pvAtual: v })}
-          onMaxChange={(v) => onChange({ pvMax: v })}
-          cor="pv"
-        />
-        <BarraRecurso
-          label="Pontos de Energia (PE)"
-          atual={recursos.peAtual}
-          max={recursos.peMax}
-          temporario={recursos.energiaTemporaria}
-          onAtualChange={(v) => onChange({ peAtual: v })}
-          onMaxChange={(v) => onChange({ peMax: v })}
-          cor="pe"
-        />
+        <div>
+          <p className="mb-2 text-xs text-slate-500">Atual / Máximo — edite os números ou use a barra como referência.</p>
+          <BarraRecurso
+            label="Pontos de Vida (PV)"
+            atual={recursos.pvAtual}
+            max={recursos.pvMax}
+            temporario={recursos.vidaTemporaria}
+            onAtualChange={(v) => onChange({ pvAtual: v })}
+            onMaxChange={(v) => onChange({ pvMax: v })}
+            cor="pv"
+          />
+        </div>
+        <div>
+          <BarraRecurso
+            label="Pontos de Energia (PE)"
+            atual={recursos.peAtual}
+            max={recursos.peMax}
+            temporario={recursos.energiaTemporaria}
+            onAtualChange={(v) => onChange({ peAtual: v })}
+            onMaxChange={(v) => onChange({ peMax: v })}
+            cor="pe"
+          />
+          <p className="mt-1 text-xs text-slate-500">Gaste PE para usar técnicas e feitiços. Restringidos usam Estamina (mesmo campo).</p>
+        </div>
 
         {mostrarIntegridade && (
           <div className="space-y-2 rounded-lg border border-[#8832ff]/30 bg-[#8832ff]/5 p-3">
-            <Label className="text-[#8832ff]/90">Integridade da Alma (v2.5)</Label>
+            <Label className="text-[#8832ff]/90">Integridade da Alma</Label>
             <p className="text-xs text-slate-400 mb-2">
-              Máximo = PV Máximo. Rastreamento separado; dano à alma afeta este valor.
+              O máximo é sempre igual ao seu <strong>PV máximo</strong>. Dano à alma (efeitos que atacam a essência) reduz este valor em vez do PV. Quando chega a 0, o personagem pode sofrer consequências graves.
             </p>
             <div className="flex items-center gap-2">
               <Input
@@ -151,10 +159,13 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
           </div>
         )}
         <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
-          <Label className="text-amber-400/90">Regra v2.5 - Temporários</Label>
+          <Label className="text-amber-400/90">PV e PE temporários</Label>
+          <p className="text-xs text-slate-400 mb-2">
+            Bônus temporários (magias, itens, etc.). <strong>Regra v2.5:</strong> se o temporário for maior que a metade do máximo, o jogo exige atenção — por isso destacamos em amarelo.
+          </p>
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
-              <Label htmlFor="vidaTemp" className="text-sm">Vida temp:</Label>
+              <Label htmlFor="vidaTemp" className="text-sm">Vida temp.</Label>
               <Input
                 id="vidaTemp"
                 type="number"
@@ -169,7 +180,7 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
               />
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="energiaTemp" className="text-sm">Energia temp:</Label>
+              <Label htmlFor="energiaTemp" className="text-sm">Energia temp.</Label>
               <Input
                 id="energiaTemp"
                 type="number"
@@ -184,10 +195,6 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
               />
             </div>
           </div>
-          <p className="text-xs text-slate-400">
-            Se o valor temporário exceder metade do máximo, será destacado em
-            amarelo como aviso.
-          </p>
         </div>
       </CardContent>
     </Card>

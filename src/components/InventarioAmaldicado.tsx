@@ -50,8 +50,8 @@ export function InventarioAmaldicado({
     <Card>
       <CardHeader>
         <CardTitle>Inventário Amaldiçoado</CardTitle>
-        <p className="text-xs text-slate-400">
-          Ferramentas Amaldiçoadas (Grau 4 a Especial)
+        <p className="mt-1 text-sm text-slate-400">
+          Armas e ferramentas amaldiçadas que o personagem carrega. O <strong>Grau</strong> (4º ao Especial) indica a potência do item. Preencha dano e propriedades conforme o livro ou a narração.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

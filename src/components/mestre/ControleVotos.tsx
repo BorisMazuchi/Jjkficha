@@ -29,11 +29,16 @@ interface ControleVotosProps {
 const VOTOS_INICIAIS: VotoRestricao[] = []
 
 export function ControleVotos({
-  votos = VOTOS_INICIAIS,
+  votos: votosProp = VOTOS_INICIAIS,
   onVotosChange,
   className,
 }: ControleVotosProps) {
-  const [expandido, setExpandido] = useState(false)
+  const [expandido, setExpandido] = useState(true)
+  const [votosInternos, setVotosInternos] = useState<VotoRestricao[]>(VOTOS_INICIAIS)
+
+  const controlandoExternamente = onVotosChange != null
+  const votos = controlandoExternamente ? votosProp : votosInternos
+  const setVotos = controlandoExternamente ? onVotosChange : setVotosInternos
 
   const adicionar = () => {
     const novo: VotoRestricao = {
@@ -43,18 +48,16 @@ export function ControleVotos({
       maleficio: "",
       ativo: true,
     }
-    onVotosChange?.([...votos, novo])
+    setVotos([...votos, novo])
     setExpandido(true)
   }
 
   const atualizar = (id: string, patch: Partial<VotoRestricao>) => {
-    onVotosChange?.(
-      votos.map((v) => (v.id === id ? { ...v, ...patch } : v))
-    )
+    setVotos(votos.map((v) => (v.id === id ? { ...v, ...patch } : v)))
   }
 
   const remover = (id: string) => {
-    onVotosChange?.(votos.filter((v) => v.id !== id))
+    setVotos(votos.filter((v) => v.id !== id))
   }
 
   return (

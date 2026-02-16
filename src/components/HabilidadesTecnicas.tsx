@@ -51,7 +51,7 @@ function ListaHabilidades({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e]/30 p-4">
       <div className="flex items-center justify-between">
         <Label className="font-medium">{titulo}</Label>
         <Button size="sm" variant="outline" onClick={adicionar}>
@@ -163,17 +163,20 @@ export function HabilidadesTecnicas({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Habilidades e Técnicas</CardTitle>
+        <CardTitle>Habilidades e técnicas</CardTitle>
+        <p className="mt-1 text-sm text-slate-400">
+          <strong>Técnicas inatas:</strong> poderes da sua Técnica Amaldiçada (custo em PE, descrição). <strong>Habilidades de classe:</strong> ganhas pela especialização (Lutador, Controlador, etc.). Use “Limitada pelo nível” quando o bônus não puder passar do seu nível.
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         <ListaHabilidades
-          titulo="Técnicas Inatas"
+          titulo="Técnicas inatas"
           habilidades={tecnicasInatas}
           nivel={nivel}
           onChange={onTecnicasChange}
         />
         <ListaHabilidades
-          titulo="Habilidades de Classe"
+          titulo="Habilidades de classe"
           habilidades={habilidadesClasse}
           nivel={nivel}
           onChange={onHabilidadesChange}

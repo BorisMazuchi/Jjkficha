@@ -29,6 +29,10 @@ export interface SessaoMestreDados {
     pvAtual: number
     pvMax: number
     grau?: string
+    defesa?: number
+    descricao?: string
+    ataques?: { id: string; nome: string; dano: string; tipo?: string; descricao?: string }[]
+    feiticos?: { id: string; nome: string; custoPE: number; descricao?: string; alcance?: string }[]
   }[]
   log: {
     id: string

@@ -40,9 +40,8 @@ export function CalculadoraRaioNegro({
           <Zap className="h-5 w-5 text-amber-400" />
           Calculadora de Raio Negro (Black Flash)
         </CardTitle>
-        <p className="text-xs text-slate-400">
-          Ao acertar um Raio Negro, aumente automaticamente uma aptidão em +1
-          (até máx. 5)
+        <p className="mt-1 text-sm text-slate-400">
+          Quando o personagem acerta um <strong>Raio Negro</strong> em combate (timing preciso), ele pode aumentar uma aptidão em +1, até no máximo 5. Escolha qual aptidão será beneficiada e use o botão ao acertar.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">

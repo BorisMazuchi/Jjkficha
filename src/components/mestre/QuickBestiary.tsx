@@ -2,7 +2,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { Maldicao } from "@/types/mestre"
-import { Ghost, Plus, Minus, Swords } from "lucide-react"
+import { FichaMaldicaoModal } from "@/components/mestre/FichaMaldicaoModal"
+import { Ghost, Plus, Minus, Swords, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const MALDICOES_PREDEFINIDAS = [
@@ -28,6 +29,7 @@ export function QuickBestiary({
 }: QuickBestiaryProps) {
   const [novaNome, setNovaNome] = useState("")
   const [novaPV, setNovaPV] = useState(30)
+  const [maldicaoFichaAberta, setMaldicaoFichaAberta] = useState<Maldicao | null>(null)
 
   const addMaldicao = (nome: string, pv: number, grau?: string) => {
     const id = crypto.randomUUID()
@@ -41,6 +43,13 @@ export function QuickBestiary({
 
   const removeMaldicao = (id: string) => {
     onMaldicoesChange(maldicoes.filter((m) => m.id !== id))
+  }
+
+  const salvarFichaMaldicao = (m: Maldicao) => {
+    onMaldicoesChange(
+      maldicoes.map((mal) => (mal.id === m.id ? m : mal))
+    )
+    setMaldicaoFichaAberta(null)
   }
 
   const danoRapido = [5, 10, 15, 20, 25]
@@ -105,8 +114,21 @@ export function QuickBestiary({
                 {m.grau && (
                   <span className="shrink-0 text-xs text-slate-500">{m.grau}</span>
                 )}
+                {(m.ataques?.length ?? 0) > 0 || (m.feiticos?.length ?? 0) > 0 ? (
+                  <span className="shrink-0 rounded bg-cyan-500/20 px-1 text-[10px] text-cyan-400">
+                    Ficha
+                  </span>
+                ) : null}
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
+                <button
+                  type="button"
+                  onClick={() => setMaldicaoFichaAberta(m)}
+                  className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-cyan-400"
+                  title="Editar ficha (ataques e feitiços)"
+                >
+                  <FileText className="h-4 w-4" />
+                </button>
                 <button
                   type="button"
                   onClick={() => onAddToIniciativa(m)}
@@ -144,6 +166,15 @@ export function QuickBestiary({
           </div>
         ))}
       </div>
+
+      {maldicaoFichaAberta && (
+        <FichaMaldicaoModal
+          maldicao={maldicaoFichaAberta}
+          isOpen={true}
+          onClose={() => setMaldicaoFichaAberta(null)}
+          onSave={salvarFichaMaldicao}
+        />
+      )}
     </div>
   )
 }

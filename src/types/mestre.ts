@@ -22,12 +22,32 @@ export interface InitiativeEntry {
   pvMax?: number
 }
 
+export interface AtaqueMaldicao {
+  id: string
+  nome: string
+  dano: string
+  tipo?: string
+  descricao?: string
+}
+
+export interface FeiticoMaldicao {
+  id: string
+  nome: string
+  custoPE: number
+  descricao?: string
+  alcance?: string
+}
+
 export interface Maldicao {
   id: string
   nome: string
   pvAtual: number
   pvMax: number
   grau?: string
+  defesa?: number
+  descricao?: string
+  ataques?: AtaqueMaldicao[]
+  feiticos?: FeiticoMaldicao[]
 }
 
 export type Condicao =

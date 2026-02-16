@@ -23,8 +23,11 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <span className="font-display tracking-wider">FICHA DE PERSONAGEM</span>
-          <span className="text-xs font-normal text-slate-400">Feiticeiros & Maldições</span>
+          <span className="text-xs font-normal text-slate-400">Feiticeiros & Maldições v2.5</span>
         </CardTitle>
+        <p className="mt-1 text-sm text-slate-400">
+          Identificação e nível do personagem. O <strong>Grau</strong> é a classificação do feiticeiro (4º ao Especial).
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -47,7 +50,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="nivel">Nível (1-20)</Label>
+            <Label htmlFor="nivel">Nível (1–20)</Label>
             <Input
               id="nivel"
               type="number"
@@ -57,9 +60,10 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               onChange={(e) => onChange({ nivel: parseInt(e.target.value) || 1 })}
               placeholder="1"
             />
+            <p className="text-xs text-slate-500">Define bônus de perícia e defesa (metade do nível).</p>
           </div>
           <div className="space-y-2">
-            <Label>Grau</Label>
+            <Label>Grau do Feiticeiro</Label>
             <Select value={dados.grau} onValueChange={(v) => onChange({ grau: v as Grau })}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione" />
@@ -97,6 +101,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               }
               placeholder="0"
             />
+            <p className="text-xs text-slate-500">Acumule XP para subir de nível (consulte a tabela do livro).</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="xpProximo">XP para próximo nível</Label>
@@ -113,6 +118,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               }
               placeholder="Ex: 300"
             />
+            <p className="text-xs text-slate-500">Quanto falta para o próximo nível (referência).</p>
           </div>
         </div>
       </CardContent>

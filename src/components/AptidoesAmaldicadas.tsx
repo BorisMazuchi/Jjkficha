@@ -44,6 +44,13 @@ function SliderNivel({
   )
 }
 
+const APTIDAO_DICA: Record<AptidaoAmaldicada, string> = {
+  Aura: "Presença e resistência da energia amaldiçada.",
+  Controle: "Precisão e fineza no uso da técnica.",
+  Fluxo: "Quantidade e fluidez da energia disponível.",
+  Potência: "Força bruta dos efeitos da técnica.",
+}
+
 export function AptidoesAmaldicadasComponent({
   aptidoes,
   onChange,
@@ -51,17 +58,21 @@ export function AptidoesAmaldicadasComponent({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Aptidões Amaldiçadas</CardTitle>
-        <p className="text-xs text-slate-400">Níveis 0 a 5</p>
+        <CardTitle>Aptidões amaldiçadas</CardTitle>
+        <p className="mt-1 text-sm text-slate-400">
+          Níveis de 0 a 5. Definem o perfil da sua energia amaldiçada e influenciam testes e efeitos (consulte o livro para cada aptidão).
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {APTIDOES.map((apt) => (
-          <SliderNivel
-            key={apt}
-            nome={apt}
-            valor={aptidoes[apt]}
-            onChange={(v) => onChange({ [apt]: v })}
-          />
+          <div key={apt} className="rounded-lg border border-[#2a2a4a] bg-[#1a1a2e]/50 px-3 py-2">
+            <SliderNivel
+              nome={apt}
+              valor={aptidoes[apt]}
+              onChange={(v) => onChange({ [apt]: v })}
+            />
+            <p className="mt-1 text-xs text-slate-500">{APTIDAO_DICA[apt]}</p>
+          </div>
         ))}
       </CardContent>
     </Card>

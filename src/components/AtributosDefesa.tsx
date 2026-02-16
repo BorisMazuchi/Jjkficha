@@ -49,15 +49,15 @@ export function AtributosDefesa({
     <Card>
       <CardHeader>
         <CardTitle>Atributos e Defesa</CardTitle>
-        <p className="text-xs text-slate-400">
-          Livro v2.5: Defesa = 10 + Mod. DES + metade do nível + bônus
+        <p className="mt-1 text-sm text-slate-400">
+          Digite o <strong>valor base</strong> de cada atributo (geralmente 10). O <strong>modificador</strong> (em roxo) é calculado assim: (valor − 10) ÷ 2, arredondado para baixo.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {ATRIBUTOS.map(({ key, label, short }) => (
             <div key={key} className="space-y-2">
-              <Label className="text-xs text-slate-400">{short}</Label>
+              <Label className="text-xs text-slate-400">{short} — {label}</Label>
               <div className="flex flex-col items-center gap-1">
                 <Input
                   type="number"
@@ -69,9 +69,8 @@ export function AtributosDefesa({
                   }
                   className="h-12 text-center text-lg font-bold"
                 />
-                <span className="text-xs text-slate-500">{label}</span>
                 <span className="text-sm font-medium text-[#8832ff]">
-                  {modificarValor(atributos[key] ?? 10) >= 0 ? "+" : ""}
+                  Mod. {modificarValor(atributos[key] ?? 10) >= 0 ? "+" : ""}
                   {modificarValor(atributos[key] ?? 10)}
                 </span>
               </div>
@@ -80,17 +79,17 @@ export function AtributosDefesa({
         </div>
 
         <div className="flex flex-wrap items-end gap-6 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-4">
-          <div className="space-y-2">
-            <Label className="text-xs text-slate-400">Defesa</Label>
-            <div className="flex items-center gap-2">
+          <div className="space-y-1">
+            <Label className="text-xs text-slate-400">Defesa (CD para te acertarem)</Label>
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-2xl font-bold text-[#e94560]">{defesa}</span>
               <span className="text-sm text-slate-400">
-                = 10 + DES ({modDes >= 0 ? "+" : ""}{modDes}) + ⌊nível/2⌋ ({metadeNivel}) + bônus
+                = 10 + Mod. DES ({modDes >= 0 ? "+" : ""}{modDes}) + metade do nível ({metadeNivel}) + bônus de classe
               </span>
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="bonusDefesa">Bônus de Classe</Label>
+            <Label htmlFor="bonusDefesa">Bônus de Classe (Defesa)</Label>
             <Input
               id="bonusDefesa"
               type="number"
@@ -100,9 +99,9 @@ export function AtributosDefesa({
               className="w-20"
             />
           </div>
-          <div className="space-y-2">
-            <Label className="text-xs text-slate-400">Atenção (v2.5)</Label>
-            <div className="flex items-center gap-2">
+          <div className="space-y-1">
+            <Label className="text-xs text-slate-400">Atenção (CD para te surpreenderem)</Label>
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xl font-bold text-cyan-400">{atencao}</span>
               <span className="text-sm text-slate-400">
                 = 10 + Percepção ({percepcaoTotal >= 0 ? "+" : ""}{percepcaoTotal})
@@ -115,7 +114,7 @@ export function AtributosDefesa({
                 placeholder="Bônus Atenção"
                 value={bonusAtencao || ""}
                 onChange={(e) => onBonusAtencaoChange(parseInt(e.target.value) || 0)}
-                className="h-8 w-20"
+                className="mt-1 h-8 w-20"
               />
             )}
           </div>

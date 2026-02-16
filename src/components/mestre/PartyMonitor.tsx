@@ -63,14 +63,21 @@ function PartyCard({
         <span className="min-w-0 flex-1 truncate font-medium text-slate-100">{membro.nome}</span>
         <span className="shrink-0 text-xs text-slate-500">Nv.{membro.nivel} {membro.grau}</span>
         {onAbrirFicha && (
-          <button
-            type="button"
-            onClick={onAbrirFicha}
-            className="shrink-0 rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
-            title="Abrir ficha do jogador"
-          >
-            <FileText className="h-4 w-4" />
-          </button>
+          <div className="flex shrink-0 items-center gap-0.5">
+            {membro.fichaId && (
+              <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400" title="Ficha vinculada">
+                Ficha ✓
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={onAbrirFicha}
+              className="rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
+              title={membro.fichaId ? "Abrir/alterar ficha vinculada" : "Vincular ou abrir ficha do jogador"}
+            >
+              <FileText className="h-4 w-4" />
+            </button>
+          </div>
         )}
       </div>
 

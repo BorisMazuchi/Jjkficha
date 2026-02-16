@@ -22,8 +22,8 @@ import type {
 } from "@/types/mestre"
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
-import { Eye, FileText, LayoutGrid, Link2 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Eye, FileText, LayoutGrid, Link2, BookOpen } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 function useMestreState() {
   const [membros, setMembros] = useState<PartyMember[]>(SESSAO_INICIAL.membros)
@@ -244,6 +244,19 @@ function useMestreState() {
 export function TelaMestre() {
   const state = useMestreState()
   const [fichaModalMembro, setFichaModalMembro] = useState<PartyMember | null>(null)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const addFromBestiario = (location.state as { addMaldicaoFromBestiario?: Maldicao } | null)
+      ?.addMaldicaoFromBestiario
+    if (!addFromBestiario) return
+    navigate("/mestre", { replace: true, state: {} })
+    state.setMaldicoes((prev) => [
+      ...prev,
+      { ...addFromBestiario, id: crypto.randomUUID(), pvAtual: addFromBestiario.pvMax },
+    ])
+  }, [location.state, navigate, state.setMaldicoes])
 
   return (
     <div
@@ -270,6 +283,13 @@ export function TelaMestre() {
             >
               <FileText className="h-4 w-4" />
               Fichas
+            </Link>
+            <Link
+              to="/bestiario"
+              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
+            >
+              <BookOpen className="h-4 w-4" />
+              Bestiário
             </Link>
             <Link
               to="/tabuleiro"
@@ -347,6 +367,18 @@ export function TelaMestre() {
             turnoAtual={state.turnoAtual}
             onReorder={state.setEntradas}
             onTurnoChange={state.setTurnoAtual}
+            onRemove={(id) => {
+              const idx = state.entradas.findIndex((e) => e.id === id)
+              if (idx === -1) return
+              state.setEntradas((prev) => prev.filter((e) => e.id !== id))
+              state.setTurnoAtual((t) => {
+                const newLen = state.entradas.length - 1
+                if (newLen <= 0) return 0
+                if (t > idx) return t - 1
+                if (t === idx) return Math.min(t, newLen - 1)
+                return t
+              })
+            }}
           />
         </section>
 

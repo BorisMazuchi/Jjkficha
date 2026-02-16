@@ -1,13 +1,15 @@
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import type { InitiativeEntry } from "@/types/mestre"
-import { GripVertical, User, Ghost } from "lucide-react"
+import { GripVertical, User, Ghost, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface InitiativeTrackerProps {
   entradas: InitiativeEntry[]
   turnoAtual: number
   onReorder: (entradas: InitiativeEntry[]) => void
   onTurnoChange: (index: number) => void
+  onRemove?: (id: string) => void
 }
 
 export function InitiativeTracker({
@@ -15,6 +17,7 @@ export function InitiativeTracker({
   turnoAtual,
   onReorder,
   onTurnoChange,
+  onRemove,
 }: InitiativeTrackerProps) {
   const [dragOver, setDragOver] = useState<number | null>(null)
   const [dragged, setDragged] = useState<number | null>(null)
@@ -95,6 +98,22 @@ export function InitiativeTracker({
               <span className="text-xs text-slate-500">
                 {e.pvAtual ?? 0}/{e.pvMax}
               </span>
+            )}
+            {onRemove && (
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 shrink-0 p-0 text-slate-400 hover:text-rose-400"
+                onClick={(ev) => {
+                  ev.stopPropagation()
+                  onRemove(e.id)
+                }}
+                title="Remover da iniciativa"
+                aria-label={`Remover ${e.nome} da iniciativa`}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
             )}
           </div>
         ))}

@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { listarFichas, carregarFicha } from "@/lib/fichaDb"
 import type { FichaDados } from "@/types/supabase"
-import { X, FileText, Loader2 } from "lucide-react"
+import { X, FileText, Loader2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+const CARREGAR_FICHA_TIMEOUT_MS = 12_000
 
 interface FichaModalProps {
   isOpen: boolean
@@ -37,38 +39,81 @@ export function FichaModal({
   )
   const [dados, setDados] = useState<FichaDados | null>(null)
   const [loading, setLoading] = useState(false)
+  const [erroCarregar, setErroCarregar] = useState<string | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
     if (isOpen) {
       setFichaSelecionada(fichaIdInicial ?? "")
       setDados(null)
-      listarFichas().then((lista) =>
-        setFichas(
-          lista.map((f) => ({
-            id: f.id,
-            nome_personagem: f.nome_personagem,
-            jogador: f.jogador,
-          }))
+      setErroCarregar(null)
+      listarFichas()
+        .then((lista) =>
+          setFichas(
+            lista.map((f) => ({
+              id: f.id,
+              nome_personagem: f.nome_personagem,
+              jogador: f.jogador,
+            }))
+          )
         )
-      )
+        .catch(() => setFichas([]))
     }
   }, [isOpen, fichaIdInicial])
 
   useEffect(() => {
     if (!fichaSelecionada) {
       setDados(null)
+      setErroCarregar(null)
+      setLoading(false)
       return
     }
+    const id = ++requestIdRef.current
     setLoading(true)
+    setErroCarregar(null)
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = null
+      if (id !== requestIdRef.current) return
+      setLoading(false)
+      setErroCarregar("Demorou demais para carregar. Verifique a conexão e se o Supabase está configurado.")
+    }, CARREGAR_FICHA_TIMEOUT_MS)
+
     carregarFicha(fichaSelecionada)
       .then((f) => {
+        if (id !== requestIdRef.current) return
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+          timeoutRef.current = null
+        }
         setDados(f)
-        // Sincronizar nome e foto do personagem na party/iniciativa quando a ficha vinculada é carregada
+        setErroCarregar(null)
         if (f && membroId && onDadosCarregados && fichaSelecionada === fichaIdInicial) {
           onDadosCarregados(membroId, f)
         }
       })
-      .finally(() => setLoading(false))
+      .catch(() => {
+        if (id !== requestIdRef.current) return
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+          timeoutRef.current = null
+        }
+        setDados(null)
+        setErroCarregar("Não foi possível carregar a ficha. Verifique a conexão e as variáveis VITE_SUPABASE_*.")
+      })
+      .finally(() => {
+        if (id === requestIdRef.current) setLoading(false)
+      })
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+    }
   }, [fichaSelecionada, membroId, fichaIdInicial, onDadosCarregados])
 
   const handleVincular = () => {
@@ -137,14 +182,22 @@ export function FichaModal({
 
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
-            <div className="flex items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center gap-3 py-12">
               <Loader2 className="h-8 w-8 animate-spin text-[var(--color-neon-purple)]" />
+              <span className="text-sm text-[var(--color-text-muted)]">Carregando ficha…</span>
+            </div>
+          ) : erroCarregar ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+              <AlertCircle className="h-10 w-10 text-[var(--color-accent-red)]" />
+              <p className="text-sm text-[var(--color-text-muted)]">{erroCarregar}</p>
             </div>
           ) : dados ? (
             <FichaResumo dados={dados} />
           ) : (
             <div className="py-12 text-center text-slate-500">
-              Selecione uma ficha salva no Supabase para visualizar
+              {fichas.length === 0
+                ? "Nenhuma ficha no Supabase. Configure VITE_SUPABASE_* no .env ou salve uma ficha na página de fichas."
+                : "Selecione uma ficha na lista acima para visualizar"}
             </div>
           )}
         </div>

@@ -271,8 +271,8 @@ function PartyCard({
             />
             m
           </span>
-          <span className="flex items-center gap-0.5 text-slate-400">
-            <ShieldCheck className="h-3 w-3" title="Cobertura" />
+          <span className="flex items-center gap-0.5 text-slate-400" title="Cobertura">
+            <ShieldCheck className="h-3 w-3" />
             {(["meia", "total"] as const).map((c) => (
               <button
                 key={c}
@@ -348,8 +348,8 @@ function PartyCard({
             </button>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-xs">
-          <Focus className="h-3 w-3 text-slate-500" title="Concentração (Cap. 12)" />
+        <div className="flex items-center gap-1 text-xs" title="Concentração (Cap. 12)">
+          <Focus className="h-3 w-3 text-slate-500" />
           <input
             type="text"
             value={membro.concentrandoEm ?? ""}
@@ -359,8 +359,8 @@ function PartyCard({
           />
         </div>
         {membro.dominioNome && (
-          <div className="flex items-center gap-1.5 text-xs">
-            <Scan className="h-3 w-3 text-slate-500" title="Expansão de Domínio (Cap. 12)" />
+          <div className="flex items-center gap-1.5 text-xs" title="Expansão de Domínio (Cap. 12)">
+            <Scan className="h-3 w-3 text-slate-500" />
             <span className="min-w-0 truncate text-slate-400">{membro.dominioNome}</span>
             <button
               type="button"

@@ -247,6 +247,8 @@ function useMestreState() {
     setEntradas,
     setTurnoAtual,
     setMaldicoes,
+    sequenciaAtaques,
+    setSequenciaAtaques,
     updateMembro,
     addLog,
     addCondicaoMembro,
@@ -445,7 +447,7 @@ export function TelaMestre() {
             onTurnoChange={(index) => {
               state.setTurnoAtual(index)
               const id = state.entradas[index]?.id
-              if (id) state.setSequenciaAtaques((prev) => ({ ...prev, [id]: 0 }))
+              if (id) state.setSequenciaAtaques((prev: Record<string, number>) => ({ ...prev, [id]: 0 }))
             }}
             onRemove={(id) => {
               const idx = state.entradas.findIndex((e) => e.id === id)
@@ -738,7 +740,7 @@ export function TelaMestre() {
                 membros={state.membros}
                 sequenciaAtaques={state.sequenciaAtaques}
                 onAplicarDano={(alvo, valor, atacanteNome, tipoDano) => {
-                  state.setSequenciaAtaques((prev) => ({
+                  state.setSequenciaAtaques((prev: Record<string, number>) => ({
                     ...prev,
                     [alvo.id]: (prev[alvo.id] ?? 0) + 1,
                   }))

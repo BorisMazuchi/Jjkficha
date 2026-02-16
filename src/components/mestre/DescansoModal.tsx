@@ -43,7 +43,7 @@ export function DescansoModal({
       })
     })
     addLog?.({
-      tipo: "sistema",
+      tipo: "info",
       texto: `Descanso longo: todos recuperaram PV/PE e reduziram exaustão em 1.`,
     })
     onClose()

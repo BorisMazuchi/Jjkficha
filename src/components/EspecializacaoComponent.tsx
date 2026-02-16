@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input"
 import type { DadosEspecializacao, Especializacao, EstoqueInvocacao } from "@/types/especializacao"
 import { DADO_VIDA_POR_ESP } from "@/types/especializacao"
-import { Swords, Target, Flame, Ghost, Heart, Shield, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react"
+import { Swords, Target, Flame, Ghost, Heart, Shield, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 
@@ -226,7 +226,6 @@ function InvocacoesManager({
   onChange: (estoque: EstoqueInvocacao[]) => void
 }) {
   const [editingId, setEditingId] = useState<string | null>(null)
-  const editing = estoque.find((i) => i.id === editingId)
 
   const addNew = () => {
     const novo: EstoqueInvocacao = {

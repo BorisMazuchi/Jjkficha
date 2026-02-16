@@ -109,6 +109,11 @@ export function PainelAcaoCombate({
   const [pendentePortas, setPendentePortas] = useState<string | null>(null)
   const [tipoDano, setTipoDano] = useState<string>("")
 
+  const alvoEntry = alvos.find((e) => e.id === alvoId)
+  const membroAlvo = alvoEntry?.tipo === "jogador" ? membros.find((m) => m.id === alvoEntry.id) : null
+  const pvMaxAlvo = alvoEntry?.tipo === "jogador" ? membroAlvo?.pvMax ?? (alvoEntry.pvMax ?? 0) : (alvoEntry?.pvMax ?? 0)
+  const pvAtualAlvo = alvoEntry?.tipo === "jogador" ? membroAlvo?.pvAtual ?? (alvoEntry.pvAtual ?? 0) : (alvoEntry?.pvAtual ?? 0)
+
   const expressaoDano = acaoSelecionada.dano || (opcoesAtaque.length <= 1 ? danoCustomExpr : "")
   const nSequenciaAlvo = alvoId ? sequenciaAtaques[alvoId] ?? 0 : 0
   const defesaPenalidade = penalidadeSequencia(nSequenciaAlvo)
@@ -128,11 +133,6 @@ export function PainelAcaoCombate({
       addLog({ tipo: "rolagem", texto: critico ? `${result.texto} (crítico ×2) = ${total}` : result.texto })
     }
   }
-
-  const alvoEntry = alvos.find((e) => e.id === alvoId)
-  const membroAlvo = alvoEntry?.tipo === "jogador" ? membros.find((m) => m.id === alvoEntry.id) : null
-  const pvMaxAlvo = alvoEntry?.tipo === "jogador" ? membroAlvo?.pvMax ?? (alvoEntry.pvMax ?? 0) : (alvoEntry?.pvMax ?? 0)
-  const pvAtualAlvo = alvoEntry?.tipo === "jogador" ? membroAlvo?.pvAtual ?? (alvoEntry.pvAtual ?? 0) : (alvoEntry?.pvAtual ?? 0)
 
   const aplicarDano = () => {
     if (!alvoEntry || danoAplicar < 0) return

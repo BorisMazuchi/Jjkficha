@@ -103,7 +103,7 @@ export function LogCombate({ log, onRolagem }: LogCombateProps) {
         </Button>
       </div>
 
-      <div className="flex-1 space-y-1 overflow-y-auto rounded border border-slate-700/80 bg-black/30 p-2 font-mono text-xs">
+      <div className="min-h-0 max-h-96 flex-1 space-y-1 overflow-y-auto overflow-x-hidden rounded border border-slate-700/80 bg-black/30 p-2 font-mono text-xs">
         {log.length === 0 && (
           <div className="py-4 text-center text-slate-500">
             Nenhum registro ainda

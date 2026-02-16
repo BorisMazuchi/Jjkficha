@@ -41,6 +41,13 @@ export interface SessaoMestreDados {
     texto: string
     alvo?: string
   }[]
+  votos: {
+    id: string
+    tipo: string
+    beneficio: string
+    maleficio: string
+    ativo: boolean
+  }[]
 }
 
 export interface SessaoCarregada extends Omit<SessaoMestreDados, "log"> {
@@ -59,6 +66,7 @@ export const SESSAO_INICIAL: SessaoMestreDados = {
   turnoAtual: 0,
   maldicoes: [],
   log: [],
+  votos: [],
 }
 
 export async function carregarSessao(): Promise<SessaoCarregada | null> {
@@ -78,6 +86,7 @@ export async function carregarSessao(): Promise<SessaoCarregada | null> {
       ...e,
       timestamp: new Date(e.timestamp),
     })),
+    votos: d.votos ?? [],
   }
 }
 
@@ -89,6 +98,7 @@ export async function salvarSessao(dados: SessaoCarregada): Promise<boolean> {
       ...e,
       timestamp: typeof e.timestamp === "string" ? e.timestamp : e.timestamp.toISOString(),
     })),
+    votos: dados.votos ?? [],
   }
   const { data: existing } = await supabase
     .from("sessao_mestre")

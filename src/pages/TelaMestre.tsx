@@ -20,6 +20,7 @@ import type {
   LogEntry,
   Condicao,
 } from "@/types/mestre"
+import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
 import { Eye, FileText, LayoutGrid, Link2 } from "lucide-react"
 import { Link } from "react-router-dom"
@@ -30,6 +31,7 @@ function useMestreState() {
   const [turnoAtual, setTurnoAtual] = useState(SESSAO_INICIAL.turnoAtual)
   const [maldicoes, setMaldicoes] = useState<Maldicao[]>(SESSAO_INICIAL.maldicoes)
   const [log, setLog] = useState<LogEntry[]>([])
+  const [votos, setVotos] = useState<VotoRestricao[]>(SESSAO_INICIAL.votos as VotoRestricao[])
   const [modoPanico, setModoPanico] = useState(false)
   const [carregado, setCarregado] = useState(false)
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -45,6 +47,7 @@ function useMestreState() {
         setTurnoAtual(sessao.turnoAtual)
         setMaldicoes(sessao.maldicoes as Maldicao[])
         setLog(sessao.log as LogEntry[])
+        setVotos((sessao.votos ?? []) as VotoRestricao[])
       }
       setCarregado(true)
     }
@@ -54,8 +57,8 @@ function useMestreState() {
     }
   }, [])
 
-  const stateRef = useRef({ membros, entradas, turnoAtual, maldicoes, log })
-  stateRef.current = { membros, entradas, turnoAtual, maldicoes, log }
+  const stateRef = useRef({ membros, entradas, turnoAtual, maldicoes, log, votos })
+  stateRef.current = { membros, entradas, turnoAtual, maldicoes, log, votos }
 
   useEffect(() => {
     if (!carregado) return
@@ -68,6 +71,7 @@ function useMestreState() {
         turnoAtual: s.turnoAtual,
         maldicoes: s.maldicoes,
         log: s.log,
+        votos: s.votos,
       })
       saveTimeoutRef.current = null
     }, 1500)
@@ -81,10 +85,11 @@ function useMestreState() {
           turnoAtual: s.turnoAtual,
           maldicoes: s.maldicoes,
           log: s.log,
+          votos: s.votos,
         })
       }
     }
-  }, [carregado, membros, entradas, turnoAtual, maldicoes, log])
+  }, [carregado, membros, entradas, turnoAtual, maldicoes, log, votos])
 
   const addLog = useCallback(
     (entry: Omit<LogEntry, "id" | "timestamp">) => {
@@ -225,6 +230,8 @@ function useMestreState() {
     syncIniciativaFromMembros,
     addMembro,
     removeMembro,
+    votos,
+    setVotos,
   }
 }
 
@@ -428,7 +435,10 @@ export function TelaMestre() {
               : "border-cyan-900/60 bg-slate-900/50"
           )}
         >
-          <ControleVotos />
+          <ControleVotos
+            votos={state.votos}
+            onVotosChange={state.setVotos}
+          />
         </section>
 
         {/* Log + Rolador de dados - full width bottom */}

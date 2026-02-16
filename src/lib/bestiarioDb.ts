@@ -40,41 +40,47 @@ async function salvarBestiarioSupabase(maldicoes: Maldicao[]): Promise<boolean> 
   return !error
 }
 
-function carregarBestiarioLocal(): Maldicao[] {
+/** Remove dados do bestiário do localStorage (usado após migrar para Supabase). */
+function limparBestiarioLocal(): void {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as Maldicao[]
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
-}
-
-function salvarBestiarioLocal(maldicoes: Maldicao[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(maldicoes))
+    localStorage.removeItem(STORAGE_KEY)
   } catch {
     // ignore
   }
 }
 
 /**
- * Carrega o bestiário: tenta Supabase primeiro; se não configurado ou falha, usa localStorage.
+ * Carrega o bestiário apenas do Supabase (tabela bestiario).
+ * Se a tabela não existir, retorna []. Se existir dados antigos no localStorage, tenta migrar uma vez.
  */
 export async function carregarBestiario(): Promise<Maldicao[]> {
   const fromSupabase = await carregarBestiarioSupabase()
   if (fromSupabase != null) return fromSupabase
-  return carregarBestiarioLocal()
+  // Migração única: se tinha dados no localStorage, tenta enviar para o Supabase (quando a tabela já existir)
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as Maldicao[]
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const ok = await salvarBestiarioSupabase(parsed)
+        if (ok) {
+          limparBestiarioLocal()
+          return parsed
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return []
 }
 
 /**
- * Salva o bestiário: tenta Supabase primeiro; se não configurado ou falha, usa localStorage.
- * Retorna true se salvou no Supabase, false se usou apenas localStorage.
+ * Salva o bestiário apenas no Supabase (tabela bestiario).
+ * Retorna true se salvou, false se Supabase não está configurado ou a tabela não existe.
  */
 export async function salvarBestiario(maldicoes: Maldicao[]): Promise<boolean> {
   const ok = await salvarBestiarioSupabase(maldicoes)
-  if (ok) return true
-  salvarBestiarioLocal(maldicoes)
-  return false
+  if (ok) limparBestiarioLocal()
+  return ok
 }

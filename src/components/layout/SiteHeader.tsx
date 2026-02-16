@@ -1,14 +1,15 @@
 import { Link, useLocation } from "react-router-dom"
-import { Home, FileText, BookOpen, LayoutGrid, ExternalLink } from "lucide-react"
+import { Home, FileText, BookOpen, LayoutGrid, ExternalLink, ScrollText } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-/** URL do Livro de Regras (PDF). Deixe vazio ou defina para o arquivo em /public ou URL externa. */
-export const URL_LIVRO_REGRAS = ""
+/** URL do Livro de Regras (PDF). Coloque o PDF em public/ como livro-regras.pdf ou defina URL externa. */
+export const URL_LIVRO_REGRAS = "/livro-regras.pdf"
 
 const NAV = [
   { to: "/", label: "Início", icon: Home },
   { to: "/fichas", label: "Fichas", icon: FileText },
   { to: "/bestiario", label: "Bestiário", icon: BookOpen },
+  { to: "/regras", label: "Regras", icon: ScrollText },
   { to: "/mestre", label: "Mestre", icon: LayoutGrid },
 ] as const
 

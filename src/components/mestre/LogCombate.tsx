@@ -1,13 +1,16 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { LogEntry } from "@/types/mestre"
-import { MessageSquare, Dices } from "lucide-react"
+import type { LogEntry, InitiativeEntry } from "@/types/mestre"
+import { MessageSquare, Dices, Swords } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface LogCombateProps {
   log: LogEntry[]
   onRolagem: (entry: Omit<LogEntry, "id" | "timestamp">) => void
+  /** Se definido, permite aplicar o resultado da última rolagem de dano a um alvo */
+  entradas?: InitiativeEntry[]
+  onAplicarDano?: (alvo: InitiativeEntry, valor: number) => void
 }
 
 function formatTime(d: Date) {
@@ -48,8 +51,18 @@ function tipoCor(tipo: LogEntry["tipo"]) {
   }
 }
 
-export function LogCombate({ log, onRolagem }: LogCombateProps) {
+function extrairTotalRolagem(texto: string): number | null {
+  const match = texto.match(/=\s*(-?\d+)\s*$/)
+  return match ? parseInt(match[1], 10) : null
+}
+
+export function LogCombate({ log, onRolagem, entradas = [], onAplicarDano }: LogCombateProps) {
   const [dadoInput, setDadoInput] = useState("")
+  const [alvoAplicarId, setAlvoAplicarId] = useState("")
+  const ultimaRolagem = log.length > 0 && log[log.length - 1].tipo === "rolagem" ? log[log.length - 1] : null
+  const totalAplicar = ultimaRolagem ? extrairTotalRolagem(ultimaRolagem.texto) : null
+  const podeAplicarDano = totalAplicar != null && totalAplicar >= 0 && entradas.length > 0 && onAplicarDano && alvoAplicarId
+  const alvoAplicar = entradas.find((e) => e.id === alvoAplicarId)
 
   const handleRolar = () => {
     const match = dadoInput.match(/(\d+)d(\d+)([+-]\d+)?/i)
@@ -102,6 +115,34 @@ export function LogCombate({ log, onRolagem }: LogCombateProps) {
           Rolagem
         </Button>
       </div>
+
+      {totalAplicar != null && totalAplicar >= 0 && entradas.length > 0 && onAplicarDano && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded border border-slate-700/80 bg-slate-800/40 p-2">
+          <span className="text-xs text-slate-400">Aplicar resultado como dano:</span>
+          <select
+            value={alvoAplicarId}
+            onChange={(e) => setAlvoAplicarId(e.target.value)}
+            className="h-8 rounded border border-slate-600 bg-slate-800 px-2 text-xs text-slate-200"
+          >
+            <option value="">Selecione o alvo</option>
+            {entradas.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.nome} — {e.pvAtual ?? 0}/{e.pvMax ?? 0} PV
+              </option>
+            ))}
+          </select>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => alvoAplicar && onAplicarDano(alvoAplicar, totalAplicar!)}
+            disabled={!podeAplicarDano}
+            className="h-8 border-red-500/50 text-red-400 hover:bg-red-500/20"
+          >
+            <Swords className="mr-1 h-3.5 w-3.5" />
+            Aplicar {totalAplicar} PV
+          </Button>
+        </div>
+      )}
 
       <div className="min-h-0 max-h-96 flex-1 space-y-1 overflow-y-auto overflow-x-hidden rounded border border-slate-700/80 bg-black/30 p-2 font-mono text-xs">
         {log.length === 0 && (

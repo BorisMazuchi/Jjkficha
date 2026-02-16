@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom"
-import { FileText, BookOpen, LayoutGrid, Plus } from "lucide-react"
+import { FileText, BookOpen, LayoutGrid, Plus, ScrollText } from "lucide-react"
 import { SiteHeader } from "@/components/layout/SiteHeader"
 import { Button } from "@/components/ui/button"
 
 const LINKS = [
   { to: "/fichas", label: "Fichas", icon: FileText, desc: "Listar e editar fichas de personagem" },
   { to: "/bestiario", label: "Bestiário", icon: BookOpen, desc: "Maldições e criaturas" },
+  { to: "/regras", label: "Regras", icon: ScrollText, desc: "Livro de regras e resumos (CDs, dano, ferimentos)" },
   { to: "/mestre", label: "Mestre", icon: LayoutGrid, desc: "Party, iniciativa, condições e regras" },
 ] as const
 

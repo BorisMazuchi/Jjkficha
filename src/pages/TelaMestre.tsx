@@ -8,6 +8,7 @@ import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
 import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
 import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
+import { PainelAcaoCombate } from "@/components/mestre/PainelAcaoCombate"
 import { DiceRoller } from "@/components/DiceRoller"
 import {
   carregarSessao,
@@ -660,7 +661,7 @@ export function TelaMestre() {
           />
         </section>
 
-        {/* Log + Rolador de dados - full width bottom */}
+        {/* Ação de combate + Log + Rolador - full width bottom */}
         <section
           className={cn(
             "col-span-full min-h-[180px] rounded-xl border p-4 transition-all duration-500",
@@ -670,7 +671,7 @@ export function TelaMestre() {
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
-          <div className="flex h-full gap-4">
+          <div className="flex h-full flex-wrap gap-4">
             <div className="w-56 shrink-0">
               <DiceRoller
                 onRolar={(r) => {
@@ -682,8 +683,78 @@ export function TelaMestre() {
                 }}
               />
             </div>
+            <div className="min-w-[280px] max-w-md shrink-0">
+              <PainelAcaoCombate
+                entradas={state.entradas}
+                turnoAtual={state.turnoAtual}
+                maldicoes={state.maldicoes}
+                membros={state.membros}
+                onAplicarDano={(alvo, valor, atacanteNome) => {
+                  if (alvo.tipo === "jogador") {
+                    const m = state.membros.find((x) => x.id === alvo.id)
+                    if (m) {
+                      const novoPv = Math.max(0, m.pvAtual - valor)
+                      state.updateMembro(alvo.id, { pvAtual: novoPv })
+                    }
+                  } else {
+                    const mal = state.maldicoes.find((x) => x.id === alvo.id)
+                    if (mal) {
+                      const novoPv = Math.max(0, mal.pvAtual - valor)
+                      state.setMaldicoes((prev) =>
+                        prev.map((x) => (x.id === alvo.id ? { ...x, pvAtual: novoPv } : x))
+                      )
+                      state.setEntradas((prev) =>
+                        prev.map((e) =>
+                          e.id === alvo.id ? { ...e, pvAtual: novoPv } : e
+                        )
+                      )
+                    }
+                  }
+                  state.addLog({
+                    tipo: "dano",
+                    texto: atacanteNome ? `${atacanteNome} → -${valor} PV` : `-${valor} PV`,
+                    alvo: alvo.nome,
+                  })
+                }}
+                onAplicarCura={(alvo, valor) => {
+                  if (alvo.tipo === "jogador") {
+                    const m = state.membros.find((x) => x.id === alvo.id)
+                    if (m) {
+                      const novoPv = Math.min(m.pvMax, m.pvAtual + valor)
+                      state.updateMembro(alvo.id, { pvAtual: novoPv })
+                    }
+                  }
+                  state.addLog({ tipo: "cura", texto: `+${valor} PV`, alvo: alvo.nome })
+                }}
+                addLog={state.addLog}
+              />
+            </div>
             <div className="min-w-0 flex-1">
-              <LogCombate log={state.log} onRolagem={state.addLog} />
+              <LogCombate
+                log={state.log}
+                onRolagem={state.addLog}
+                entradas={state.entradas}
+                onAplicarDano={(alvo, valor) => {
+                  if (alvo.tipo === "jogador") {
+                    const m = state.membros.find((x) => x.id === alvo.id)
+                    if (m) {
+                      state.updateMembro(alvo.id, { pvAtual: Math.max(0, m.pvAtual - valor) })
+                    }
+                  } else {
+                    const mal = state.maldicoes.find((x) => x.id === alvo.id)
+                    if (mal) {
+                      const novoPv = Math.max(0, mal.pvAtual - valor)
+                      state.setMaldicoes((prev) =>
+                        prev.map((x) => (x.id === alvo.id ? { ...x, pvAtual: novoPv } : x))
+                      )
+                      state.setEntradas((prev) =>
+                        prev.map((e) => (e.id === alvo.id ? { ...e, pvAtual: novoPv } : e))
+                      )
+                    }
+                  }
+                  state.addLog({ tipo: "dano", texto: `-${valor} PV`, alvo: alvo.nome })
+                }}
+              />
             </div>
           </div>
         </section>

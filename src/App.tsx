@@ -4,6 +4,7 @@ import { FichaPersonagem } from "@/pages/FichaPersonagemV2"
 import { ListagemFichas } from "@/pages/ListagemFichas"
 import { TelaMestre } from "@/pages/TelaMestre"
 import { Bestiario } from "@/pages/Bestiario"
+import { Regras } from "@/pages/Regras"
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/ficha" element={<FichaPersonagem />} />
         <Route path="/mestre" element={<TelaMestre />} />
         <Route path="/bestiario" element={<Bestiario />} />
+        <Route path="/regras" element={<Regras />} />
       </Routes>
     </BrowserRouter>
   )

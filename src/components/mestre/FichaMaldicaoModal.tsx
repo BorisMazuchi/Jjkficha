@@ -21,7 +21,7 @@ export function FichaMaldicaoModal({
   const [nome, setNome] = useState(maldicao.nome)
   const [pvMax, setPvMax] = useState(maldicao.pvMax)
   const [grau, setGrau] = useState(maldicao.grau ?? "")
-  const [defesa, setDefesa] = useState(maldicao.defesa ?? "")
+  const [defesa, setDefesa] = useState<string>(String(maldicao.defesa ?? ""))
   const [descricao, setDescricao] = useState(maldicao.descricao ?? "")
   const [ataques, setAtaques] = useState<AtaqueMaldicao[]>(maldicao.ataques ?? [])
   const [feiticos, setFeiticos] = useState<FeiticoMaldicao[]>(maldicao.feiticos ?? [])
@@ -31,7 +31,7 @@ export function FichaMaldicaoModal({
       setNome(maldicao.nome)
       setPvMax(maldicao.pvMax)
       setGrau(maldicao.grau ?? "")
-      setDefesa(maldicao.defesa ?? "")
+      setDefesa(maldicao.defesa != null ? String(maldicao.defesa) : "")
       setDescricao(maldicao.descricao ?? "")
       setAtaques(maldicao.ataques ?? [])
       setFeiticos(maldicao.feiticos ?? [])
@@ -73,7 +73,7 @@ export function FichaMaldicaoModal({
   }
 
   const handleSave = () => {
-    const defesaNum = defesa === "" ? undefined : parseInt(defesa, 10)
+    const defesaNum = defesa === "" ? undefined : parseInt(String(defesa), 10)
     onSave({
       ...maldicao,
       nome,

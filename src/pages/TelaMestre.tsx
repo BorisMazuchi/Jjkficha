@@ -4,7 +4,10 @@ import { InitiativeTracker } from "@/components/mestre/InitiativeTracker"
 import { FichaModal } from "@/components/mestre/FichaModal"
 import { QuickBestiary } from "@/components/mestre/QuickBestiary"
 import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
+import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
+import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
+import { DiceRoller } from "@/components/DiceRoller"
 import {
   carregarSessao,
   salvarSessao,
@@ -18,7 +21,7 @@ import type {
   Condicao,
 } from "@/types/mestre"
 import { cn } from "@/lib/utils"
-import { Eye, FileText, Link2 } from "lucide-react"
+import { Eye, FileText, LayoutGrid, Link2 } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function useMestreState() {
@@ -222,6 +225,13 @@ export function TelaMestre() {
               <FileText className="h-4 w-4" />
               Fichas
             </Link>
+            <Link
+              to="/tabuleiro"
+              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
+            >
+              <LayoutGrid className="h-4 w-4" />
+              Tabuleiro
+            </Link>
             <h1 className="font-display text-xl font-bold tracking-[0.2em] text-cyan-400">
               TELA DO MESTRE
             </h1>
@@ -364,7 +374,29 @@ export function TelaMestre() {
           />
         </section>
 
-        {/* Log - full width bottom */}
+        <section
+          className={cn(
+            "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            state.modoPanico
+              ? "border-rose-500/30 bg-black/30"
+              : "border-cyan-900/60 bg-slate-900/50"
+          )}
+        >
+          <PainelRegrasRapidas />
+        </section>
+
+        <section
+          className={cn(
+            "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            state.modoPanico
+              ? "border-rose-500/30 bg-black/30"
+              : "border-cyan-900/60 bg-slate-900/50"
+          )}
+        >
+          <ControleVotos />
+        </section>
+
+        {/* Log + Rolador de dados - full width bottom */}
         <section
           className={cn(
             "col-span-full min-h-[180px] rounded-xl border p-4 transition-all duration-500",
@@ -373,7 +405,22 @@ export function TelaMestre() {
               : "border-cyan-900/60 bg-slate-900/50"
           )}
         >
-          <LogCombate log={state.log} onRolagem={state.addLog} />
+          <div className="flex h-full gap-4">
+            <div className="w-56 shrink-0">
+              <DiceRoller
+                onRolar={(r) => {
+                  const txt =
+                    r.critico || r.criticoFalha
+                      ? `${r.expressao} → ${r.total} ${r.critico ? " (Crítico!)" : " (Falha crítica)"}`
+                      : `${r.expressao} → [${r.valores.join(", ")}] = ${r.total}`
+                  state.addLog({ tipo: "rolagem", texto: txt })
+                }}
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <LogCombate log={state.log} onRolagem={state.addLog} />
+            </div>
+          </div>
         </section>
       </main>
 

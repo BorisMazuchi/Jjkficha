@@ -1,0 +1,174 @@
+import { useState } from "react"
+import { Vote, Plus, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+
+export type TipoVoto = "Proprio" | "Emergencial" | "Congenito"
+
+export interface VotoRestricao {
+  id: string
+  tipo: TipoVoto
+  beneficio: string
+  maleficio: string
+  ativo: boolean
+}
+
+const LABEL_TIPO: Record<TipoVoto, string> = {
+  Proprio: "Próprio",
+  Emergencial: "Emergencial",
+  Congenito: "Congênito",
+}
+
+interface ControleVotosProps {
+  votos?: VotoRestricao[]
+  onVotosChange?: (votos: VotoRestricao[]) => void
+  className?: string
+}
+
+const VOTOS_INICIAIS: VotoRestricao[] = []
+
+export function ControleVotos({
+  votos = VOTOS_INICIAIS,
+  onVotosChange,
+  className,
+}: ControleVotosProps) {
+  const [expandido, setExpandido] = useState(false)
+
+  const adicionar = () => {
+    const novo: VotoRestricao = {
+      id: crypto.randomUUID(),
+      tipo: "Proprio",
+      beneficio: "",
+      maleficio: "",
+      ativo: true,
+    }
+    onVotosChange?.([...votos, novo])
+    setExpandido(true)
+  }
+
+  const atualizar = (id: string, patch: Partial<VotoRestricao>) => {
+    onVotosChange?.(
+      votos.map((v) => (v.id === id ? { ...v, ...patch } : v))
+    )
+  }
+
+  const remover = (id: string) => {
+    onVotosChange?.(votos.filter((v) => v.id !== id))
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col rounded-lg border border-slate-700/80 bg-slate-900/50 p-3",
+        className
+      )}
+    >
+      <button
+        type="button"
+        onClick={() => setExpandido(!expandido)}
+        className="mb-2 flex w-full items-center justify-between gap-2 text-left"
+      >
+        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+          <Vote className="h-4 w-4" />
+          Votos de restrição
+        </h3>
+        <span className="text-xs text-slate-500">
+          {votos.filter((v) => v.ativo).length} ativo(s)
+        </span>
+      </button>
+
+      {expandido && (
+        <>
+          <div className="mb-2 space-y-2 overflow-y-auto">
+            {votos.length === 0 && (
+              <p className="text-xs text-slate-500">
+                Nenhum voto registrado. Adicione para listar benefício e malefício mecânico.
+              </p>
+            )}
+            {votos.map((v) => (
+              <div
+                key={v.id}
+                className="rounded border border-slate-700/60 bg-slate-800/40 p-2 text-xs"
+              >
+                <div className="mb-1.5 flex items-center justify-between gap-2">
+                  <select
+                    value={v.tipo}
+                    onChange={(e) =>
+                      atualizar(v.id, {
+                        tipo: e.target.value as TipoVoto,
+                      })
+                    }
+                    className="rounded border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-cyan-300"
+                  >
+                    {(["Proprio", "Emergencial", "Congenito"] as const).map(
+                      (t) => (
+                        <option key={t} value={t}>
+                          {LABEL_TIPO[t]}
+                        </option>
+                      )
+                    )}
+                  </select>
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      checked={v.ativo}
+                      onChange={(e) =>
+                        atualizar(v.id, { ativo: e.target.checked })
+                      }
+                      className="rounded border-slate-600"
+                    />
+                    Ativo
+                  </label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-slate-400 hover:text-rose-400"
+                    onClick={() => remover(v.id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <div className="space-y-1">
+                  <div>
+                    <span className="text-slate-500">Benefício: </span>
+                    <Input
+                      value={v.beneficio}
+                      onChange={(e) =>
+                        atualizar(v.id, { beneficio: e.target.value })
+                      }
+                      placeholder="Ex: +1 PE por nível"
+                      className="h-7 border-slate-600 bg-slate-800/80 text-slate-200"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Malefício: </span>
+                    <Input
+                      value={v.maleficio}
+                      onChange={(e) =>
+                        atualizar(v.id, { maleficio: e.target.value })
+                      }
+                      placeholder="Ex: Não pode usar X"
+                      className="h-7 border-slate-600 bg-slate-800/80 text-slate-200"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={adicionar}
+            className="h-8 w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+          >
+            <Plus className="mr-1.5 h-4 w-4" />
+            Adicionar voto
+          </Button>
+        </>
+      )}
+    </div>
+  )
+}

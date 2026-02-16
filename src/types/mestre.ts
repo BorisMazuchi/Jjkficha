@@ -22,6 +22,8 @@ export interface InitiativeEntry {
   tipo: "jogador" | "maldicao"
   pvAtual?: number
   pvMax?: number
+  /** URL da imagem (personagem ou maldição) para exibir no rastreador */
+  imagemUrl?: string
 }
 
 export interface AtaqueMaldicao {

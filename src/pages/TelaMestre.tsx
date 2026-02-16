@@ -119,6 +119,7 @@ function useMestreState() {
       tipo: "jogador",
       pvAtual: m.pvAtual,
       pvMax: m.pvMax,
+      imagemUrl: m.imagemUrl ?? undefined,
     }))
     const maldiEntradas: InitiativeEntry[] = maldicoes.map((m) => ({
       id: m.id,
@@ -126,6 +127,7 @@ function useMestreState() {
       tipo: "maldicao",
       pvAtual: m.pvAtual,
       pvMax: m.pvMax,
+      imagemUrl: m.imagens?.[0],
     }))
     setEntradas([...jogadores, ...maldiEntradas])
     setTurnoAtual(0)
@@ -145,6 +147,7 @@ function useMestreState() {
                   ...e,
                   pvAtual: dados.pvAtual ?? e.pvAtual,
                   pvMax: dados.pvMax ?? e.pvMax,
+                  ...(dados.imagemUrl !== undefined ? { imagemUrl: dados.imagemUrl ?? undefined } : {}),
                 }
               : e
           )
@@ -413,6 +416,7 @@ export function TelaMestre() {
                   tipo: "maldicao",
                   pvAtual: m.pvAtual,
                   pvMax: m.pvMax,
+                  imagemUrl: m.imagens?.[0],
                 },
               ])
               state.addLog({
@@ -474,6 +478,18 @@ export function TelaMestre() {
                       m.pvAtual <= 0 && "opacity-50"
                     )}
                   >
+                    {m.imagens?.[0] && (
+                      <div className="mb-2 flex justify-center">
+                        <img
+                          src={m.imagens[0]}
+                          alt=""
+                          className="h-14 w-14 rounded border border-slate-600 object-cover"
+                          onError={(e) => {
+                            ;(e.target as HTMLImageElement).style.display = "none"
+                          }}
+                        />
+                      </div>
+                    )}
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <span className="truncate block text-sm font-medium">{m.nome}</span>
@@ -492,19 +508,20 @@ export function TelaMestre() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => {
-                            state.setEntradas((prev) => [
-                              ...prev,
-                              {
-                                id: m.id,
-                                nome: m.nome,
-                                tipo: "maldicao",
-                                pvAtual: m.pvAtual,
-                                pvMax: m.pvMax,
-                              },
-                            ])
-                            state.addLog({ tipo: "info", texto: `${m.nome} adicionado à iniciativa` })
-                          }}
+                            onClick={() => {
+                              state.setEntradas((prev) => [
+                                ...prev,
+                                {
+                                  id: m.id,
+                                  nome: m.nome,
+                                  tipo: "maldicao",
+                                  pvAtual: m.pvAtual,
+                                  pvMax: m.pvMax,
+                                  imagemUrl: m.imagens?.[0],
+                                },
+                              ])
+                              state.addLog({ tipo: "info", texto: `${m.nome} adicionado à iniciativa` })
+                            }}
                           className="rounded p-0.5 text-slate-400 hover:bg-cyan-500/20 hover:text-cyan-400"
                           title="Adicionar à iniciativa"
                         >

@@ -22,6 +22,7 @@ export interface SessaoMestreDados {
     tipo: "jogador" | "maldicao"
     pvAtual?: number
     pvMax?: number
+    imagemUrl?: string
   }[]
   turnoAtual: number
   maldicoes: {

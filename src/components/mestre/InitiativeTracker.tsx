@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { cn } from "@/lib/utils"
 import type { InitiativeEntry } from "@/types/mestre"
 import { GripVertical, User, Ghost, Trash2 } from "lucide-react"
@@ -21,6 +21,10 @@ export function InitiativeTracker({
 }: InitiativeTrackerProps) {
   const [dragOver, setDragOver] = useState<number | null>(null)
   const [dragged, setDragged] = useState<number | null>(null)
+  const [imagemFalhou, setImagemFalhou] = useState<Set<string>>(new Set())
+  const onImagemErro = useCallback((url: string) => {
+    setImagemFalhou((prev) => new Set(prev).add(url))
+  }, [])
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDragged(index)
@@ -86,7 +90,14 @@ export function InitiativeTracker({
             <span className="text-lg font-bold text-slate-400">
               {i + 1}.
             </span>
-            {e.tipo === "jogador" ? (
+            {e.imagemUrl && !imagemFalhou.has(e.imagemUrl) ? (
+              <img
+                src={e.imagemUrl}
+                alt=""
+                className="h-8 w-8 shrink-0 rounded border border-slate-600 object-cover"
+                onError={() => onImagemErro(e.imagemUrl!)}
+              />
+            ) : e.tipo === "jogador" ? (
               <User className="h-4 w-4 shrink-0 text-cyan-400" />
             ) : (
               <Ghost className="h-4 w-4 shrink-0 text-red-400" />

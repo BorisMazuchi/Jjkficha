@@ -62,11 +62,8 @@ export function PainelAcaoCombate({
   onAplicarCura,
   addLog,
   onFerimentoComplexo,
-  onPortasDaMorte,
 }: PainelAcaoCombateProps) {
   const atacanteIndex = entradas.length > 0 ? Math.min(turnoAtual, entradas.length - 1) : -1
-  const atacante = atacanteIndex >= 0 ? entradas[atacanteIndex] : null
-  const maldicaoAtacante = atacante?.tipo === "maldicao" ? maldicoes.find((m) => m.id === atacante.id) : null
 
   const [atacanteOverride, setAtacanteOverride] = useState<number | null>(null)
   const idxAtacante = atacanteOverride ?? atacanteIndex
@@ -74,7 +71,7 @@ export function PainelAcaoCombate({
   const maldicaoAtual = atacanteAtual?.tipo === "maldicao" ? maldicoes.find((m) => m.id === atacanteAtual.id) : null
 
   const alvos = useMemo(
-    () => entradas.filter((e, i) => i !== idxAtacante),
+    () => entradas.filter((_, i) => i !== idxAtacante),
     [entradas, idxAtacante]
   )
 

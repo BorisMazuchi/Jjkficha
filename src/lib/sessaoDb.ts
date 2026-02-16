@@ -32,6 +32,7 @@ export interface SessaoMestreDados {
     defesa?: number
     descricao?: string
     imagens?: string[]
+    origemBestiario?: boolean
     ataques?: { id: string; nome: string; dano: string; tipo?: string; descricao?: string }[]
     feiticos?: { id: string; nome: string; custoPE: number; descricao?: string; alcance?: string }[]
   }[]

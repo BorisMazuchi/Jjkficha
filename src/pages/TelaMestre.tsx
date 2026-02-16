@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react"
 import { PartyMonitor } from "@/components/mestre/PartyMonitor"
 import { InitiativeTracker } from "@/components/mestre/InitiativeTracker"
 import { FichaModal } from "@/components/mestre/FichaModal"
+import { FichaMaldicaoModal } from "@/components/mestre/FichaMaldicaoModal"
 import { QuickBestiary } from "@/components/mestre/QuickBestiary"
 import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
 import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
@@ -22,7 +23,7 @@ import type {
 } from "@/types/mestre"
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
-import { Eye, FileText, LayoutGrid, Link2, BookOpen } from "lucide-react"
+import { Eye, FileText, LayoutGrid, Link2, BookOpen, Swords, Minus } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
 function useMestreState() {
@@ -241,9 +242,12 @@ function useMestreState() {
   }
 }
 
+const danoRapido = [5, 10, 15, 20, 25]
+
 export function TelaMestre() {
   const state = useMestreState()
   const [fichaModalMembro, setFichaModalMembro] = useState<PartyMember | null>(null)
+  const [fichaBestiarioAberta, setFichaBestiarioAberta] = useState<Maldicao | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -254,7 +258,12 @@ export function TelaMestre() {
     navigate("/mestre", { replace: true, state: {} })
     state.setMaldicoes((prev) => [
       ...prev,
-      { ...addFromBestiario, id: crypto.randomUUID(), pvAtual: addFromBestiario.pvMax },
+      {
+        ...addFromBestiario,
+        id: crypto.randomUUID(),
+        pvAtual: addFromBestiario.pvMax,
+        origemBestiario: true,
+      },
     ])
   }, [location.state, navigate, state.setMaldicoes])
 
@@ -439,6 +448,118 @@ export function TelaMestre() {
           />
         </section>
 
+        {state.maldicoes.filter((m) => m.origemBestiario).length > 0 && (
+          <section
+            className={cn(
+              "col-span-full min-h-[120px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+              state.modoPanico
+                ? "border-rose-500/30 bg-black/30"
+                : "border-cyan-900/60 bg-slate-900/50"
+            )}
+          >
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+              <BookOpen className="h-4 w-4" />
+              Maldições do bestiário
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {state.maldicoes
+                .filter((m) => m.origemBestiario)
+                .map((m) => (
+                  <div
+                    key={m.id}
+                    className={cn(
+                      "rounded-lg border border-slate-700/80 bg-slate-800/50 p-2 min-w-[180px]",
+                      m.pvAtual <= 0 && "opacity-50"
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="truncate block text-sm font-medium">{m.nome}</span>
+                        {m.grau && (
+                          <span className="text-xs text-slate-500">{m.grau}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => setFichaBestiarioAberta(m)}
+                          className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-cyan-400"
+                          title="Editar ficha"
+                        >
+                          <FileText className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            state.setEntradas((prev) => [
+                              ...prev,
+                              {
+                                id: m.id,
+                                nome: m.nome,
+                                tipo: "maldicao",
+                                pvAtual: m.pvAtual,
+                                pvMax: m.pvMax,
+                              },
+                            ])
+                            state.addLog({ tipo: "info", texto: `${m.nome} adicionado à iniciativa` })
+                          }}
+                          className="rounded p-0.5 text-slate-400 hover:bg-cyan-500/20 hover:text-cyan-400"
+                          title="Adicionar à iniciativa"
+                        >
+                          <Swords className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => state.setMaldicoes((prev) => prev.filter((mal) => mal.id !== m.id))}
+                          className="rounded p-0.5 text-slate-400 hover:bg-red-500/20 hover:text-red-400"
+                          title="Remover da sessão"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-xs text-red-400">
+                        {Math.max(0, m.pvAtual)}/{m.pvMax} PV
+                      </span>
+                      <div className="flex gap-0.5">
+                        {danoRapido.map((d) => (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => {
+                              state.setMaldicoes((prev) =>
+                                prev.map((mal) =>
+                                  mal.id === m.id
+                                    ? { ...mal, pvAtual: Math.max(0, mal.pvAtual - d) }
+                                    : mal
+                                )
+                              )
+                              state.setEntradas((prev) =>
+                                prev.map((e) =>
+                                  e.id === m.id
+                                    ? {
+                                        ...e,
+                                        pvAtual: Math.max(0, (e.pvAtual ?? 0) - d),
+                                      }
+                                    : e
+                                )
+                              )
+                              state.addLog({ tipo: "dano", texto: `-${d} PV`, alvo: m.nome })
+                            }}
+                            className="rounded border border-red-900/60 bg-red-500/10 px-1.5 py-0.5 text-[10px] font-bold text-red-400 hover:bg-red-500/30"
+                          >
+                            -{d}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
         <section
           className={cn(
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
@@ -526,6 +647,20 @@ export function TelaMestre() {
           )
         }}
       />
+
+      {fichaBestiarioAberta && (
+        <FichaMaldicaoModal
+          maldicao={fichaBestiarioAberta}
+          isOpen={true}
+          onClose={() => setFichaBestiarioAberta(null)}
+          onSave={(m) => {
+            state.setMaldicoes((prev) =>
+              prev.map((mal) => (mal.id === m.id ? { ...m, origemBestiario: true } : mal))
+            )
+            setFichaBestiarioAberta(null)
+          }}
+        />
+      )}
     </div>
   )
 }

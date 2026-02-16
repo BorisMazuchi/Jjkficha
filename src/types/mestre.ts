@@ -48,6 +48,8 @@ export interface Maldicao {
   descricao?: string
   /** URLs ou data URLs (base64) das imagens da maldição */
   imagens?: string[]
+  /** True quando foi adicionada à sessão a partir do Bestiário (não aparece no Quick Bestiary) */
+  origemBestiario?: boolean
   ataques?: AtaqueMaldicao[]
   feiticos?: FeiticoMaldicao[]
 }

@@ -99,7 +99,7 @@ export function QuickBestiary({
       </div>
 
       <div className="flex-1 space-y-2 overflow-y-auto">
-        {maldicoes.map((m) => (
+        {maldicoes.filter((m) => !m.origemBestiario).map((m) => (
           <div
             key={m.id}
             className={cn(

@@ -56,6 +56,8 @@ interface TabuleiroContentProps {
   onMoveEntry?: (id: string, pos: { x: number; y: number }) => void
   /** Callback ao clicar em uma entrada (opcional: definir como turno ativo) */
   onSelectTurn?: (index: number) => void
+  /** Quando true, usa h-full em vez de h-screen (para layout com header) */
+  fillHeight?: boolean
   className?: string
 }
 
@@ -65,6 +67,7 @@ export function TabuleiroContent({
   turnoAtual = 0,
   onMoveEntry,
   onSelectTurn,
+  fillHeight = false,
   className,
 }: TabuleiroContentProps) {
   const [tokens, setTokens] = useState<Token[]>(TOKENS_INICIAIS)
@@ -182,14 +185,14 @@ export function TabuleiroContent({
         <ZoomControls zoom={zoom} onZoomChange={setZoom} />
       </div>
       {!embedded && (
-        <div className="absolute top-4 left-4 rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-xs text-slate-300 max-w-[180px] space-y-1">
-          <div className="mb-2 font-medium text-slate-100">Atalhos</div>
-          <div><span className="font-mono text-[#8832ff]">R</span> Régua</div>
-          <div><span className="font-mono text-[#8832ff]">C</span> Cone</div>
-          <div><span className="font-mono text-[#8832ff]">G</span> Grid</div>
-          <div><span className="font-mono text-[#8832ff]">O</span> Coord</div>
-          <div><span className="font-mono text-[#8832ff]">Del</span> Remover</div>
-          <div><span className="font-mono text-[#8832ff]">Esc</span> Deselecionar</div>
+        <div className="absolute left-4 top-4 max-w-[180px] space-y-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-2 text-xs text-[var(--color-text-muted)]">
+          <div className="mb-2 font-medium text-[var(--color-text)]">Atalhos</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">R</span> Régua</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">C</span> Cone</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">G</span> Grid</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">O</span> Coord</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">Del</span> Remover</div>
+          <div><span className="font-mono text-[var(--color-accent-purple)]">Esc</span> Deselecionar</div>
         </div>
       )}
     </>
@@ -204,12 +207,12 @@ export function TabuleiroContent({
     return (
       <div
         className={cn(
-          "flex flex-col rounded-xl border border-slate-700/80 bg-slate-900/80 overflow-hidden",
+          "flex flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)]",
           className
         )}
       >
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-700/80 bg-slate-800/60 px-3 py-2">
-          <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-3 py-2">
+          <h3 className="section-title flex items-center gap-2">
             <LayoutGrid className="h-4 w-4" />
             Rastreador de Iniciativa
           </h3>
@@ -239,7 +242,7 @@ export function TabuleiroContent({
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0e14]">
+    <div className={cn("flex bg-[var(--color-bg-page)]", fillHeight ? "h-full" : "h-screen")}>
       <ToolbarVTT
         ferramentaAtiva={ferramenta}
         onFerramentaChange={setFerramenta}

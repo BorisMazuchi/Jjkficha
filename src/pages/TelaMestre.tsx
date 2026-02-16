@@ -25,7 +25,8 @@ import type {
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
 import { Eye, FileText, Link2, BookOpen, Swords, Minus } from "lucide-react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
+import { SiteHeader } from "@/components/layout/SiteHeader"
 
 function useMestreState() {
   const [membros, setMembros] = useState<PartyMember[]>(SESSAO_INICIAL.membros)
@@ -279,38 +280,18 @@ export function TelaMestre() {
         "min-h-screen transition-all duration-700",
         state.modoPanico
           ? "bg-[#0f0a14]"
-          : "bg-[#0a0e14]"
+          : "bg-[var(--color-bg-page)]"
       )}
     >
-      <header
+      <SiteHeader
+        title="TELA DO MESTRE"
         className={cn(
-          "border-b px-4 py-3 transition-all duration-500",
-          state.modoPanico
-            ? "border-rose-500/60 bg-black/60 shadow-[0_0_30px_rgba(244,63,94,0.2)]"
-            : "border-cyan-900/60 bg-slate-900/80"
+          "transition-all duration-500",
+          state.modoPanico &&
+            "border-rose-500/60 bg-black/60 shadow-[0_0_30px_rgba(244,63,94,0.2)]"
         )}
-      >
-        <div className="mx-auto flex max-w-[1800px] items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              <FileText className="h-4 w-4" />
-              Fichas
-            </Link>
-            <Link
-              to="/bestiario"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              <BookOpen className="h-4 w-4" />
-              Bestiário
-            </Link>
-            <h1 className="font-display text-xl font-bold tracking-[0.2em] text-cyan-400">
-              TELA DO MESTRE
-            </h1>
-          </div>
-          <div className="flex items-center gap-3">
+        right={
+          <>
             <button
               type="button"
               onClick={() => state.syncIniciativaFromMembros()}
@@ -332,9 +313,9 @@ export function TelaMestre() {
               <Eye className="h-5 w-5" />
               {state.modoPanico ? "EXPANSÃO DE DOMÍNIO" : "Modo de Pânico"}
             </button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <main
         className={cn(
@@ -349,7 +330,7 @@ export function TelaMestre() {
             "col-span-full rounded-xl border p-4 transition-all duration-500",
             state.modoPanico
               ? "border-rose-500/40 bg-black/40 shadow-[inset_0_0_40px_rgba(244,63,94,0.05)]"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <PartyMonitor
@@ -367,7 +348,7 @@ export function TelaMestre() {
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <InitiativeTracker
@@ -395,7 +376,7 @@ export function TelaMestre() {
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <QuickBestiary
@@ -477,7 +458,7 @@ export function TelaMestre() {
               "col-span-full min-h-[120px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
               state.modoPanico
                 ? "border-rose-500/30 bg-black/30"
-                : "border-cyan-900/60 bg-slate-900/50"
+                : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
             )}
           >
             <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
@@ -491,7 +472,7 @@ export function TelaMestre() {
                   <div
                     key={m.id}
                     className={cn(
-                      "rounded-lg border border-slate-700/80 bg-slate-800/50 p-2 min-w-[180px]",
+                      "rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-2 min-w-[180px]",
                       m.pvAtual <= 0 && "opacity-50"
                     )}
                   >
@@ -601,7 +582,7 @@ export function TelaMestre() {
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <PainelCondicoes
@@ -616,7 +597,7 @@ export function TelaMestre() {
             "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <PainelRegrasRapidas />
@@ -627,7 +608,7 @@ export function TelaMestre() {
             "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <ControleVotos
@@ -643,7 +624,7 @@ export function TelaMestre() {
             "col-span-full min-h-[180px] rounded-xl border p-4 transition-all duration-500",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
-              : "border-cyan-900/60 bg-slate-900/50"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
           )}
         >
           <div className="flex h-full gap-4">

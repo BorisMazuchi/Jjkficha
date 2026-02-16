@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { BookOpen, Plus, Pencil, Trash2, Ghost, FileText, Send } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { Plus, Pencil, Trash2, Ghost, Send } from "lucide-react"
 import type { Maldicao } from "@/types/mestre"
 import { FichaMaldicaoModal } from "@/components/mestre/FichaMaldicaoModal"
 import { Button } from "@/components/ui/button"
 import { carregarBestiario, salvarBestiario } from "@/lib/bestiarioDb"
+import { SiteHeader } from "@/components/layout/SiteHeader"
 import { cn } from "@/lib/utils"
 
 const MALDICAO_VAZIA = (): Maldicao => ({
@@ -61,42 +62,13 @@ export function Bestiario() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-200">
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-900/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <div className="flex items-center gap-6">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              <FileText className="h-4 w-4" />
-              Fichas
-            </Link>
-            <Link
-              to="/mestre"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              Mestre
-            </Link>
-            <Link
-              to="/tabuleiro"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              Tabuleiro
-            </Link>
-            <h1 className="font-display flex items-center gap-2 text-xl font-bold tracking-[0.15em] text-cyan-400">
-              <BookOpen className="h-6 w-6" />
-              BESTIÁRIO
-            </h1>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text)]">
+      <SiteHeader title="BESTIÁRIO" subtitle="Maldições cadastradas por ficha" />
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-slate-400">
-            Maldições cadastradas por ficha. Adicione novas entradas e edite ataques, feitiços e
-            descrição.
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-[var(--color-text-muted)]">
+            Adicione novas entradas e edite ataques, feitiços e descrição.
           </p>
           <Button
             onClick={handleOpenNew}
@@ -110,12 +82,12 @@ export function Bestiario() {
         {maldicoes.length === 0 ? (
           <div
             className={cn(
-              "flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-900/30 py-16 text-center"
+              "flex flex-col items-center justify-center rounded-xl border border-dashed border-[var(--color-border)] page-section py-16 text-center"
             )}
           >
-            <Ghost className="mb-3 h-12 w-12 text-slate-600" />
-            <p className="text-slate-400">Nenhuma maldição no bestiário.</p>
-            <p className="mt-1 text-sm text-slate-500">
+            <Ghost className="mb-3 h-12 w-12 text-[var(--color-text-subtle)]" />
+            <p className="text-[var(--color-text-muted)]">Nenhuma maldição no bestiário.</p>
+            <p className="mt-1 text-sm text-[var(--color-text-subtle)]">
               Clique em &quot;Adicionar maldição&quot; para criar uma ficha completa.
             </p>
             <Button
@@ -123,9 +95,9 @@ export function Bestiario() {
               variant="outline"
               className="mt-4 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
             >
-                <Plus className="mr-2 h-4 w-4" />
-                Adicionar maldição
-              </Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Adicionar maldição
+            </Button>
           </div>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -133,14 +105,14 @@ export function Bestiario() {
               <li
                 key={m.id}
                 className={cn(
-                  "flex flex-col rounded-xl border border-slate-700/80 bg-slate-800/50 p-4",
-                  "transition-colors hover:border-slate-600 hover:bg-slate-800/70"
+                  "flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4",
+                  "transition-colors hover:border-[var(--color-accent-cyan)]/50 hover:bg-[var(--color-bg-elevated)]"
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-bold text-cyan-300">{m.nome || "Sem nome"}</h3>
-                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-slate-500">
+                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-[var(--color-text-muted)]">
                       {m.grau && <span>{m.grau}</span>}
                       {m.pvMax != null && (
                         <span>PV {m.pvAtual ?? m.pvMax}/{m.pvMax}</span>
@@ -153,7 +125,7 @@ export function Bestiario() {
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-cyan-400"
+                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-cyan-400"
                       onClick={() => handleOpenEdit(m)}
                       title="Editar ficha"
                     >
@@ -163,7 +135,7 @@ export function Bestiario() {
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-rose-400"
+                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-rose-400"
                       onClick={() => handleRemove(m.id)}
                       title="Remover do bestiário"
                     >
@@ -189,18 +161,18 @@ export function Bestiario() {
                   Usar na sessão
                 </Button>
                 {m.descricao && (
-                  <p className="mt-2 line-clamp-2 text-xs text-slate-400">
+                  <p className="mt-2 line-clamp-2 text-xs text-[var(--color-text-muted)]">
                     {m.descricao}
                   </p>
                 )}
                 <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
                   {m.ataques && m.ataques.length > 0 && (
-                    <span className="rounded bg-slate-700/80 px-1.5 py-0.5 text-slate-300">
+                    <span className="rounded bg-[var(--color-bg-elevated)] px-1.5 py-0.5 text-[var(--color-text)]">
                       {m.ataques.length} ataque(s)
                     </span>
                   )}
                   {m.feiticos && m.feiticos.length > 0 && (
-                    <span className="rounded bg-slate-700/80 px-1.5 py-0.5 text-slate-300">
+                    <span className="rounded bg-[var(--color-bg-elevated)] px-1.5 py-0.5 text-[var(--color-text)]">
                       {m.feiticos.length} feitiço(s)
                     </span>
                   )}

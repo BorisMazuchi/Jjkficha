@@ -19,8 +19,8 @@ import type {
   FerramentaAmaldicada,
   AptidaoAmaldicada,
 } from "@/types/ficha"
-import { Link } from "react-router-dom"
-import { LayoutGrid, Info } from "lucide-react"
+import { Info } from "lucide-react"
+import { SiteHeader } from "@/components/layout/SiteHeader"
 
 const ATRIBUTO_PARA_MOD: Record<string, string> = {
   FOR: "forca",
@@ -185,44 +185,28 @@ export function FichaPersonagem() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] text-slate-100">
-      <header className="border-b border-[#2a2a4a] bg-[#16213e] px-4 py-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold tracking-wider text-[#e94560]">
-              FEITICEIROS & MALDIÇÕES
-            </h1>
-            <p className="text-sm text-slate-400">
-              Plataforma de Gestão de Fichas — Jujutsu Kaisen RPG
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/mestre"
-              className="flex items-center gap-2 rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1.5 text-sm text-cyan-400 transition-colors hover:bg-cyan-500/20"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              Tela do Mestre
-            </Link>
-            <FichaSupabase
-              dados={dadosParaSupabase}
-              fichaId={fichaId}
-              onCarregar={carregarFichaNoApp}
-              onFichaIdChange={setFichaId}
-            />
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text)]">
+      <SiteHeader
+        subtitle="Plataforma de Gestão de Fichas — Jujutsu Kaisen RPG"
+        right={
+          <FichaSupabase
+            dados={dadosParaSupabase}
+            fichaId={fichaId}
+            onCarregar={carregarFichaNoApp}
+            onFichaIdChange={setFichaId}
+          />
+        }
+      />
 
       <main className="mx-auto max-w-6xl space-y-6 p-4 pb-12">
         <div
-          className="flex gap-3 rounded-lg border border-cyan-500/30 bg-cyan-500/5 px-4 py-3 text-sm text-slate-300"
+          className="flex gap-3 rounded-lg border border-[var(--color-border-accent)] bg-cyan-500/10 px-4 py-3 text-sm text-[var(--color-text-muted)]"
           role="status"
         >
-          <Info className="mt-0.5 h-5 w-5 shrink-0 text-cyan-400" />
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent-cyan)]" />
           <div>
             <p className="font-medium text-cyan-200">Como preencher a ficha</p>
-            <p className="mt-1 text-slate-400">
+            <p className="mt-1 text-[var(--color-text-muted)]">
               Preencha na ordem: <strong>dados básicos</strong> (nome, nível, grau) →{" "}
               <strong>atributos e defesa</strong> → <strong>recursos</strong> (PV, PE, Integridade) →{" "}
               <strong>aptidões</strong> → <strong>perícias</strong> (escolha Treinamento ou Especialização) →{" "}
@@ -232,7 +216,7 @@ export function FichaPersonagem() {
         </div>
 
         <section aria-labelledby="sec-cabecalho">
-          <h2 id="sec-cabecalho" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-cabecalho" className="section-title mb-3">
             1. Dados do personagem
           </h2>
           <CabecalhoFicha
@@ -242,7 +226,7 @@ export function FichaPersonagem() {
         </section>
 
         <section aria-labelledby="sec-atributos-recursos">
-          <h2 id="sec-atributos-recursos" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-atributos-recursos" className="section-title mb-3">
             2. Atributos, defesa e recursos
           </h2>
         <div className="grid gap-6 lg:grid-cols-2">
@@ -264,7 +248,7 @@ export function FichaPersonagem() {
         </section>
 
         <section aria-labelledby="sec-aptidoes">
-          <h2 id="sec-aptidoes" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-aptidoes" className="section-title mb-3">
             3. Aptidões amaldiçadas
           </h2>
         <AptidoesAmaldicadasComponent
@@ -281,7 +265,7 @@ export function FichaPersonagem() {
         </section>
 
         <section aria-labelledby="sec-pericias">
-          <h2 id="sec-pericias" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-pericias" className="section-title mb-3">
             4. Perícias
           </h2>
         <PainelPericias
@@ -293,7 +277,7 @@ export function FichaPersonagem() {
         </section>
 
         <section aria-labelledby="sec-habilidades">
-          <h2 id="sec-habilidades" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-habilidades" className="section-title mb-3">
             5. Habilidades e técnicas
           </h2>
         <HabilidadesTecnicas
@@ -306,7 +290,7 @@ export function FichaPersonagem() {
         </section>
 
         <section aria-labelledby="sec-inventario">
-          <h2 id="sec-inventario" className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <h2 id="sec-inventario" className="section-title mb-3">
             6. Inventário amaldiçado
           </h2>
         <InventarioAmaldicado ferramentas={ferramentas} onChange={setFerramentas} />

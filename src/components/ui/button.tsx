@@ -4,14 +4,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8832ff] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-purple)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-page)] disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-[#8832ff] text-white hover:bg-[#a855f7] shadow-lg shadow-[#8832ff]/25",
-        destructive: "bg-[#e94560] text-white hover:bg-[#f87171]",
-        outline: "border border-[#8832ff] text-[#8832ff] hover:bg-[#8832ff]/10",
-        ghost: "hover:bg-[#2a2a4a] hover:text-slate-100",
+        default: "bg-[var(--color-accent-purple)] text-white hover:bg-[var(--color-neon-purple)] shadow-lg shadow-[var(--color-accent-purple)]/25",
+        destructive: "bg-[var(--color-accent-red)] text-white hover:opacity-90",
+        outline: "border border-[var(--color-accent-purple)] text-[var(--color-accent-purple)] hover:bg-[var(--color-accent-purple)]/10",
+        ghost: "hover:bg-[var(--color-bg-elevated)] hover:text-[var(--color-text)]",
       },
       size: {
         default: "h-9 px-4 py-2",

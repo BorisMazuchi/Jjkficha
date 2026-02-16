@@ -20,13 +20,13 @@ const GRAUS: Grau[] = ["4º", "3º", "2º", "1º", "Especial"]
 
 export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
   return (
-    <Card className="border-[#8832ff]/30 shadow-[0_0_20px_rgba(136,50,255,0.1)]">
+    <Card className="border-[var(--color-accent-purple)]/30 shadow-[0_0_20px_rgba(136,50,255,0.1)]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <span className="font-display tracking-wider">FICHA DE PERSONAGEM</span>
-          <span className="text-xs font-normal text-slate-400">Feiticeiros & Maldições v2.5</span>
+          <span className="text-xs font-normal text-[var(--color-text-muted)]">Feiticeiros & Maldições v2.5</span>
         </CardTitle>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-[var(--color-text-muted)]">
           Identificação e nível do personagem. O <strong>Grau</strong> é a classificação do feiticeiro (4º ao Especial).
         </p>
       </CardHeader>

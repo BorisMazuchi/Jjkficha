@@ -63,7 +63,7 @@ export function InitiativeTracker({
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+      <h3 className="section-title mb-2">
         Rastreador de Iniciativa
       </h3>
       <div className="flex-1 space-y-1 overflow-y-auto">

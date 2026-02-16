@@ -21,7 +21,7 @@ export function PartyMonitor({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="section-title flex items-center gap-2">
           <Shield className="h-4 w-4" />
           Party Monitor
         </h3>
@@ -39,7 +39,7 @@ export function PartyMonitor({
         )}
       </div>
       {membros.length === 0 && (
-        <p className="rounded-lg border border-dashed border-slate-600 bg-slate-800/30 py-6 text-center text-sm text-slate-500">
+        <p className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-bg-elevated)]/50 py-6 text-center text-sm text-[var(--color-text-muted)]">
           Nenhum jogador na party. Clique em &quot;Adicionar jogador&quot; para começar e depois vincule a ficha de cada um pelo ícone da ficha.
         </p>
       )}

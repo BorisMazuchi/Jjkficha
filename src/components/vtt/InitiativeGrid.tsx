@@ -233,19 +233,19 @@ export function InitiativeGrid({
           onPointerLeave={arrastando ? handlePointerUp : undefined}
         />
       </div>
-      <div className="flex items-center justify-end gap-2 border-t border-slate-700/80 bg-slate-800/60 px-2 py-1.5">
+      <div className="flex items-center justify-end gap-2 border-t border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2 py-1.5">
         <button
           type="button"
           onClick={() => setZoom((z) => Math.min(2, z + 0.2))}
-          className="rounded px-2 py-0.5 text-xs text-slate-400 hover:bg-slate-700 hover:text-white"
+          className="rounded px-2 py-0.5 text-xs text-[var(--color-text-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-text)]"
         >
           +
         </button>
-        <span className="text-xs text-slate-500">{Math.round(zoom * 100)}%</span>
+        <span className="text-xs text-[var(--color-text-subtle)]">{Math.round(zoom * 100)}%</span>
         <button
           type="button"
           onClick={() => setZoom((z) => Math.max(0.4, z - 0.2))}
-          className="rounded px-2 py-0.5 text-xs text-slate-400 hover:bg-slate-700 hover:text-white"
+          className="rounded px-2 py-0.5 text-xs text-[var(--color-text-muted)] hover:bg-[var(--color-border)] hover:text-[var(--color-text)]"
         >
           −
         </button>

@@ -81,6 +81,7 @@ export function FichaPersonagem() {
   })
 
   const [bonusDefesaClasse, setBonusDefesaClasse] = useState(0)
+  const [bonusAtencao, setBonusAtencao] = useState(0)
   const [recursos, setRecursos] = useState<Recursos>({
     pvAtual: 0,
     pvMax: 10,
@@ -261,6 +262,18 @@ export function FichaPersonagem() {
     return mod
   }, [atributos])
 
+  const bonusPorTipoPericia = (tipo: import("@/types/ficha").TipoPericia, n: number) =>
+    tipo === "Treinamento" ? n : tipo === "Especialização" ? n * 2 : 0
+
+  const percepcaoTotal = useMemo(() => {
+    const p = pericias.find((x) => x.nome === "Percepção")
+    if (!p) return 0
+    const mod = modificadoresPericia[p.atributoBase] ?? 0
+    const bonus = bonusPorTipoPericia(p.tipo, cabecalho.nivel)
+    const custom = p.bonusCustomizado ?? 0
+    return mod + bonus + custom
+  }, [pericias, cabecalho.nivel, modificadoresPericia])
+
   const aumentarAptidaoRaioNegro = (apt: AptidaoAmaldicada) => {
     setAptidoes((prev) => ({
       ...prev,
@@ -329,13 +342,18 @@ export function FichaPersonagem() {
         <div className="grid gap-6 lg:grid-cols-2">
           <AtributosDefesa
             atributos={atributos}
+            nivel={cabecalho.nivel}
             bonusDefesaClasse={bonusDefesaClasse}
+            percepcaoTotal={percepcaoTotal}
+            bonusAtencao={bonusAtencao}
             onChange={(d) => setAtributos((prev) => ({ ...prev, ...d }))}
             onBonusDefesaChange={setBonusDefesaClasse}
+            onBonusAtencaoChange={setBonusAtencao}
           />
           <RecursosBarra
             recursos={recursos}
             onChange={(d) => setRecursos((prev) => ({ ...prev, ...d }))}
+            mostrarIntegridade={false}
           />
         </div>
 

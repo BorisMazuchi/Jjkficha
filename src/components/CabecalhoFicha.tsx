@@ -83,6 +83,38 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
             placeholder="Ex: Técnica Amaldiçoada Inata, Clã Gojo"
           />
         </div>
+
+        <div className="grid grid-cols-1 gap-4 border-t border-[#2a2a4a] pt-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="xpAtual" className="text-amber-400/90">XP Atual (v2.5)</Label>
+            <Input
+              id="xpAtual"
+              type="number"
+              min={0}
+              value={dados.xpAtual ?? ""}
+              onChange={(e) =>
+                onChange({ xpAtual: e.target.value === "" ? undefined : parseInt(e.target.value) || 0 })
+              }
+              placeholder="0"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="xpProximo">XP para próximo nível</Label>
+            <Input
+              id="xpProximo"
+              type="number"
+              min={0}
+              value={dados.xpProximoNivel ?? ""}
+              onChange={(e) =>
+                onChange({
+                  xpProximoNivel:
+                    e.target.value === "" ? undefined : parseInt(e.target.value) || 0,
+                })
+              }
+              placeholder="Ex: 300"
+            />
+          </div>
+        </div>
       </CardContent>
     </Card>
   )

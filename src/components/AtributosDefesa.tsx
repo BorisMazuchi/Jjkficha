@@ -9,14 +9,20 @@ const ATRIBUTOS = [
   { key: "constituicao", label: "Constituição", short: "CON" },
   { key: "inteligencia", label: "Inteligência", short: "INT" },
   { key: "sabedoria", label: "Sabedoria", short: "SAB" },
-  { key: "carisma", label: "Carisma", short: "CAR" },
+  { key: "carisma", label: "Presença", short: "PRE" },
 ] as const
 
 interface AtributosDefesaProps {
   atributos: Atributos
+  nivel: number
   bonusDefesaClasse: number
+  /** Total da perícia Percepção (Mod + bônus) para Atenção = 10 + Percepção + bônus (Livro v2.5) */
+  percepcaoTotal?: number
+  /** Bônus extra à Atenção (equipamento, etc.) */
+  bonusAtencao?: number
   onChange: (atributos: Partial<Atributos>) => void
   onBonusDefesaChange: (valor: number) => void
+  onBonusAtencaoChange?: (valor: number) => void
 }
 
 function modificarValor(val: number): number {
@@ -25,17 +31,27 @@ function modificarValor(val: number): number {
 
 export function AtributosDefesa({
   atributos,
+  nivel,
   bonusDefesaClasse,
+  percepcaoTotal = 0,
+  bonusAtencao = 0,
   onChange,
   onBonusDefesaChange,
+  onBonusAtencaoChange,
 }: AtributosDefesaProps) {
   const destreza = atributos.destreza
-  const defesa = 10 + modificarValor(destreza) + bonusDefesaClasse
+  const modDes = modificarValor(destreza)
+  const metadeNivel = Math.floor(nivel / 2)
+  const defesa = 10 + modDes + metadeNivel + bonusDefesaClasse
+  const atencao = 10 + percepcaoTotal + bonusAtencao
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Atributos e Defesa</CardTitle>
+        <p className="text-xs text-slate-400">
+          Livro v2.5: Defesa = 10 + Mod. DES + metade do nível + bônus
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
@@ -63,14 +79,13 @@ export function AtributosDefesa({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-end gap-4 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-4">
+        <div className="flex flex-wrap items-end gap-6 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-4">
           <div className="space-y-2">
-            <Label className="text-xs text-slate-400">Defesa Base</Label>
+            <Label className="text-xs text-slate-400">Defesa</Label>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold text-[#e94560]">{defesa}</span>
               <span className="text-sm text-slate-400">
-                = 10 + DES ({modificarValor(destreza) >= 0 ? "+" : ""}
-                {modificarValor(destreza)}) + bônus classe
+                = 10 + DES ({modDes >= 0 ? "+" : ""}{modDes}) + ⌊nível/2⌋ ({metadeNivel}) + bônus
               </span>
             </div>
           </div>
@@ -84,6 +99,25 @@ export function AtributosDefesa({
               onChange={(e) => onBonusDefesaChange(parseInt(e.target.value) || 0)}
               className="w-20"
             />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs text-slate-400">Atenção (v2.5)</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold text-cyan-400">{atencao}</span>
+              <span className="text-sm text-slate-400">
+                = 10 + Percepção ({percepcaoTotal >= 0 ? "+" : ""}{percepcaoTotal})
+                {bonusAtencao !== 0 && ` + bônus (${bonusAtencao >= 0 ? "+" : ""}${bonusAtencao})`}
+              </span>
+            </div>
+            {onBonusAtencaoChange != null && (
+              <Input
+                type="number"
+                placeholder="Bônus Atenção"
+                value={bonusAtencao || ""}
+                onChange={(e) => onBonusAtencaoChange(parseInt(e.target.value) || 0)}
+                className="h-8 w-20"
+              />
+            )}
           </div>
         </div>
       </CardContent>

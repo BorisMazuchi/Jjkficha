@@ -14,6 +14,8 @@ export interface FichaDados {
     nivel: number
     grau: string
     origemCla: string
+    xpAtual?: number
+    xpProximoNivel?: number
   }
   atributos: Record<string, number>
   bonusDefesaClasse: number
@@ -24,6 +26,7 @@ export interface FichaDados {
     peMax: number
     vidaTemporaria: number
     energiaTemporaria: number
+    integridadeAtual?: number
   }
   aptidoes: Record<string, number>
   // Novos campos da Fase 1

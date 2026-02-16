@@ -8,6 +8,10 @@ export interface CabeçalhoFicha {
   nivel: number
   grau: Grau
   origemCla: string
+  /** XP atual (Livro v2.5) */
+  xpAtual?: number
+  /** XP necessário para próximo nível */
+  xpProximoNivel?: number
 }
 
 export interface Atributos {
@@ -26,6 +30,8 @@ export interface Recursos {
   peMax: number
   vidaTemporaria: number
   energiaTemporaria: number
+  /** Integridade da Alma atual (máx = pvMax, Livro v2.5) */
+  integridadeAtual?: number
 }
 
 export interface AptidoesAmaldicadas {

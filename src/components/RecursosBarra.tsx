@@ -8,6 +8,8 @@ import type { Recursos } from "@/types/ficha"
 interface RecursosBarraProps {
   recursos: Recursos
   onChange: (recursos: Partial<Recursos>) => void
+  /** Se false, não exibe o bloco Integridade da Alma (ex.: quando já existe XPIntegridade na página) */
+  mostrarIntegridade?: boolean
 }
 
 /**
@@ -86,11 +88,15 @@ function BarraRecurso({
   )
 }
 
-export function RecursosBarra({ recursos, onChange }: RecursosBarraProps) {
+export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }: RecursosBarraProps) {
+  const integridadeMax = recursos.pvMax
+  const integridadeAtual = recursos.integridadeAtual ?? recursos.pvMax
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Recursos (Barra de Status)</CardTitle>
+        <p className="text-xs text-slate-400">Livro v2.5 — PE ou Estamina (Restringido)</p>
       </CardHeader>
       <CardContent className="space-y-6">
         <BarraRecurso
@@ -111,6 +117,39 @@ export function RecursosBarra({ recursos, onChange }: RecursosBarraProps) {
           onMaxChange={(v) => onChange({ peMax: v })}
           cor="pe"
         />
+
+        {mostrarIntegridade && (
+          <div className="space-y-2 rounded-lg border border-[#8832ff]/30 bg-[#8832ff]/5 p-3">
+            <Label className="text-[#8832ff]/90">Integridade da Alma (v2.5)</Label>
+            <p className="text-xs text-slate-400 mb-2">
+              Máximo = PV Máximo. Rastreamento separado; dano à alma afeta este valor.
+            </p>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={0}
+                max={integridadeMax}
+                value={integridadeAtual}
+                onChange={(e) =>
+                  onChange({
+                    integridadeAtual: Math.min(
+                      parseInt(e.target.value) || 0,
+                      integridadeMax
+                    ),
+                  })
+                }
+                className="h-10 w-20 text-center"
+              />
+              <span className="text-slate-400">/</span>
+              <span className="w-16 text-center font-medium">{integridadeMax}</span>
+            </div>
+            <Progress
+              value={integridadeMax > 0 ? (integridadeAtual / integridadeMax) * 100 : 0}
+              variant={integridadeAtual <= integridadeMax * 0.25 ? "danger" : "default"}
+              className="h-2 [&>div]:bg-[#8832ff]"
+            />
+          </div>
+        )}
         <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
           <Label className="text-amber-400/90">Regra v2.5 - Temporários</Label>
           <div className="flex gap-4">

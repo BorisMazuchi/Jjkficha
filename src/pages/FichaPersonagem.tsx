@@ -74,6 +74,7 @@ export function FichaPersonagem() {
   })
 
   const [bonusDefesaClasse, setBonusDefesaClasse] = useState(0)
+  const [bonusAtencao, setBonusAtencao] = useState(0)
   const [recursos, setRecursos] = useState<Recursos>({
     pvAtual: 0,
     pvMax: 10,
@@ -128,6 +129,8 @@ export function FichaPersonagem() {
     setCabecalho({
       ...d.cabecalho,
       grau: (d.cabecalho.grau || "4º") as import("@/types/ficha").Grau,
+      xpAtual: (d.cabecalho as { xpAtual?: number }).xpAtual,
+      xpProximoNivel: (d.cabecalho as { xpProximoNivel?: number }).xpProximoNivel,
     })
     setAtributos({
       forca: d.atributos.forca ?? 10,
@@ -138,7 +141,10 @@ export function FichaPersonagem() {
       carisma: d.atributos.carisma ?? 10,
     })
     setBonusDefesaClasse(d.bonusDefesaClasse ?? 0)
-    setRecursos(d.recursos)
+    setRecursos({
+      ...d.recursos,
+      integridadeAtual: (d.recursos as { integridadeAtual?: number }).integridadeAtual,
+    })
     setAptidoes({
       Aura: d.aptidoes.Aura ?? 0,
       Controle: d.aptidoes.Controle ?? 0,
@@ -158,6 +164,18 @@ export function FichaPersonagem() {
     }
     return mod
   }, [atributos])
+
+  const bonusPorTipoPericia = (tipo: import("@/types/ficha").TipoPericia, n: number) =>
+    tipo === "Treinamento" ? n : tipo === "Especialização" ? n * 2 : 0
+
+  const percepcaoTotal = useMemo(() => {
+    const p = pericias.find((x) => x.nome === "Percepção")
+    if (!p) return 0
+    const mod = modificadoresPericia[p.atributoBase] ?? 0
+    const bonus = bonusPorTipoPericia(p.tipo, cabecalho.nivel)
+    const custom = p.bonusCustomizado ?? 0
+    return mod + bonus + custom
+  }, [pericias, cabecalho.nivel, modificadoresPericia])
 
   const aumentarAptidaoRaioNegro = (apt: AptidaoAmaldicada) => {
     setAptidoes((prev) => ({
@@ -205,9 +223,13 @@ export function FichaPersonagem() {
         <div className="grid gap-6 lg:grid-cols-2">
           <AtributosDefesa
             atributos={atributos}
+            nivel={cabecalho.nivel}
             bonusDefesaClasse={bonusDefesaClasse}
+            percepcaoTotal={percepcaoTotal}
+            bonusAtencao={bonusAtencao}
             onChange={(d) => setAtributos((prev) => ({ ...prev, ...d }))}
             onBonusDefesaChange={setBonusDefesaClasse}
+            onBonusAtencaoChange={setBonusAtencao}
           />
           <RecursosBarra
             recursos={recursos}

@@ -219,6 +219,7 @@ function useMestreState() {
   )
 
   return {
+    carregado,
     membros,
     entradas,
     turnoAtual,
@@ -251,11 +252,11 @@ export function TelaMestre() {
   const location = useLocation()
   const navigate = useNavigate()
 
+  // Adicionar maldição vinda do Bestiário só depois da sessão carregar (evita ser sobrescrita pelo load)
   useEffect(() => {
     const addFromBestiario = (location.state as { addMaldicaoFromBestiario?: Maldicao } | null)
       ?.addMaldicaoFromBestiario
-    if (!addFromBestiario) return
-    navigate("/mestre", { replace: true, state: {} })
+    if (!state.carregado || !addFromBestiario) return
     state.setMaldicoes((prev) => [
       ...prev,
       {
@@ -265,7 +266,8 @@ export function TelaMestre() {
         origemBestiario: true,
       },
     ])
-  }, [location.state, navigate, state.setMaldicoes])
+    navigate("/mestre", { replace: true, state: {} })
+  }, [state.carregado, location.state, navigate, state.setMaldicoes])
 
   return (
     <div

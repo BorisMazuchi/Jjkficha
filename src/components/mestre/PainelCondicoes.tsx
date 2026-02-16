@@ -46,7 +46,7 @@ export function PainelCondicoes({
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <AlertTriangle className="h-4 w-4" />
         Painel de Condições
       </h3>
@@ -107,7 +107,7 @@ export function PainelCondicoes({
                 <Button
                   type="button"
                   size="sm"
-                  className="h-8 bg-cyan-600 hover:bg-cyan-500"
+                  className="h-8 bg-[var(--color-accent-red)] hover:opacity-90"
                   onClick={() => aplicarOutro(m.id)}
                 >
                   Aplicar

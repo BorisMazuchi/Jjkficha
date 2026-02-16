@@ -20,10 +20,10 @@ const GRAUS: Grau[] = ["4º", "3º", "2º", "1º", "Especial"]
 
 export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
   return (
-    <Card className="border-[var(--color-accent-purple)]/30 shadow-[0_0_20px_rgba(136,50,255,0.1)]">
+    <Card className="border-[var(--color-accent-purple)]/40 shadow-[0_0_24px_rgba(106,13,173,0.2)]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
-          <span className="font-display tracking-wider">FICHA DE PERSONAGEM</span>
+          <span className="font-display tracking-wider text-[var(--color-jjk-gold)]">FICHA DE PERSONAGEM</span>
           <span className="text-xs font-normal text-[var(--color-text-muted)]">Feiticeiros & Maldições v2.5</span>
         </CardTitle>
         <p className="mt-1 text-sm text-[var(--color-text-muted)]">
@@ -61,7 +61,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               onChange={(e) => onChange({ nivel: parseInt(e.target.value) || 1 })}
               placeholder="1"
             />
-            <p className="text-xs text-slate-500">Define bônus de perícia e defesa (metade do nível).</p>
+            <p className="text-xs text-[var(--color-text-subtle)]">Define bônus de perícia e defesa (metade do nível).</p>
           </div>
           <div className="space-y-2">
             <Label>Grau do Feiticeiro</Label>
@@ -89,7 +89,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
           />
         </div>
 
-        <div className="border-t border-[#2a2a4a] pt-4">
+        <div className="border-t border-[var(--color-border)] pt-4">
           <ImagePicker
             label="Imagem do personagem (URL ou arquivo — aceita GIF)"
             value={dados.imagemPersonagem}
@@ -98,9 +98,9 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 border-t border-[#2a2a4a] pt-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 border-t border-[var(--color-border)] pt-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="xpAtual" className="text-amber-400/90">XP Atual (v2.5)</Label>
+            <Label htmlFor="xpAtual" className="text-[var(--color-jjk-gold)]">XP Atual (v2.5)</Label>
             <Input
               id="xpAtual"
               type="number"
@@ -111,7 +111,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               }
               placeholder="0"
             />
-            <p className="text-xs text-slate-500">Acumule XP para subir de nível (consulte a tabela do livro).</p>
+            <p className="text-xs text-[var(--color-text-subtle)]">Acumule XP para subir de nível (consulte a tabela do livro).</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="xpProximo">XP para próximo nível</Label>
@@ -128,7 +128,7 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
               }
               placeholder="Ex: 300"
             />
-            <p className="text-xs text-slate-500">Quanto falta para o próximo nível (referência).</p>
+            <p className="text-xs text-[var(--color-text-subtle)]">Quanto falta para o próximo nível (referência).</p>
           </div>
         </div>
       </CardContent>

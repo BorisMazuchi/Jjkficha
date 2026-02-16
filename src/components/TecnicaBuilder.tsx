@@ -98,10 +98,10 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
   }
 
   return (
-    <Card className="border-[#8832ff]/30">
+    <Card className="border-[var(--color-accent-purple)]/30">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Zap className="h-5 w-5 text-[#8832ff]" />
+          <Zap className="h-5 w-5 text-[var(--color-neon-purple)]" />
           Builder de Técnica Amaldiçoada
         </CardTitle>
         <p className="text-xs text-slate-400">
@@ -129,7 +129,7 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
               placeholder="Descreva a aparência e tema da sua técnica..."
               value={tecnicaAtual.descricao}
               onChange={(e) => atualizarTecnica({ descricao: e.target.value })}
-              className="flex min-h-[80px] w-full rounded-md border border-[#2a2a4a] bg-[#1a1a2e] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8832ff]"
+              className="flex min-h-[80px] w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-purple)]"
             />
           </div>
 
@@ -142,7 +142,7 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
               onChange={(e) =>
                 atualizarTecnica({ funcionamentoBasico: e.target.value })
               }
-              className="flex min-h-[120px] w-full rounded-md border border-[#2a2a4a] bg-[#1a1a2e] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8832ff]"
+              className="flex min-h-[120px] w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-purple)]"
             />
             <p className="text-xs text-slate-500">
               Ex: "Permite criar e manipular sombras físicas. As sombras podem
@@ -191,7 +191,7 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
             ))}
 
             {tecnicaAtual.feiticos.length === 0 && (
-              <div className="rounded-lg border border-dashed border-[#2a2a4a] bg-[#1a1a2e]/50 p-8 text-center">
+              <div className="rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-bg-card)]/50 p-8 text-center">
                 <Zap className="mx-auto h-12 w-12 text-slate-600" />
                 <p className="mt-2 text-sm text-slate-400">
                   Nenhum feitiço criado ainda
@@ -232,8 +232,8 @@ function FeiticoCard({
   return (
     <div
       className={cn(
-        "rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] transition-all",
-        expandido && "border-[#8832ff]/50"
+        "rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all",
+        expandido && "border-[var(--color-accent-purple)]/50"
       )}
     >
       {/* Header do Feitiço */}
@@ -244,7 +244,7 @@ function FeiticoCard({
           className="flex flex-1 items-center gap-2 text-left"
         >
           {expandido ? (
-            <ChevronUp className="h-4 w-4 text-[#8832ff]" />
+            <ChevronUp className="h-4 w-4 text-[var(--color-neon-purple)]" />
           ) : (
             <ChevronDown className="h-4 w-4 text-slate-400" />
           )}
@@ -266,8 +266,8 @@ function FeiticoCard({
             className={cn(
               "rounded p-1 transition-colors",
               editando
-                ? "bg-[#8832ff]/20 text-[#8832ff]"
-                : "text-slate-400 hover:bg-[#2a2a4a] hover:text-slate-100"
+                ? "bg-[var(--color-accent-purple)]/20 text-[var(--color-neon-purple)]"
+                : "text-slate-400 hover:bg-[var(--color-border)] hover:text-slate-100"
             )}
           >
             <Edit3 className="h-4 w-4" />
@@ -284,7 +284,7 @@ function FeiticoCard({
 
       {/* Conteúdo Expandido */}
       {expandido && (
-        <div className="space-y-4 border-t border-[#2a2a4a] p-4">
+        <div className="space-y-4 border-t border-[var(--color-border)] p-4">
           {editando ? (
             <FeiticoEditor feitico={feitico} onAtualizar={onAtualizar} />
           ) : (
@@ -470,7 +470,7 @@ function FeiticoEditor({
           value={feitico.descricao}
           onChange={(e) => onAtualizar({ descricao: e.target.value })}
           placeholder="Descreva os efeitos especiais, condições, etc..."
-          className="flex min-h-[80px] w-full rounded-md border border-[#2a2a4a] bg-[#1a1a2e] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8832ff]"
+          className="flex min-h-[80px] w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent-purple)]"
         />
       </div>
     </div>
@@ -489,7 +489,7 @@ function FeiticoDisplay({
       <div className="flex flex-wrap gap-x-4 gap-y-2">
         <div>
           <span className="text-slate-400">Custo:</span>{" "}
-          <span className="font-medium text-[#8832ff]">{feitico.custoPE} PE</span>
+          <span className="font-medium text-[var(--color-neon-purple)]">{feitico.custoPE} PE</span>
         </div>
         <div>
           <span className="text-slate-400">Dano:</span>{" "}
@@ -515,7 +515,7 @@ function FeiticoDisplay({
         )}
       </div>
       {feitico.descricao && (
-        <div className="rounded border border-[#2a2a4a] bg-[#16213e] p-2 text-slate-300">
+        <div className="rounded border border-[var(--color-border)] bg-[var(--color-bg-card)] p-2 text-slate-300">
           {feitico.descricao}
         </div>
       )}

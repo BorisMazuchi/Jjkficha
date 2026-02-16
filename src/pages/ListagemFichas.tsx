@@ -38,7 +38,7 @@ export function ListagemFichas() {
           <p className="text-[var(--color-text-muted)]">
             Selecione uma ficha para editar ou crie uma nova.
           </p>
-          <Button asChild className="bg-cyan-600 hover:bg-cyan-500">
+          <Button asChild className="bg-[var(--color-accent-red)] hover:opacity-90">
             <Link to="/ficha" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
               Nova ficha
@@ -62,7 +62,7 @@ export function ListagemFichas() {
             <p className="mt-1 text-sm text-[var(--color-text-subtle)]">
               Crie uma ficha e salve no Supabase para vê-la aqui.
             </p>
-            <Button asChild variant="outline" className="mt-4 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10">
+            <Button asChild variant="outline" className="mt-4 border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/10">
               <Link to="/ficha" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Nova ficha
@@ -76,12 +76,12 @@ export function ListagemFichas() {
                 key={f.id}
                 className={cn(
                   "flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4",
-                  "transition-colors hover:border-[var(--color-accent-cyan)]/50 hover:bg-[var(--color-bg-elevated)]"
+                  "transition-colors hover:border-[var(--color-neon-purple)]/50 hover:bg-[var(--color-bg-elevated)]"
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-bold text-cyan-300">
+                    <h3 className="truncate font-bold text-[var(--color-neon-purple)]">
                       {f.nome_personagem || "Sem nome"}
                     </h3>
                     <p className="mt-0.5 text-sm text-[var(--color-text-muted)]">
@@ -98,7 +98,7 @@ export function ListagemFichas() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="mt-3 w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                  className="mt-3 w-full border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/10"
                   onClick={() => abrirFicha(f.id)}
                 >
                   <FileText className="mr-1.5 h-3.5 w-3.5" />

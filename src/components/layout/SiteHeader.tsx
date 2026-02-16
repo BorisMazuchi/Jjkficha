@@ -29,10 +29,18 @@ export function SiteHeader({ right, title, subtitle, className }: SiteHeaderProp
     <header
       className={cn(
         "sticky top-0 z-20 border-b border-[var(--color-border)] bg-[var(--color-bg-header)] px-4 py-3 shadow-sm",
+        "relative overflow-hidden",
         className
       )}
     >
-      <div className="mx-auto flex max-w-[1800px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* Faixa cursed energy - gradiente roxo/vermelho */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-0.5 opacity-90"
+        style={{
+          background: "linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-red), var(--color-accent-purple))",
+        }}
+      />
+      <div className="relative mx-auto flex max-w-[1800px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-4 sm:gap-6">
           {NAV.map(({ to, label, icon: Icon }) => (
             <Link
@@ -41,8 +49,8 @@ export function SiteHeader({ right, title, subtitle, className }: SiteHeaderProp
               className={cn(
                 "flex items-center gap-2 text-sm font-medium transition-colors",
                 location.pathname === to
-                  ? "text-[var(--color-accent-cyan)]"
-                  : "text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)]"
+                  ? "text-[var(--color-neon-purple)]"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-neon-purple)]"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -51,7 +59,7 @@ export function SiteHeader({ right, title, subtitle, className }: SiteHeaderProp
           ))}
           <div className="hidden h-5 w-px bg-[var(--color-border)] sm:block" />
           <div>
-            <h1 className="font-display text-xl font-bold tracking-[0.12em] text-[var(--color-accent-red)]">
+            <h1 className="font-display text-xl font-bold tracking-[0.12em] text-[var(--color-jjk-gold)]">
               {title ?? "FEITICEIROS & MALDIÇÕES"}
             </h1>
             {subtitle && (
@@ -63,7 +71,7 @@ export function SiteHeader({ right, title, subtitle, className }: SiteHeaderProp
               href={URL_LIVRO_REGRAS}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)]"
+              className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-neon-purple)]"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               Livro de Regras (PDF)

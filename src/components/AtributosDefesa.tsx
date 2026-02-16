@@ -69,7 +69,7 @@ export function AtributosDefesa({
                   }
                   className="h-12 text-center text-lg font-bold"
                 />
-                <span className="text-sm font-medium text-[#8832ff]">
+                <span className="text-sm font-medium text-[var(--color-neon-purple)]">
                   Mod. {modificarValor(atributos[key] ?? 10) >= 0 ? "+" : ""}
                   {modificarValor(atributos[key] ?? 10)}
                 </span>
@@ -78,7 +78,7 @@ export function AtributosDefesa({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-end gap-6 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-4">
+        <div className="flex flex-wrap items-end gap-6 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4">
           <div className="space-y-1">
             <Label className="text-xs text-slate-400">Defesa (CD para te acertarem)</Label>
             <div className="flex flex-wrap items-center gap-2">
@@ -102,7 +102,7 @@ export function AtributosDefesa({
           <div className="space-y-1">
             <Label className="text-xs text-slate-400">Atenção (CD para te surpreenderem)</Label>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xl font-bold text-cyan-400">{atencao}</span>
+              <span className="text-xl font-bold text-[var(--color-neon-purple)]">{atencao}</span>
               <span className="text-sm text-slate-400">
                 = 10 + Percepção ({percepcaoTotal >= 0 ? "+" : ""}{percepcaoTotal})
                 {bonusAtencao !== 0 && ` + bônus (${bonusAtencao >= 0 ? "+" : ""}${bonusAtencao})`}

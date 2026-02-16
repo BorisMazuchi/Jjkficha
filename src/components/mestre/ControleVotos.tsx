@@ -92,7 +92,7 @@ export function ControleVotos({
         onClick={() => setExpandido(!expandido)}
         className="mb-2 flex w-full items-center justify-between gap-2 text-left"
       >
-        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
           <Vote className="h-4 w-4" />
           Votos de restrição
         </h3>
@@ -143,7 +143,7 @@ export function ControleVotos({
                         tipo: e.target.value as TipoVoto,
                       })
                     }
-                    className="rounded border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-cyan-300"
+                    className="rounded border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-[var(--color-neon-purple)]"
                   >
                     {(["Proprio", "Emergencial", "Congenito", "Contratual"] as const).map(
                       (t) => (
@@ -226,7 +226,7 @@ export function ControleVotos({
             size="sm"
             variant="outline"
             onClick={adicionar}
-            className="h-8 w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+            className="h-8 w-full border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
           >
             <Plus className="mr-1.5 h-4 w-4" />
             Adicionar voto

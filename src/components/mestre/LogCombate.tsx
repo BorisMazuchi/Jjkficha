@@ -79,7 +79,7 @@ export function LogCombate({ log, onRolagem }: LogCombateProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <MessageSquare className="h-4 w-4" />
         Log de Combate
       </h3>

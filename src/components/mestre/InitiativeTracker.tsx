@@ -80,7 +80,7 @@ export function InitiativeTracker({
             className={cn(
               "flex cursor-grab items-center gap-2 rounded-lg border px-2 py-2 transition-all active:cursor-grabbing",
               turnoAtual === i
-                ? "border-cyan-500 bg-cyan-500/20 shadow-lg shadow-cyan-500/20"
+                ? "border-[var(--color-accent-purple)] bg-[var(--color-accent-purple)]/20 shadow-lg shadow-[var(--color-accent-purple)]/20"
                 : "border-slate-700/80 bg-slate-800/50 hover:border-slate-600",
               dragOver === i && "border-amber-500 bg-amber-500/10",
               dragged === i && "opacity-50"
@@ -98,7 +98,7 @@ export function InitiativeTracker({
                 onError={() => onImagemErro(e.imagemUrl!)}
               />
             ) : e.tipo === "jogador" ? (
-              <User className="h-5 w-5 shrink-0 text-cyan-400" />
+              <User className="h-5 w-5 shrink-0 text-[var(--color-neon-purple)]" />
             ) : (
               <Ghost className="h-5 w-5 shrink-0 text-red-400" />
             )}
@@ -134,7 +134,7 @@ export function InitiativeTracker({
         onClick={() =>
           onTurnoChange(turnoAtual >= entradas.length - 1 ? 0 : turnoAtual + 1)
         }
-        className="mt-2 rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-400 hover:bg-cyan-500/20"
+        className="mt-2 rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1 text-sm text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
       >
         Próximo turno →
       </button>

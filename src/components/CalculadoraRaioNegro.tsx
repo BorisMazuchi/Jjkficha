@@ -34,7 +34,7 @@ export function CalculadoraRaioNegro({
   }
 
   return (
-    <Card className="border-[#8832ff]/30 bg-gradient-to-br from-[#16213e] to-[#1a1a2e]">
+    <Card className="border-[var(--color-accent-purple)]/30 bg-gradient-to-br from-[var(--color-bg-card)] to-[var(--color-bg-page)]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-amber-400" />

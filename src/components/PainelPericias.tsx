@@ -91,7 +91,7 @@ export function PainelPericias({
               return (
                 <div
                   key={p.nome}
-                  className="flex items-center justify-between rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] px-3 py-2"
+                  className="flex items-center justify-between rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-2"
                 >
                   <div className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">
@@ -114,8 +114,8 @@ export function PainelPericias({
                           className={cn(
                             "rounded px-2 py-0.5 text-xs transition-colors",
                             p.tipo === t
-                              ? "bg-[#8832ff] text-white"
-                              : "bg-[#2a2a4a] text-slate-400 hover:bg-[#3a3a5a]"
+                              ? "bg-[var(--color-accent-purple)] text-white"
+                              : "bg-[var(--color-border)] text-slate-400 hover:bg-[var(--color-bg-elevated)]"
                           )}
                         >
                           {t === "Nenhum" ? "—" : t === "Treinamento" ? "T" : "E"}

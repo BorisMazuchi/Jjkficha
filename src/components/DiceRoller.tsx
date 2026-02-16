@@ -126,7 +126,7 @@ export function DiceRoller({ onRolar, className, compact }: DiceRollerProps) {
               className={cn(
                 "rounded px-2 py-0.5 text-xs transition-colors",
                 modo === "normal"
-                  ? "bg-[#8832ff]/30 text-[#a855f7]"
+                  ? "bg-[var(--color-accent-purple)]/30 text-[var(--color-neon-purple)]"
                   : "text-slate-400 hover:text-slate-200"
               )}
               title="Normal"

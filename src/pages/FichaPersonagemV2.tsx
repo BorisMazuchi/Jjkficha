@@ -311,7 +311,7 @@ export function FichaPersonagem() {
           <div className="flex items-center gap-3">
             <Link
               to="/mestre"
-              className="flex items-center gap-2 rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1.5 text-sm text-cyan-400 transition-colors hover:bg-cyan-500/20"
+              className="flex items-center gap-2 rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1.5 text-sm text-[var(--color-neon-purple)] transition-colors hover:bg-[var(--color-accent-purple)]/20"
             >
               <LayoutGrid className="h-4 w-4" />
               Mestre

@@ -56,7 +56,7 @@ export function QuickBestiary({
 
   return (
     <div className="flex h-full flex-col">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <Ghost className="h-4 w-4" />
         Quick Bestiary
       </h3>
@@ -67,7 +67,7 @@ export function QuickBestiary({
             key={m.nome}
             type="button"
             onClick={() => addMaldicao(m.nome, m.pv, m.grau)}
-            className="rounded border border-slate-600 bg-slate-800/80 px-2 py-1 text-xs text-slate-300 transition-colors hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-400"
+            className="rounded border border-slate-600 bg-slate-800/80 px-2 py-1 text-xs text-slate-300 transition-colors hover:border-[var(--color-accent-purple)]/50 hover:bg-[var(--color-accent-purple)]/10 hover:text-[var(--color-neon-purple)]"
           >
             + {m.nome}
           </button>
@@ -92,7 +92,7 @@ export function QuickBestiary({
           size="sm"
           variant="outline"
           onClick={() => addMaldicao(novaNome || "Maldição", novaPV)}
-          className="h-8 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+          className="h-8 border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -115,7 +115,7 @@ export function QuickBestiary({
                   <span className="shrink-0 text-xs text-slate-500">{m.grau}</span>
                 )}
                 {(m.ataques?.length ?? 0) > 0 || (m.feiticos?.length ?? 0) > 0 ? (
-                  <span className="shrink-0 rounded bg-cyan-500/20 px-1 text-[10px] text-cyan-400">
+                  <span className="shrink-0 rounded bg-[var(--color-accent-purple)]/20 px-1 text-[10px] text-[var(--color-neon-purple)]">
                     Ficha
                   </span>
                 ) : null}
@@ -124,7 +124,7 @@ export function QuickBestiary({
                 <button
                   type="button"
                   onClick={() => setMaldicaoFichaAberta(m)}
-                  className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-cyan-400"
+                  className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-[var(--color-neon-purple)]"
                   title="Editar ficha (ataques e feitiços)"
                 >
                   <FileText className="h-4 w-4" />
@@ -132,7 +132,7 @@ export function QuickBestiary({
                 <button
                   type="button"
                   onClick={() => onAddToIniciativa(m)}
-                  className="rounded p-0.5 text-slate-400 hover:bg-cyan-500/20 hover:text-cyan-400"
+                  className="rounded p-0.5 text-slate-400 hover:bg-[var(--color-accent-purple)]/20 hover:text-[var(--color-neon-purple)]"
                   title="Adicionar à iniciativa"
                 >
                   <Swords className="h-4 w-4" />

@@ -1,25 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  /* Fundos */
-  --color-bg-page: #1a1a2e;
-  --color-bg-card: #16213e;
-  --color-bg-header: #16213e;
-  --color-bg-elevated: #1e2a4a;
-  /* Bordas */
-  --color-border: #334155;
-  --color-border-accent: rgba(6, 182, 212, 0.5);
+  /* Fundos - JJK preto/sombra e tons com toque roxo */
+  --color-bg-page: #0d0d0f;
+  --color-bg-card: #15101f;
+  --color-bg-header: #1a1525;
+  --color-bg-elevated: #1f1a2a;
+  /* Bordas - roxo espírito */
+  --color-border: #2d2640;
+  --color-border-accent: rgba(94, 43, 109, 0.5);
   /* Texto */
   --color-text: #f1f5f9;
-  --color-text-muted: #94a3b8;
-  --color-text-subtle: #64748b;
-  /* Acentos */
-  --color-accent-cyan: #06b6d4;
-  --color-accent-red: #e94560;
-  --color-accent-purple: #8832ff;
-  --color-neon-purple: #a855f7;
+  --color-text-muted: #a78bba;
+  --color-text-subtle: #6b5b7a;
+  /* Acentos JJK */
+  --color-accent-cyan: #7c3aed;
+  --color-accent-red: #B83C3D;
+  --color-accent-purple: #6A0DAD;
+  --color-neon-purple: #8b5cf6;
+  /* Detalhes temáticos */
+  --color-jjk-gold: #D4AF37;
+  --color-jjk-blue: #4B92DB;
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Rajdhani", sans-serif;
+  --font-display: "Orbitron", "Rajdhani", sans-serif;
 }
 
 * {
@@ -47,21 +50,21 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #8832ff;
+  background: var(--color-accent-purple);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a855f7;
+  background: var(--color-neon-purple);
 }
 
-/* Modo de Pânico - Expansão de Domínio */
+/* Modo de Pânico - Expansão de Domínio (JJK vermelho/roxo) */
 @keyframes dominio-pulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+    box-shadow: 0 0 20px rgba(184, 60, 61, 0.3), 0 0 20px rgba(106, 13, 173, 0.2);
   }
   50% {
-    box-shadow: 0 0 40px rgba(244, 63, 94, 0.4);
+    box-shadow: 0 0 40px rgba(184, 60, 61, 0.5), 0 0 30px rgba(106, 13, 173, 0.3);
   }
 }
 
@@ -82,5 +85,14 @@ body {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-accent-cyan);
+  color: var(--color-neon-purple);
+}
+
+/* Hero - gradiente + padrão domínio/barreira */
+.hero-pattern {
+  background-color: var(--color-bg-page);
+  background-image:
+    linear-gradient(135deg, rgba(106, 13, 173, 0.12) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(184, 60, 61, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(106, 13, 173, 0.15), transparent);
 }

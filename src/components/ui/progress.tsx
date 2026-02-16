@@ -9,7 +9,7 @@ const Progress = React.forwardRef<
   }
 >(({ className, value, variant = "default", ...props }, ref) => {
   const variantStyles = {
-    default: "bg-[#8832ff]",
+    default: "bg-[var(--color-accent-purple)]",
     warning: "bg-amber-500",
     danger: "bg-[#e94560]",
   }
@@ -17,7 +17,7 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
       ref={ref}
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-[#1a1a2e]",
+        "relative h-4 w-full overflow-hidden rounded-full bg-[var(--color-bg-page)]",
         className
       )}
       {...props}

@@ -29,7 +29,7 @@ export function SectionCollapsible({
         )}
         aria-expanded={open}
       >
-        <span className="section-title text-[var(--color-accent-cyan)]">{title}</span>
+        <span className="section-title">{title}</span>
         <span className="block shrink-0 md:hidden">
           {open ? (
             <ChevronDown className="h-5 w-5 text-slate-400" />

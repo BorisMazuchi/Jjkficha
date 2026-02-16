@@ -29,12 +29,12 @@ function SliderNivel({
           max={5}
           value={valor}
           onChange={(e) => onChange(parseInt(e.target.value))}
-          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-[#1a1a2e] accent-[#8832ff]"
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-[var(--color-bg-page)] accent-[var(--color-accent-purple)]"
         />
         <span
           className={cn(
             "flex h-8 w-8 items-center justify-center rounded-md font-bold",
-            valor >= 4 ? "bg-[#8832ff] text-white" : "bg-[#2a2a4a] text-slate-300"
+            valor >= 4 ? "bg-[var(--color-accent-purple)] text-white" : "bg-[var(--color-border)] text-slate-300"
           )}
         >
           {valor}
@@ -65,7 +65,7 @@ export function AptidoesAmaldicadasComponent({
       </CardHeader>
       <CardContent className="space-y-4">
         {APTIDOES.map((apt) => (
-          <div key={apt} className="rounded-lg border border-[#2a2a4a] bg-[#1a1a2e]/50 px-3 py-2">
+          <div key={apt} className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)]/50 px-3 py-2">
             <SliderNivel
               nome={apt}
               valor={aptidoes[apt]}

@@ -92,13 +92,13 @@ export function FichaModal({
     >
       <div
         className={cn(
-          "flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl border border-cyan-900/60 bg-slate-900 shadow-xl",
+          "flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] shadow-xl",
           "overflow-hidden"
         )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-700 bg-slate-800/80 px-4 py-3">
-          <h2 className="flex items-center gap-2 font-display text-lg font-bold text-cyan-400">
+          <h2 className="flex items-center gap-2 font-display text-lg font-bold text-[var(--color-neon-purple)]">
             <FileText className="h-5 w-5" />
             Ficha — {membroNome}
           </h2>
@@ -128,7 +128,7 @@ export function FichaModal({
             <button
               type="button"
               onClick={handleVincular}
-              className="rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1.5 text-sm text-cyan-400 hover:bg-cyan-500/20"
+              className="rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1.5 text-sm text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
             >
               Vincular esta ficha ao jogador
             </button>
@@ -138,7 +138,7 @@ export function FichaModal({
         <div className="flex-1 overflow-y-auto p-4">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+              <Loader2 className="h-8 w-8 animate-spin text-[var(--color-neon-purple)]" />
             </div>
           ) : dados ? (
             <FichaResumo dados={dados} />
@@ -169,7 +169,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
   return (
     <div className="space-y-6 text-sm">
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
           Cabeçalho
         </h3>
         <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -201,7 +201,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
       </section>
 
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
           Atributos
         </h3>
         <div className="flex flex-wrap gap-4 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -223,7 +223,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
       </section>
 
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
           Recursos
         </h3>
         <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -249,7 +249,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
       </section>
 
       <section>
-        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
           Aptidões Amaldiçadas
         </h3>
         <div className="flex flex-wrap gap-4 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -263,7 +263,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
 
       {(imagemTecnica || dados.tecnicasInatas?.length > 0 || dados.habilidadesClasse?.length > 0) && (
         <section>
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
             Técnica Inata / Habilidades
           </h3>
           <div className="space-y-2 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -301,7 +301,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
 
       {(dados.pericias?.length ?? 0) > 0 && (
         <section>
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
             Perícias
           </h3>
           <div className="flex flex-wrap gap-2 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
@@ -310,7 +310,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
               .map((p: unknown, i: number) => (
                 <span
                   key={i}
-                  className="rounded bg-cyan-500/20 px-2 py-0.5 text-xs text-cyan-400"
+                  className="rounded bg-[var(--color-accent-purple)]/20 px-2 py-0.5 text-xs text-[var(--color-neon-purple)]"
                 >
                   {(p as { nome?: string }).nome} (
                   {(p as { tipo?: string }).tipo})
@@ -322,7 +322,7 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
 
       {(dados.ferramentas?.length ?? 0) > 0 && (
         <section>
-          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
             Inventário Amaldiçoado
           </h3>
           <div className="space-y-3 rounded-lg border border-slate-700 bg-slate-800/50 p-3">

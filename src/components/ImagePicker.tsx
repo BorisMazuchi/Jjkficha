@@ -90,7 +90,7 @@ export function ImagePicker({
             type="button"
             size="sm"
             variant="outline"
-            className="h-8 shrink-0 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+            className="h-8 shrink-0 border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/10"
             onClick={() => inputRef.current?.click()}
           >
             <ImagePlus className="mr-1 h-3.5 w-3.5" />

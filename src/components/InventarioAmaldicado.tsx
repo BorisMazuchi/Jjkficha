@@ -64,7 +64,7 @@ export function InventarioAmaldicado({
           {ferramentas.map((f) => (
             <div
               key={f.id}
-              className="rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-4 space-y-3"
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4 space-y-3"
             >
               <div className="flex flex-wrap gap-2 items-center justify-between">
                 <Input

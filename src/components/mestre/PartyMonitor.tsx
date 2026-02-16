@@ -31,7 +31,7 @@ export function PartyMonitor({
             size="sm"
             variant="outline"
             onClick={onAddMembro}
-            className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+            className="border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
           >
             <UserPlus className="mr-1.5 h-4 w-4" />
             Adicionar jogador
@@ -80,8 +80,8 @@ function PartyCard({
   return (
     <div
       className={cn(
-        "min-w-[180px] flex-shrink-0 rounded-lg border border-cyan-900/60 bg-slate-900/80 p-3 shadow-lg",
-        "transition-all hover:border-cyan-500/40 hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]",
+        "min-w-[180px] flex-shrink-0 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-3 shadow-lg",
+        "transition-all hover:border-[var(--color-neon-purple)]/40 hover:shadow-[0_0_15px_rgba(106,13,173,0.15)]",
         membro.condicoes.length > 0 && "ring-1 ring-amber-500/50",
         membro.energiaTemporaria && "ring-1 ring-amber-400/40"
       )}
@@ -91,7 +91,7 @@ function PartyCard({
           <img
             src={membro.imagemUrl}
             alt=""
-            className="h-14 w-14 rounded-lg border border-cyan-900/60 object-cover"
+            className="h-14 w-14 rounded-lg border border-[var(--color-border)] object-cover"
             onError={(e) => {
               ;(e.target as HTMLImageElement).style.display = "none"
             }}
@@ -103,7 +103,7 @@ function PartyCard({
           type="text"
           value={membro.nome}
           onChange={(e) => onUpdate({ nome: e.target.value })}
-          className="min-w-0 flex-1 truncate rounded border-0 bg-transparent font-medium text-slate-100 outline-none focus:ring-1 focus:ring-cyan-500/50"
+          className="min-w-0 flex-1 truncate rounded border-0 bg-transparent font-medium text-slate-100 outline-none focus:ring-1 focus:ring-[var(--color-accent-purple)]/50"
           placeholder="Nome"
         />
         <span className="shrink-0 text-xs text-slate-500">Nv.{membro.nivel} {membro.grau}</span>
@@ -111,14 +111,14 @@ function PartyCard({
           {onAbrirFicha && (
             <>
               {membro.fichaId && (
-                <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400" title="Ficha vinculada">
+                <span className="rounded bg-[var(--color-accent-purple)]/20 px-1.5 py-0.5 text-[10px] font-medium text-[var(--color-neon-purple)]" title="Ficha vinculada">
                   Ficha ✓
                 </span>
               )}
               <button
                 type="button"
                 onClick={onAbrirFicha}
-                className="rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
+                className="rounded p-1 text-slate-500 transition-colors hover:bg-[var(--color-accent-purple)]/20 hover:text-[var(--color-neon-purple)]"
                 title={membro.fichaId ? "Abrir/alterar ficha vinculada" : "Vincular ou abrir ficha do jogador"}
               >
                 <FileText className="h-4 w-4" />

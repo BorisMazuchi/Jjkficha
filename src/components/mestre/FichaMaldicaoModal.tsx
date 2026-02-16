@@ -131,7 +131,7 @@ export function FichaMaldicaoModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-slate-700 bg-slate-800/80 px-4 py-3">
-          <h2 className="font-display text-lg font-bold text-cyan-400">
+          <h2 className="font-display text-lg font-bold text-[var(--color-neon-purple)]">
             Ficha da maldição
           </h2>
           <button
@@ -198,7 +198,7 @@ export function FichaMaldicaoModal({
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-sm font-bold text-cyan-400">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--color-neon-purple)]">
                 <ImagePlus className="h-4 w-4" />
                 Imagens
               </h3>
@@ -270,7 +270,7 @@ export function FichaMaldicaoModal({
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-sm font-bold text-cyan-400">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--color-neon-purple)]">
                 <Swords className="h-4 w-4" />
                 Ataques
               </h3>
@@ -330,7 +330,7 @@ export function FichaMaldicaoModal({
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-sm font-bold text-cyan-400">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-[var(--color-neon-purple)]">
                 <Zap className="h-4 w-4" />
                 Feitiços / técnicas
               </h3>
@@ -397,7 +397,7 @@ export function FichaMaldicaoModal({
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-cyan-600 hover:bg-cyan-500">
+          <Button onClick={handleSave} className="bg-[var(--color-accent-red)] hover:opacity-90">
             Salvar ficha
           </Button>
         </div>

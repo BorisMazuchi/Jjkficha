@@ -145,9 +145,9 @@ export function EspecializacaoComponent({
         </div>
 
         {especInfo && (
-          <div className="rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-3">
+          <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-3">
             <div className="flex items-start gap-3">
-              <Icon className="h-5 w-5 shrink-0 text-[#8832ff]" />
+              <Icon className="h-5 w-5 shrink-0 text-[var(--color-neon-purple)]" />
               <div className="space-y-2">
                 <p className="text-sm text-slate-300">{especInfo.descricao}</p>
                 <div className="flex flex-wrap gap-4 text-xs text-slate-400">
@@ -156,11 +156,11 @@ export function EspecializacaoComponent({
                     {dados.usaEstamina ? "Estamina" : "PE"} Base: {PE_BASE[dados.especializacao]} por nível
                   </span>
                 </div>
-                <div className="rounded border border-[#8832ff]/30 bg-[#8832ff]/10 p-2 text-sm">
-                  <div className="font-medium text-[#8832ff]">Recursos Calculados (Nível {nivel}):</div>
+                <div className="rounded border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/10 p-2 text-sm">
+                  <div className="font-medium text-[var(--color-neon-purple)]">Recursos Calculados (Nível {nivel}):</div>
                   <div className="mt-1 flex gap-4">
                     <span className="text-[#e94560]">PV Máx: {pvCalculado}</span>
-                    <span className="text-[#8832ff]">
+                    <span className="text-[var(--color-neon-purple)]">
                       {dados.usaEstamina ? "Estamina" : "PE"} Máx: {peCalculado}
                     </span>
                   </div>
@@ -192,17 +192,17 @@ export function EspecializacaoComponent({
 
         {/* Botão para gerenciar invocações (Controlador) */}
         {dados.especializacao === "Controlador" && (
-          <div className="rounded-lg border border-[#8832ff]/30 bg-[#8832ff]/5 p-3">
+          <div className="rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-[#8832ff]">Estoque de Invocações</Label>
+                <Label className="text-[var(--color-neon-purple)]">Estoque de Invocações</Label>
                 <p className="text-xs text-slate-400">
                   {(dados.estoqueInvocacoes || []).length} Shikigamis/Corpos criados
                 </p>
               </div>
               <button
                 type="button"
-                className="rounded border border-[#8832ff]/50 bg-[#8832ff]/10 px-3 py-1 text-sm text-[#8832ff] hover:bg-[#8832ff]/20"
+                className="rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1 text-sm text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/20"
                 onClick={() => {
                   // TODO: Abrir modal de gerenciamento de invocações
                   alert("Gerenciamento de Invocações será implementado em breve")

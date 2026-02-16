@@ -81,7 +81,7 @@ export function Bestiario() {
           </p>
           <Button
             onClick={handleOpenNew}
-            className="bg-cyan-600 hover:bg-cyan-500"
+            className="bg-[var(--color-accent-red)] hover:opacity-90"
           >
             <Plus className="mr-2 h-4 w-4" />
             Adicionar maldição
@@ -102,7 +102,7 @@ export function Bestiario() {
             <Button
               onClick={handleOpenNew}
               variant="outline"
-              className="mt-4 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+              className="mt-4 border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/10"
             >
               <Plus className="mr-2 h-4 w-4" />
               Adicionar maldição
@@ -115,12 +115,12 @@ export function Bestiario() {
                 key={m.id}
                 className={cn(
                   "flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-4",
-                  "transition-colors hover:border-[var(--color-accent-cyan)]/50 hover:bg-[var(--color-bg-elevated)]"
+                  "transition-colors hover:border-[var(--color-neon-purple)]/50 hover:bg-[var(--color-bg-elevated)]"
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-bold text-cyan-300">{m.nome || "Sem nome"}</h3>
+                    <h3 className="truncate font-bold text-[var(--color-neon-purple)]">{m.nome || "Sem nome"}</h3>
                     <div className="mt-1 flex flex-wrap gap-2 text-xs text-[var(--color-text-muted)]">
                       {m.grau && <span>{m.grau}</span>}
                       {m.pvMax != null && (
@@ -134,7 +134,7 @@ export function Bestiario() {
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-cyan-400"
+                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-[var(--color-neon-purple)]"
                       onClick={() => handleOpenEdit(m)}
                       title="Editar ficha"
                     >
@@ -144,7 +144,7 @@ export function Bestiario() {
                       type="button"
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-rose-400"
+                      className="h-8 w-8 p-0 text-[var(--color-text-muted)] hover:text-[var(--color-accent-red)]"
                       onClick={() => handleRemove(m.id)}
                       title="Remover do bestiário"
                     >
@@ -156,7 +156,7 @@ export function Bestiario() {
                   type="button"
                   size="sm"
                   variant="outline"
-                  className="mt-3 w-full border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"
+                  className="mt-3 w-full border-[var(--color-accent-purple)]/50 text-[var(--color-neon-purple)] hover:bg-[var(--color-accent-purple)]/10"
                   onClick={() =>
                     navigate("/mestre", {
                       state: {

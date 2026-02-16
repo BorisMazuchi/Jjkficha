@@ -327,7 +327,7 @@ export function TelaMestre() {
             <button
               type="button"
               onClick={() => state.syncIniciativaFromMembros()}
-              className="rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-400 transition-colors hover:bg-cyan-500/20"
+              className="rounded border border-[var(--color-accent-purple)]/50 bg-[var(--color-accent-purple)]/10 px-3 py-1.5 text-xs font-medium text-[var(--color-neon-purple)] transition-colors hover:bg-[var(--color-accent-purple)]/20"
             >
               <Link2 className="mr-1.5 inline h-4 w-4" />
               Sincronizar Iniciativa
@@ -373,7 +373,7 @@ export function TelaMestre() {
               className={cn(
                 "min-h-[44px] shrink-0 touch-manipulation rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 abaMobile === id
-                  ? "bg-cyan-500/30 text-cyan-400"
+                  ? "bg-[var(--color-accent-purple)]/30 text-[var(--color-neon-purple)]"
                   : "text-[var(--color-text-muted)] hover:bg-slate-700/50 hover:text-[var(--color-text)]"
               )}
             >
@@ -500,7 +500,7 @@ export function TelaMestre() {
                 : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
             )}
           >
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
               <BookOpen className="h-4 w-4" />
               Maldições do bestiário
             </h3>
@@ -538,7 +538,7 @@ export function TelaMestre() {
                         <button
                           type="button"
                           onClick={() => setFichaBestiarioAberta(m)}
-                          className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-cyan-400"
+                          className="rounded p-0.5 text-slate-400 hover:bg-slate-600 hover:text-[var(--color-neon-purple)]"
                           title="Editar ficha"
                         >
                           <FileText className="h-4 w-4" />
@@ -559,7 +559,7 @@ export function TelaMestre() {
                               ])
                               state.addLog({ tipo: "info", texto: `${m.nome} adicionado à iniciativa` })
                             }}
-                          className="rounded p-0.5 text-slate-400 hover:bg-cyan-500/20 hover:text-cyan-400"
+                          className="rounded p-0.5 text-slate-400 hover:bg-[var(--color-accent-purple)]/20 hover:text-[var(--color-neon-purple)]"
                           title="Adicionar à iniciativa"
                         >
                           <Swords className="h-4 w-4" />

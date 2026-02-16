@@ -11,15 +11,15 @@ const LINKS = [
 
 export function Home() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text)]">
+    <div className="min-h-screen text-[var(--color-text)] hero-pattern">
       <SiteHeader title="FEITICEIROS & MALDIÇÕES" subtitle="Plataforma de Gestão — Jujutsu Kaisen RPG v2.5" />
 
       <main className="mx-auto max-w-4xl px-4 py-12">
-        <div className="mb-10 text-center">
-          <h2 className="font-display text-2xl font-bold tracking-wide text-[var(--color-text)]">
+        <div className="mb-12 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-card)]/80 px-6 py-10 text-center shadow-[0_0_30px_rgba(106,13,173,0.15)]">
+          <h2 className="font-display text-2xl font-bold tracking-wide text-[var(--color-jjk-gold)] sm:text-3xl">
             Bem-vindo à plataforma
           </h2>
-          <p className="mt-2 text-[var(--color-text-muted)]">
+          <p className="mt-3 text-[var(--color-text-muted)]">
             Gerencie fichas, bestiário e sessões do Mestre em um só lugar.
           </p>
         </div>
@@ -38,11 +38,11 @@ export function Home() {
             <li key={to}>
               <Link
                 to={to}
-                className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-5 transition-colors hover:border-[var(--color-accent-cyan)]/50 hover:bg-[var(--color-bg-elevated)]"
+                className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-card)] p-5 transition-colors hover:border-[var(--color-neon-purple)]/50 hover:bg-[var(--color-bg-elevated)] hover:shadow-[0_0_20px_rgba(106,13,173,0.2)]"
               >
                 <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-[var(--color-accent-cyan)]/10 p-2">
-                    <Icon className="h-6 w-6 text-[var(--color-accent-cyan)]" />
+                  <div className="rounded-lg bg-[var(--color-accent-purple)]/20 p-2">
+                    <Icon className="h-6 w-6 text-[var(--color-neon-purple)]" />
                   </div>
                   <span className="font-semibold text-[var(--color-text)]">{label}</span>
                 </div>

@@ -51,7 +51,7 @@ function ListaHabilidades({
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e]/30 p-4">
+    <div className="space-y-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)]/30 p-4">
       <div className="flex items-center justify-between">
         <Label className="font-medium">{titulo}</Label>
         <Button size="sm" variant="outline" onClick={adicionar}>
@@ -67,7 +67,7 @@ function ListaHabilidades({
           return (
             <div
               key={h.id}
-              className="flex flex-col gap-2 rounded-lg border border-[#2a2a4a] bg-[#1a1a2e] p-3"
+              className="flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-3"
             >
               <div className="flex flex-wrap gap-2">
                 <Input
@@ -126,7 +126,7 @@ function ListaHabilidades({
                     className="h-7 w-16"
                   />
                   {h.bonusInserido != null && (
-                    <span className="text-[#8832ff]">
+                    <span className="text-[var(--color-neon-purple)]">
                       Bônus efetivo: {bonusEfetivo} (menor entre {h.bonusInserido}{" "}
                       e nível {nivel})
                     </span>

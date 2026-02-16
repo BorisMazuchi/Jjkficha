@@ -114,7 +114,7 @@ export function FichaSupabase({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[#2a2a4a] bg-[#16213e] p-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] p-3">
       <Button
         size="sm"
         onClick={handleSalvar}

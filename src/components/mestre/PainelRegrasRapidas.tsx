@@ -99,7 +99,7 @@ export function PainelRegrasRapidas() {
 
   return (
     <div className="flex h-full flex-col rounded-lg border border-slate-700/80 bg-slate-900/50 p-3">
-      <h3 className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+      <h3 className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[var(--color-neon-purple)]">
         <BookOpen className="h-4 w-4" />
         Regras rápidas
       </h3>
@@ -113,7 +113,7 @@ export function PainelRegrasRapidas() {
             className={cn(
               "rounded px-2 py-1 text-xs font-medium transition-colors",
               aba === a
-                ? "bg-cyan-500/30 text-cyan-400"
+                ? "bg-[var(--color-accent-purple)]/30 text-[var(--color-neon-purple)]"
                 : "text-slate-400 hover:text-slate-200"
             )}
           >
@@ -151,25 +151,25 @@ export function PainelRegrasRapidas() {
               </div>
             ))}
             <div className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5">
-              <div className="font-medium text-cyan-300">Físicos</div>
+              <div className="font-medium text-[var(--color-neon-purple)]">Físicos</div>
               {TIPOS_DANO_FISICOS.map((t) => (
                 <div key={t.tipo} className="mt-0.5 text-slate-300"><span className="text-amber-300/90">{t.tipo}:</span> {t.desc}</div>
               ))}
             </div>
             <div className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5">
-              <div className="font-medium text-cyan-300">Elementais</div>
+              <div className="font-medium text-[var(--color-neon-purple)]">Elementais</div>
               {TIPOS_DANO_ELEMENTAIS.map((t) => (
                 <div key={t.tipo} className="mt-0.5 text-slate-300"><span className="text-amber-300/90">{t.tipo}:</span> {t.desc}</div>
               ))}
             </div>
             <div className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5">
-              <div className="font-medium text-cyan-300">Etéreos</div>
+              <div className="font-medium text-[var(--color-neon-purple)]">Etéreos</div>
               {TIPOS_DANO_ETEREOS.map((t) => (
                 <div key={t.tipo} className="mt-0.5 text-slate-300"><span className="text-amber-300/90">{t.tipo}:</span> {t.desc}</div>
               ))}
             </div>
             <div className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5">
-              <div className="font-medium text-cyan-300">Biológicos</div>
+              <div className="font-medium text-[var(--color-neon-purple)]">Biológicos</div>
               {TIPOS_DANO_BIOLOGICOS.map((t) => (
                 <div key={t.tipo} className="mt-0.5 text-slate-300"><span className="text-amber-300/90">{t.tipo}:</span> {t.desc}</div>
               ))}
@@ -191,7 +191,7 @@ export function PainelRegrasRapidas() {
               </div>
               {TABELA_FERIMENTOS.map((row) => (
                 <div key={row.roll} className="mt-1.5 border-t border-slate-700/50 pt-1 first:mt-0 first:border-0 first:pt-0">
-                  <span className="font-mono text-cyan-300/90">{row.roll}</span> — <span className="text-amber-300/90">{row.membro}</span>
+                  <span className="font-mono text-[var(--color-neon-purple)]/90">{row.roll}</span> — <span className="text-amber-300/90">{row.membro}</span>
                   <div className="mt-0.5 text-slate-300">{row.efeito}</div>
                 </div>
               ))}
@@ -207,7 +207,7 @@ export function PainelRegrasRapidas() {
               <div className="font-medium text-rose-300/90">Portas da Morte (PV = 0)</div>
               {PORTAS_DA_MORTE.map((row) => (
                 <div key={row.quando} className="mt-1">
-                  <span className="text-cyan-300/90">{row.quando}:</span>{" "}
+                  <span className="text-[var(--color-neon-purple)]/90">{row.quando}:</span>{" "}
                   <span className="text-slate-300">{row.texto}</span>
                 </div>
               ))}
@@ -223,7 +223,7 @@ export function PainelRegrasRapidas() {
                 key={row.nivel}
                 className="flex items-start gap-2 rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5"
               >
-                <span className="font-mono font-bold text-cyan-300/90 shrink-0">Nív. {row.nivel}</span>
+                <span className="font-mono font-bold text-[var(--color-neon-purple)]/90 shrink-0">Nív. {row.nivel}</span>
                 <span className="text-slate-300">{row.efeito}</span>
               </div>
             ))}

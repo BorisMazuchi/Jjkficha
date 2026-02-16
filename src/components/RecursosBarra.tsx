@@ -81,7 +81,7 @@ function BarraRecurso({
         variant={totalEfetivo <= 0 ? "danger" : excedeMetade ? "warning" : "default"}
         className={cn(
           cor === "pv" && " [&>div]:bg-[#e94560]",
-          cor === "pe" && " [&>div]:bg-[#8832ff]"
+          cor === "pe" && " [&>div]:bg-[var(--color-accent-purple)]"
         )}
       />
     </div>
@@ -127,8 +127,8 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
         </div>
 
         {mostrarIntegridade && (
-          <div className="space-y-2 rounded-lg border border-[#8832ff]/30 bg-[#8832ff]/5 p-3">
-            <Label className="text-[#8832ff]/90">Integridade da Alma</Label>
+          <div className="space-y-2 rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
+            <Label className="text-[var(--color-accent-purple)]/90">Integridade da Alma</Label>
             <p className="text-xs text-slate-400 mb-2">
               O máximo é sempre igual ao seu <strong>PV máximo</strong>. Dano à alma (efeitos que atacam a essência) reduz este valor em vez do PV. Quando chega a 0, o personagem pode sofrer consequências graves.
             </p>
@@ -154,7 +154,7 @@ export function RecursosBarra({ recursos, onChange, mostrarIntegridade = true }:
             <Progress
               value={integridadeMax > 0 ? (integridadeAtual / integridadeMax) * 100 : 0}
               variant={integridadeAtual <= integridadeMax * 0.25 ? "danger" : "default"}
-              className="h-2 [&>div]:bg-[#8832ff]"
+              className="h-2 [&>div]:bg-[var(--color-accent-purple)]"
             />
           </div>
         )}

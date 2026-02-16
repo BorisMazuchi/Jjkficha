@@ -200,12 +200,12 @@ export function FichaPersonagem() {
 
       <main className="mx-auto max-w-6xl space-y-6 p-4 pb-12">
         <div
-          className="flex gap-3 rounded-lg border border-[var(--color-border-accent)] bg-cyan-500/10 px-4 py-3 text-sm text-[var(--color-text-muted)]"
+          className="flex gap-3 rounded-lg border border-[var(--color-border-accent)] bg-[var(--color-accent-purple)]/10 px-4 py-3 text-sm text-[var(--color-text-muted)]"
           role="status"
         >
-          <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent-cyan)]" />
+          <Info className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-neon-purple)]" />
           <div>
-            <p className="font-medium text-cyan-200">Como preencher a ficha</p>
+            <p className="font-medium text-[var(--color-neon-purple)]">Como preencher a ficha</p>
             <p className="mt-1 text-[var(--color-text-muted)]">
               Preencha na ordem: <strong>dados básicos</strong> (nome, nível, grau) →{" "}
               <strong>atributos e defesa</strong> → <strong>recursos</strong> (PV, PE, Integridade) →{" "}

@@ -132,7 +132,7 @@ export function XPIntegridade({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-[#8832ff]" />
+            <Heart className="h-5 w-5 text-[var(--color-neon-purple)]" />
             Integridade da Alma
           </CardTitle>
         </CardHeader>
@@ -189,9 +189,9 @@ export function XPIntegridade({
             />
           </div>
 
-          <div className="rounded-lg border border-[#8832ff]/30 bg-[#8832ff]/5 p-3">
+          <div className="rounded-lg border border-[var(--color-accent-purple)]/30 bg-[var(--color-accent-purple)]/5 p-3">
             <p className="text-xs text-slate-300">
-              <strong className="text-[#8832ff]">Integridade da Alma</strong>{" "}
+              <strong className="text-[var(--color-neon-purple)]">Integridade da Alma</strong>{" "}
               representa o quão inteira sua essência espiritual está. Dano à alma
               ignora PV e afeta diretamente este valor. Quando chega a 0, o
               personagem pode sofrer consequências permanentes.

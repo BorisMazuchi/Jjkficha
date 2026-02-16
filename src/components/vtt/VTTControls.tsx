@@ -17,9 +17,11 @@ import { cn } from '@/lib/utils'
 interface ToolbarVTTProps {
   ferramentaAtiva: Ferramenta
   onFerramentaChange: (ferramenta: Ferramenta) => void
+  /** Layout horizontal para embed (ex.: na Tela do Mestre) */
+  horizontal?: boolean
 }
 
-export function ToolbarVTT({ ferramentaAtiva, onFerramentaChange }: ToolbarVTTProps) {
+export function ToolbarVTT({ ferramentaAtiva, onFerramentaChange, horizontal }: ToolbarVTTProps) {
   const tools = [
     { id: 'select' as Ferramenta, icon: Hand, label: 'Selecionar', hotkey: 'V' },
     { id: 'regua' as Ferramenta, icon: Ruler, label: 'Régua', hotkey: 'R' },
@@ -32,7 +34,14 @@ export function ToolbarVTT({ ferramentaAtiva, onFerramentaChange }: ToolbarVTTPr
   ]
 
   return (
-    <div className="h-full flex flex-col items-center justify-start gap-2 py-4 bg-slate-900 border-r border-slate-700">
+    <div
+      className={cn(
+        "flex items-center gap-1 bg-slate-900 py-1.5 px-1 rounded",
+        horizontal
+          ? "flex-row border border-slate-700/80"
+          : "h-full flex-col justify-start gap-2 py-4 border-r border-slate-700"
+      )}
+    >
       {tools.map((tool) => {
         const Icon = tool.icon
         return (
@@ -52,7 +61,7 @@ export function ToolbarVTT({ ferramentaAtiva, onFerramentaChange }: ToolbarVTTPr
         )
       })}
 
-      <div className="flex-1" />
+      {!horizontal && <div className="flex-1" />}
 
       <button
         onClick={() => onFerramentaChange('revelar')}

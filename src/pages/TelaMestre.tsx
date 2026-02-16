@@ -9,6 +9,7 @@ import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
 import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
 import { DiceRoller } from "@/components/DiceRoller"
+import { TabuleiroContent } from "@/components/vtt/TabuleiroContent"
 import {
   carregarSessao,
   salvarSessao,
@@ -23,7 +24,7 @@ import type {
 } from "@/types/mestre"
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
-import { Eye, FileText, LayoutGrid, Link2, BookOpen, Swords, Minus } from "lucide-react"
+import { Eye, FileText, Link2, BookOpen, Swords, Minus } from "lucide-react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 
 function useMestreState() {
@@ -305,13 +306,6 @@ export function TelaMestre() {
               <BookOpen className="h-4 w-4" />
               Bestiário
             </Link>
-            <Link
-              to="/tabuleiro"
-              className="flex items-center gap-2 text-sm text-slate-400 transition-colors hover:text-cyan-400"
-            >
-              <LayoutGrid className="h-4 w-4" />
-              Tabuleiro
-            </Link>
             <h1 className="font-display text-xl font-bold tracking-[0.2em] text-cyan-400">
               TELA DO MESTRE
             </h1>
@@ -452,6 +446,18 @@ export function TelaMestre() {
               })
             }}
           />
+        </section>
+
+        {/* Tabuleiro de combate - grid integrado */}
+        <section
+          className={cn(
+            "col-span-full min-h-[360px] transition-all duration-500",
+            state.modoPanico
+              ? "border-rose-500/30"
+              : "border-cyan-900/60"
+          )}
+        >
+          <TabuleiroContent embedded className="h-full min-h-[360px]" />
         </section>
 
         {state.maldicoes.filter((m) => m.origemBestiario).length > 0 && (

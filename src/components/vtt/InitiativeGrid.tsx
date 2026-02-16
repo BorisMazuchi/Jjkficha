@@ -34,7 +34,7 @@ export function InitiativeGrid({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(1)
-  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [pan] = useState({ x: 0, y: 0 })
   const [arrastando, setArrastando] = useState<string | null>(null)
   const [offsetArrastagem, setOffsetArrastagem] = useState({ x: 0, y: 0 })
   const [imagensCarregadas, setImagensCarregadas] = useState<Record<string, HTMLImageElement>>({})
@@ -157,7 +157,6 @@ export function InitiativeGrid({
 
   const getEntryAtPixel = useCallback(
     (pixel: { x: number; y: number }) => {
-      const cellZoom = GRID_CELL * zoom
       for (let i = entradas.length - 1; i >= 0; i--) {
         const e = entradas[i]
         const pos = e.posicao ?? posicaoPadrao(i)

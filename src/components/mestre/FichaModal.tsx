@@ -42,6 +42,8 @@ export function FichaModal({
   const [erroCarregar, setErroCarregar] = useState<string | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const requestIdRef = useRef(0)
+  const onDadosCarregadosRef = useRef(onDadosCarregados)
+  onDadosCarregadosRef.current = onDadosCarregados
 
   useEffect(() => {
     if (isOpen) {
@@ -70,6 +72,8 @@ export function FichaModal({
       return
     }
     const id = ++requestIdRef.current
+    const fichaIdInicialAtual = fichaIdInicial
+    const membroIdAtual = membroId
     setLoading(true)
     setErroCarregar(null)
     if (timeoutRef.current) {
@@ -92,8 +96,9 @@ export function FichaModal({
         }
         setDados(f)
         setErroCarregar(null)
-        if (f && membroId && onDadosCarregados && fichaSelecionada === fichaIdInicial) {
-          onDadosCarregados(membroId, f)
+        const cb = onDadosCarregadosRef.current
+        if (f && membroIdAtual && cb && fichaSelecionada === fichaIdInicialAtual) {
+          cb(membroIdAtual, f)
         }
       })
       .catch(() => {
@@ -114,7 +119,7 @@ export function FichaModal({
         timeoutRef.current = null
       }
     }
-  }, [fichaSelecionada, membroId, fichaIdInicial, onDadosCarregados])
+  }, [fichaSelecionada, membroId, fichaIdInicial])
 
   const handleVincular = () => {
     if (membroId && fichaSelecionada && onVincularFicha) {

@@ -26,7 +26,7 @@ export interface InitiativeEntry {
   pvMax?: number
   /** URL da imagem (personagem ou maldição) para exibir no rastreador */
   imagemUrl?: string
-  /** Posição no tabuleiro (grid). Se ausente, o grid usa posição automática por índice. */
+  /** Posição (legado; reservado para uso futuro). */
   posicao?: { x: number; y: number }
 }
 

@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils"
 const ABA_CD = "CDs"
 const ABA_DANO = "Dano"
 const ABA_FERIMENTOS = "Ferimentos"
+const ABA_EXAUSTAO = "Exaustão"
+const ABA_RITUAL = "Ritual"
 
 const CDS = [
   { nivel: "Fácil", valor: 10, cor: "text-emerald-400" },
@@ -72,8 +74,28 @@ const PORTAS_DA_MORTE = [
   { quando: "Estabilizar", texto: "Medicina (ação comum, 1,5 m): CD 15 + 1 por cada 5 PV negativos. Sucesso = estável. Cura: curar todo PV negativo até 0." },
 ] as const
 
+/** Exaustão (Livro v2.5 — Cap. 12) */
+const TABELA_EXAUSTAO = [
+  { nivel: 0, efeito: "Nenhum." },
+  { nivel: 1, efeito: "Desvantagem em testes de Atributo." },
+  { nivel: 2, efeito: "Metade da velocidade de deslocamento." },
+  { nivel: 3, efeito: "Desvantagem em testes de ataque e Defesa -2." },
+  { nivel: 4, efeito: "PV máx. reduzido à metade." },
+  { nivel: 5, efeito: "Velocidade 0; morte ao terminar o próximo turno (sem cura)." },
+] as const
+
+/** Conjuração em Ritual (Livro v2.5 — Cap. 12) */
+const CONJURACAO_RITUAL = [
+  { titulo: "Tempo", texto: "Conjuração estendida fora de combate; tempo mínimo conforme o feitiço (minutos ou horas)." },
+  { titulo: "CD", texto: "Teste de Técnica Amaldiçada (ou atributo/perícia conforme o feitiço). CD definido pelo mestre ou pela regra do feitiço." },
+  { titulo: "Custo", texto: "PE (ou Estamina) pode ser reduzido ou pago ao longo do ritual, conforme descrição." },
+  { titulo: "Falha", texto: "Falha no teste pode consumir recursos parcialmente ou causar efeitos colaterais (consulte o livro)." },
+] as const
+
+type AbaRegras = typeof ABA_CD | typeof ABA_DANO | typeof ABA_FERIMENTOS | typeof ABA_EXAUSTAO | typeof ABA_RITUAL
+
 export function PainelRegrasRapidas() {
-  const [aba, setAba] = useState<typeof ABA_CD | typeof ABA_DANO | typeof ABA_FERIMENTOS>(ABA_CD)
+  const [aba, setAba] = useState<AbaRegras>(ABA_CD)
 
   return (
     <div className="flex h-full flex-col rounded-lg border border-slate-700/80 bg-slate-900/50 p-3">
@@ -82,43 +104,22 @@ export function PainelRegrasRapidas() {
         Regras rápidas
       </h3>
 
-      <div className="mb-2 flex gap-1 rounded border border-slate-600 bg-slate-800/80 p-0.5">
-        <button
-          type="button"
-          onClick={() => setAba(ABA_CD)}
-          className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-            aba === ABA_CD
-              ? "bg-cyan-500/30 text-cyan-400"
-              : "text-slate-400 hover:text-slate-200"
-          )}
-        >
-          CDs
-        </button>
-        <button
-          type="button"
-          onClick={() => setAba(ABA_DANO)}
-          className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-            aba === ABA_DANO
-              ? "bg-cyan-500/30 text-cyan-400"
-              : "text-slate-400 hover:text-slate-200"
-          )}
-        >
-          Dano
-        </button>
-        <button
-          type="button"
-          onClick={() => setAba(ABA_FERIMENTOS)}
-          className={cn(
-            "flex-1 rounded px-2 py-1 text-xs font-medium transition-colors",
-            aba === ABA_FERIMENTOS
-              ? "bg-cyan-500/30 text-cyan-400"
-              : "text-slate-400 hover:text-slate-200"
-          )}
-        >
-          Ferimentos
-        </button>
+      <div className="mb-2 flex flex-wrap gap-1 rounded border border-slate-600 bg-slate-800/80 p-0.5">
+        {([ABA_CD, ABA_DANO, ABA_FERIMENTOS, ABA_EXAUSTAO, ABA_RITUAL] as const).map((a) => (
+          <button
+            key={a}
+            type="button"
+            onClick={() => setAba(a)}
+            className={cn(
+              "rounded px-2 py-1 text-xs font-medium transition-colors",
+              aba === a
+                ? "bg-cyan-500/30 text-cyan-400"
+                : "text-slate-400 hover:text-slate-200"
+            )}
+          >
+            {a}
+          </button>
+        ))}
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto text-xs">
@@ -211,6 +212,36 @@ export function PainelRegrasRapidas() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {aba === ABA_EXAUSTAO && (
+          <div className="space-y-2">
+            <p className="text-slate-400">Exaustão (Cap. 12) — níveis 0 a 5</p>
+            {TABELA_EXAUSTAO.map((row) => (
+              <div
+                key={row.nivel}
+                className="flex items-start gap-2 rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5"
+              >
+                <span className="font-mono font-bold text-cyan-300/90 shrink-0">Nív. {row.nivel}</span>
+                <span className="text-slate-300">{row.efeito}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {aba === ABA_RITUAL && (
+          <div className="space-y-2">
+            <p className="text-slate-400">Conjuração em Ritual (Cap. 12)</p>
+            {CONJURACAO_RITUAL.map((r) => (
+              <div
+                key={r.titulo}
+                className="rounded border border-slate-700/60 bg-slate-800/40 px-2 py-1.5"
+              >
+                <div className="font-medium text-amber-300">{r.titulo}</div>
+                <div className="mt-0.5 text-slate-300">{r.texto}</div>
+              </div>
+            ))}
           </div>
         )}
       </div>

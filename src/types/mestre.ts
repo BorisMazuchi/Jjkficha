@@ -10,6 +10,8 @@ export interface PartyMember {
   defesa: number
   energiaTemporaria: boolean
   condicoes: string[]
+  /** Nível de Exaustão 0–5 (Livro v2.5 — Cap. 12) */
+  nivelExaustao?: number
   /** ID da ficha no Supabase, para o mestre abrir a ficha completa */
   fichaId?: string | null
   /** URL da imagem do personagem (vinda da ficha vinculada, para exibir no card) */

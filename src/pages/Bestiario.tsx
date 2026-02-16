@@ -27,11 +27,20 @@ export function Bestiario() {
   const [isNew, setIsNew] = useState(false)
 
   useEffect(() => {
-    setMaldicoes(carregarBestiario())
+    let cancelled = false
+    carregarBestiario().then((list) => {
+      if (!cancelled) setMaldicoes(list)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
-    if (maldicoes.length > 0) salvarBestiario(maldicoes)
+    const timer = setTimeout(() => {
+      salvarBestiario(maldicoes)
+    }, 500)
+    return () => clearTimeout(timer)
   }, [maldicoes])
 
   const handleOpenNew = () => {

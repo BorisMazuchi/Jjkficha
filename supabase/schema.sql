@@ -71,3 +71,23 @@ create policy "Permitir inserção pública" on sessao_mestre for insert with ch
 create policy "Permitir atualização pública" on sessao_mestre for update using (true);
 create policy "Permitir exclusão pública" on sessao_mestre for delete using (true);
 
+-- Tabela do bestiário (maldições salvas; um registro global por projeto ou use usuario_id quando tiver auth)
+create table if not exists bestiario (
+  id uuid primary key default gen_random_uuid(),
+  dados jsonb not null default '{"maldicoes":[]}',
+  updated_at timestamptz default now()
+);
+
+drop trigger if exists bestiario_updated_at on bestiario;
+create trigger bestiario_updated_at
+  before update on bestiario
+  for each row
+  execute function update_updated_at();
+
+alter table bestiario enable row level security;
+
+create policy "Permitir leitura pública" on bestiario for select using (true);
+create policy "Permitir inserção pública" on bestiario for insert with check (true);
+create policy "Permitir atualização pública" on bestiario for update using (true);
+create policy "Permitir exclusão pública" on bestiario for delete using (true);
+

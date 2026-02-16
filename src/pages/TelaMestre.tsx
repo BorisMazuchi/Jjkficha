@@ -20,7 +20,6 @@ import type {
   InitiativeEntry,
   Maldicao,
   LogEntry,
-  Condicao,
 } from "@/types/mestre"
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
@@ -160,7 +159,7 @@ function useMestreState() {
   )
 
   const addCondicaoMembro = useCallback(
-    (membroId: string, condicao: Condicao) => {
+    (membroId: string, condicao: string) => {
       updateMembro(membroId, {
         condicoes: [
           ...(membros.find((m) => m.id === membroId)?.condicoes ?? []),
@@ -250,12 +249,17 @@ function useMestreState() {
 
 const danoRapido = [5, 10, 15, 20, 25]
 
+type AbaMobile = "party" | "iniciativa" | "bestiario" | "tabuleiro" | "paineis"
+
 export function TelaMestre() {
   const state = useMestreState()
   const [fichaModalMembro, setFichaModalMembro] = useState<PartyMember | null>(null)
   const [fichaBestiarioAberta, setFichaBestiarioAberta] = useState<Maldicao | null>(null)
+  const [abaMobile, setAbaMobile] = useState<AbaMobile>("party")
   const location = useLocation()
   const navigate = useNavigate()
+
+  const mostrarSecao = (aba: AbaMobile) => abaMobile === aba
 
   // Adicionar maldição vinda do Bestiário só depois da sessão carregar (evita ser sobrescrita pelo load)
   useEffect(() => {
@@ -324,10 +328,38 @@ export function TelaMestre() {
           state.modoPanico && "[&>*]:animate-[pulse_3s_ease-in-out_infinite]"
         )}
       >
+        {/* Abas mobile: só visíveis em telas menores que lg */}
+        <div className="col-span-full flex gap-1 overflow-x-auto rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-1 lg:hidden">
+          {(
+            [
+              ["party", "Party"],
+              ["iniciativa", "Iniciativa"],
+              ["bestiario", "Bestiário"],
+              ["tabuleiro", "Tabuleiro"],
+              ["paineis", "Condições / Regras"],
+            ] as [AbaMobile, string][]
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setAbaMobile(id)}
+              className={cn(
+                "min-h-[44px] shrink-0 touch-manipulation rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                abaMobile === id
+                  ? "bg-cyan-500/30 text-cyan-400"
+                  : "text-[var(--color-text-muted)] hover:bg-slate-700/50 hover:text-[var(--color-text)]"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         {/* Party Monitor - full width */}
         <section
           className={cn(
             "col-span-full rounded-xl border p-4 transition-all duration-500",
+            !mostrarSecao("party") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/40 bg-black/40 shadow-[inset_0_0_40px_rgba(244,63,94,0.05)]"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -342,10 +374,11 @@ export function TelaMestre() {
           />
         </section>
 
-        {/* Bento Grid */}
+        {/* Iniciativa */}
         <section
           className={cn(
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            !mostrarSecao("iniciativa") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -374,6 +407,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            !mostrarSecao("bestiario") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -433,6 +467,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[360px] transition-all duration-500",
+            !mostrarSecao("tabuleiro") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30"
               : "border-cyan-900/60"
@@ -456,6 +491,7 @@ export function TelaMestre() {
           <section
             className={cn(
               "col-span-full min-h-[120px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+              !mostrarSecao("bestiario") && "hidden lg:block",
               state.modoPanico
                 ? "border-rose-500/30 bg-black/30"
                 : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -580,6 +616,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[200px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            !mostrarSecao("paineis") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -595,6 +632,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            !mostrarSecao("paineis") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -606,6 +644,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[160px] rounded-xl border p-4 transition-all duration-500 lg:col-span-4",
+            !mostrarSecao("paineis") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
@@ -622,6 +661,7 @@ export function TelaMestre() {
         <section
           className={cn(
             "col-span-full min-h-[180px] rounded-xl border p-4 transition-all duration-500",
+            !mostrarSecao("paineis") && "hidden lg:block",
             state.modoPanico
               ? "border-rose-500/30 bg-black/30"
               : "border-[var(--color-border)] bg-[var(--color-bg-card)]"

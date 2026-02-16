@@ -4,13 +4,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
-export type TipoVoto = "Proprio" | "Emergencial" | "Congenito"
+export type TipoVoto = "Proprio" | "Emergencial" | "Congenito" | "Contratual"
+
+export type PesoVoto = "Leve" | "Medio" | "Pesado" | "Extremo"
 
 export interface VotoRestricao {
   id: string
   /** Nome do personagem/jogador dono do voto */
   dono: string
   tipo: TipoVoto
+  /** Peso do voto (Livro v2.5 — Cap. 14) */
+  peso?: PesoVoto
   beneficio: string
   maleficio: string
   ativo: boolean
@@ -20,6 +24,14 @@ const LABEL_TIPO: Record<TipoVoto, string> = {
   Proprio: "Próprio",
   Emergencial: "Emergencial",
   Congenito: "Congênito",
+  Contratual: "Contratual",
+}
+
+const LABEL_PESO: Record<PesoVoto, string> = {
+  Leve: "Leve",
+  Medio: "Médio",
+  Pesado: "Pesado",
+  Extremo: "Extremo",
 }
 
 interface ControleVotosProps {
@@ -51,6 +63,7 @@ export function ControleVotos({
       id: crypto.randomUUID(),
       dono: donoPadrao,
       tipo: "Proprio",
+      peso: undefined,
       beneficio: "",
       maleficio: "",
       ativo: true,
@@ -132,10 +145,29 @@ export function ControleVotos({
                     }
                     className="rounded border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-cyan-300"
                   >
-                    {(["Proprio", "Emergencial", "Congenito"] as const).map(
+                    {(["Proprio", "Emergencial", "Congenito", "Contratual"] as const).map(
                       (t) => (
                         <option key={t} value={t}>
                           {LABEL_TIPO[t]}
+                        </option>
+                      )
+                    )}
+                  </select>
+                  <select
+                    value={v.peso ?? ""}
+                    onChange={(e) =>
+                      atualizar(v.id, {
+                        peso: e.target.value ? (e.target.value as PesoVoto) : undefined,
+                      })
+                    }
+                    title="Peso do voto (Cap. 14)"
+                    className="rounded border border-slate-600 bg-slate-800 px-1.5 py-0.5 text-slate-300"
+                  >
+                    <option value="">Peso</option>
+                    {(["Leve", "Medio", "Pesado", "Extremo"] as const).map(
+                      (p) => (
+                        <option key={p} value={p}>
+                          {LABEL_PESO[p]}
                         </option>
                       )
                     )}

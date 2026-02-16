@@ -61,6 +61,23 @@ interface TabuleiroContentProps {
   className?: string
 }
 
+function entradasParaTokens(entradas: InitiativeEntry[]): Token[] {
+  return entradas.map((e, i) => ({
+    id: e.id,
+    nome: e.nome,
+    tipo: e.tipo,
+    posicao: e.posicao ?? { x: 2 + (i % 6) * 4, y: 3 + Math.floor(i / 6) * 4 },
+    tamanho: 1,
+    cor: e.tipo === "jogador" ? "#06b6d4" : "#e94560",
+    visivel: true,
+    pv:
+      e.pvAtual != null && e.pvMax != null
+        ? { atual: e.pvAtual, max: e.pvMax }
+        : undefined,
+    condicoes: [],
+  }))
+}
+
 export function TabuleiroContent({
   embedded = false,
   entradas = [],
@@ -70,7 +87,9 @@ export function TabuleiroContent({
   fillHeight = false,
   className,
 }: TabuleiroContentProps) {
-  const [tokens, setTokens] = useState<Token[]>(TOKENS_INICIAIS)
+  const usaSessao = !embedded && entradas.length > 0 && typeof onMoveEntry === "function"
+  const tokensIniciais = usaSessao ? entradasParaTokens(entradas) : TOKENS_INICIAIS
+  const [tokens, setTokens] = useState<Token[]>(tokensIniciais)
   const [grid, setGrid] = useState<GridCell[][]>(criarGridVazio(30, 30))
   const [medicoes, setMedicoes] = useState<Measurement[]>([])
   const [zoom, setZoom] = useState(1)
@@ -87,11 +106,19 @@ export function TabuleiroContent({
     mestre: false,
   })
 
-  const handleTokenMove = useCallback((tokenId: string, newPos: Position) => {
-    setTokens((prev) =>
-      prev.map((t) => (t.id === tokenId ? { ...t, posicao: newPos } : t))
-    )
-  }, [])
+  useEffect(() => {
+    if (usaSessao) setTokens(entradasParaTokens(entradas))
+  }, [usaSessao, entradas])
+
+  const handleTokenMove = useCallback(
+    (tokenId: string, newPos: Position) => {
+      setTokens((prev) =>
+        prev.map((t) => (t.id === tokenId ? { ...t, posicao: newPos } : t))
+      )
+      onMoveEntry?.(tokenId, newPos)
+    },
+    [onMoveEntry]
+  )
 
   const handleTokenSelect = useCallback((tokenId: string | null) => {
     setTokenSelecionado(tokenId)
@@ -251,6 +278,37 @@ export function TabuleiroContent({
         {canvasArea}
       </div>
       <div className="w-80 space-y-4 border-l border-slate-700 bg-slate-900 overflow-y-auto p-4">
+        {usaSessao && entradas.length > 0 && (
+          <div className="rounded-lg border border-slate-700 bg-slate-800 p-3">
+            <h3 className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+              Iniciativa
+            </h3>
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => onSelectTurn?.(Math.max(0, turnoAtual - 1))}
+                className="rounded bg-slate-700 px-2 py-1 text-xs text-slate-300 hover:bg-slate-600"
+              >
+                Anterior
+              </button>
+              <span className="truncate text-sm font-medium text-cyan-400">
+                {entradas[turnoAtual]?.nome ?? "—"}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  onSelectTurn?.(Math.min(entradas.length - 1, turnoAtual + 1))
+                }
+                className="rounded bg-slate-700 px-2 py-1 text-xs text-slate-300 hover:bg-slate-600"
+              >
+                Próximo
+              </button>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              Turno {turnoAtual + 1} de {entradas.length}
+            </p>
+          </div>
+        )}
         <TokenInfo token={tokenAtivo} />
         {tokenAtivo && (
           <div className="space-y-2 rounded-lg border border-slate-700 bg-slate-800 p-4">

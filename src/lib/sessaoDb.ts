@@ -13,6 +13,7 @@ export interface SessaoMestreDados {
     defesa: number
     energiaTemporaria: boolean
     condicoes: string[]
+    nivelExaustao?: number
     fichaId?: string | null
     imagemUrl?: string | null
   }[]
@@ -50,6 +51,7 @@ export interface SessaoMestreDados {
     id: string
     dono: string
     tipo: string
+    peso?: string
     beneficio: string
     maleficio: string
     ativo: boolean

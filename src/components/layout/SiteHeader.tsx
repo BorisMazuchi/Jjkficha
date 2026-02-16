@@ -1,9 +1,13 @@
 import { Link, useLocation } from "react-router-dom"
-import { FileText, BookOpen, LayoutGrid, Swords } from "lucide-react"
+import { Home, FileText, BookOpen, LayoutGrid, Swords, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+/** URL do Livro de Regras (PDF). Deixe vazio ou defina para o arquivo em /public ou URL externa. */
+export const URL_LIVRO_REGRAS = ""
+
 const NAV = [
-  { to: "/", label: "Fichas", icon: FileText },
+  { to: "/", label: "Início", icon: Home },
+  { to: "/fichas", label: "Fichas", icon: FileText },
   { to: "/bestiario", label: "Bestiário", icon: BookOpen },
   { to: "/mestre", label: "Mestre", icon: LayoutGrid },
   { to: "/tabuleiro", label: "Tabuleiro", icon: Swords },
@@ -55,6 +59,17 @@ export function SiteHeader({ right, title, subtitle, className }: SiteHeaderProp
               <p className="text-xs text-[var(--color-text-muted)]">{subtitle}</p>
             )}
           </div>
+          {URL_LIVRO_REGRAS && (
+            <a
+              href={URL_LIVRO_REGRAS}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)] hover:text-[var(--color-accent-cyan)]"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              Livro de Regras (PDF)
+            </a>
+          )}
         </div>
         {right && <div className="flex items-center gap-3">{right}</div>}
       </div>

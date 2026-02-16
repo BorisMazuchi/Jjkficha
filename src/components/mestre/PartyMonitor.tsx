@@ -147,16 +147,16 @@ function PartyCard({
               <button
                 type="button"
                 onClick={() => alterarPV(-1)}
-                className="rounded bg-red-500/20 p-0.5 text-red-400 hover:bg-red-500/40"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-red-500/20 p-1 text-red-400 hover:bg-red-500/40 touch-manipulation"
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-4 w-4" />
               </button>
               <button
                 type="button"
                 onClick={() => alterarPV(1)}
-                className="rounded bg-emerald-500/20 p-0.5 text-emerald-400 hover:bg-emerald-500/40"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-emerald-500/20 p-1 text-emerald-400 hover:bg-emerald-500/40 touch-manipulation"
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -194,16 +194,16 @@ function PartyCard({
               <button
                 type="button"
                 onClick={() => alterarPE(-1)}
-                className="rounded bg-slate-600/50 p-0.5 text-slate-400 hover:bg-slate-500/50"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-slate-600/50 p-1 text-slate-400 hover:bg-slate-500/50 touch-manipulation"
               >
-                <Minus className="h-3 w-3" />
+                <Minus className="h-4 w-4" />
               </button>
               <button
                 type="button"
                 onClick={() => alterarPE(1)}
-                className="rounded bg-violet-500/20 p-0.5 text-violet-400 hover:bg-violet-500/40"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded bg-violet-500/20 p-1 text-violet-400 hover:bg-violet-500/40 touch-manipulation"
               >
-                <Plus className="h-3 w-3" />
+                <Plus className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -220,6 +220,43 @@ function PartyCard({
         <div className="flex items-center gap-1 text-xs text-slate-400">
           <Shield className="h-3 w-3" />
           <span>Defesa: {membro.defesa}</span>
+        </div>
+        <div className="flex items-center justify-between gap-1 text-xs">
+          <span className="text-slate-400">Exaustão:</span>
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={() =>
+                onUpdate({
+                  nivelExaustao: Math.max(0, (membro.nivelExaustao ?? 0) - 1),
+                })
+              }
+              className="rounded bg-slate-600/50 p-0.5 text-slate-400 hover:bg-slate-500/50 min-h-[28px] min-w-[28px] flex items-center justify-center"
+              title="Reduzir exaustão"
+            >
+              <Minus className="h-3 w-3" />
+            </button>
+            <span
+              className={cn(
+                "min-w-[1.25rem] text-center font-medium",
+                (membro.nivelExaustao ?? 0) > 0 ? "text-amber-400" : "text-slate-500"
+              )}
+            >
+              {membro.nivelExaustao ?? 0}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                onUpdate({
+                  nivelExaustao: Math.min(5, (membro.nivelExaustao ?? 0) + 1),
+                })
+              }
+              className="rounded bg-amber-500/20 p-0.5 text-amber-400 hover:bg-amber-500/40 min-h-[28px] min-w-[28px] flex items-center justify-center"
+              title="Aumentar exaustão"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
         </div>
         {membro.condicoes.length > 0 && (
           <div className="flex flex-wrap gap-0.5">

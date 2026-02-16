@@ -1,16 +1,29 @@
 import { supabase } from "./supabase"
 import type { FichaDados } from "@/types/supabase"
 
-export async function listarFichas(): Promise<
-  { id: string; nome_personagem: string; jogador: string; updated_at: string }[]
-> {
+export interface FichaListItem {
+  id: string
+  nome_personagem: string
+  jogador: string
+  updated_at: string
+  nivel?: number
+}
+
+export async function listarFichas(): Promise<FichaListItem[]> {
   if (!supabase) return []
   const { data, error } = await supabase
     .from("fichas")
-    .select("id, nome_personagem, jogador, updated_at")
+    .select("id, nome_personagem, jogador, updated_at, dados")
     .order("updated_at", { ascending: false })
   if (error) throw error
-  return data ?? []
+  const rows = data ?? []
+  return rows.map((r: { id: string; nome_personagem: string; jogador: string; updated_at: string; dados?: { cabecalho?: { nivel?: number } } }) => ({
+    id: r.id,
+    nome_personagem: r.nome_personagem,
+    jogador: r.jogador,
+    updated_at: r.updated_at,
+    nivel: r.dados?.cabecalho?.nivel,
+  }))
 }
 
 export async function carregarFicha(id: string): Promise<FichaDados | null> {

@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import { CabecalhoFicha } from "@/components/CabecalhoFicha"
 import { AtributosDefesa } from "@/components/AtributosDefesa"
 import { RecursosBarra } from "@/components/RecursosBarra"
@@ -11,6 +12,7 @@ import { PainelPericias } from "@/components/PainelPericias"
 import { CalculadoraRaioNegro } from "@/components/CalculadoraRaioNegro"
 import { InventarioAmaldicado } from "@/components/InventarioAmaldicado"
 import { FichaSupabase } from "@/components/FichaSupabase"
+import { carregarFicha } from "@/lib/fichaDb"
 import type { FichaDados } from "@/types/supabase"
 import type {
   CabeçalhoFicha,
@@ -28,6 +30,8 @@ import type {
 } from "@/types/ficha"
 import { Link } from "react-router-dom"
 import { LayoutGrid } from "lucide-react"
+import { SiteHeader } from "@/components/layout/SiteHeader"
+import { SectionCollapsible } from "@/components/ui/SectionCollapsible"
 
 const ATRIBUTO_PARA_MOD: Record<string, string> = {
   FOR: "forca",
@@ -125,6 +129,22 @@ export function FichaPersonagem() {
   const [pericias, setPericias] = useState<Pericia[]>(PERICIAS_INICIAIS)
   const [ferramentas, setFerramentas] = useState<FerramentaAmaldicada[]>([])
   const [fichaId, setFichaId] = useState<string | null>(null)
+
+  const location = useLocation()
+  const fichaIdFromState = (location.state as { fichaId?: string } | null)?.fichaId
+
+  useEffect(() => {
+    if (!fichaIdFromState) return
+    let cancelled = false
+    carregarFicha(fichaIdFromState).then((d) => {
+      if (cancelled || !d) return
+      carregarFichaNoApp(d)
+      setFichaId(fichaIdFromState)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [fichaIdFromState])
 
   const handleRecursosCalculados = useCallback(
     (pvMax: number, peMax: number) => {
@@ -283,24 +303,18 @@ export function FichaPersonagem() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] text-slate-100">
-      <header className="border-b border-[#2a2a4a] bg-[#16213e] px-4 py-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold tracking-wider text-[#e94560]">
-              FEITICEIROS & MALDIÇÕES
-            </h1>
-            <p className="text-sm text-slate-400">
-              Plataforma de Gestão de Fichas — Jujutsu Kaisen RPG v2.5
-            </p>
-          </div>
+    <div className="min-h-screen bg-[var(--color-bg-page)] text-[var(--color-text)]">
+      <SiteHeader
+        title="FICHA"
+        subtitle="Ficha de personagem — v2.5"
+        right={
           <div className="flex items-center gap-3">
             <Link
               to="/mestre"
               className="flex items-center gap-2 rounded border border-cyan-500/50 bg-cyan-500/10 px-3 py-1.5 text-sm text-cyan-400 transition-colors hover:bg-cyan-500/20"
             >
               <LayoutGrid className="h-4 w-4" />
-              Tela do Mestre
+              Mestre
             </Link>
             <FichaSupabase
               dados={dadosParaSupabase}
@@ -309,8 +323,8 @@ export function FichaPersonagem() {
               onFichaIdChange={setFichaId}
             />
           </div>
-        </div>
-      </header>
+        }
+      />
 
       <main className="mx-auto max-w-6xl space-y-6 p-4 pb-12">
         <CabecalhoFicha
@@ -340,8 +354,9 @@ export function FichaPersonagem() {
           onNivelUp={handleNivelUp}
         />
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          <AtributosDefesa
+        <SectionCollapsible title="Atributos e Recursos" defaultOpen={true}>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <AtributosDefesa
             atributos={atributos}
             nivel={cabecalho.nivel}
             bonusDefesaClasse={bonusDefesaClasse}
@@ -356,45 +371,58 @@ export function FichaPersonagem() {
             onChange={(d) => setRecursos((prev) => ({ ...prev, ...d }))}
             mostrarIntegridade={false}
           />
-        </div>
+          </div>
+        </SectionCollapsible>
 
-        <AptidoesAmaldicadasComponent
+        <SectionCollapsible title="Aptidões Amaldiçadas">
+          <AptidoesAmaldicadasComponent
           aptidoes={aptidoes}
           onChange={(d) => setAptidoes((prev) => ({ ...prev, ...d }))}
         />
+        </SectionCollapsible>
 
-        <CalculadoraRaioNegro
+        <SectionCollapsible title="Calculadora Raio Negro">
+          <CalculadoraRaioNegro
           aptidoes={aptidoes}
           aptidaoSelecionada={aptidaoRaioNegro}
           onAptidaoSelecionada={setAptidaoRaioNegro}
           onAumentarAptidao={aumentarAptidaoRaioNegro}
         />
 
-        {/* Builder de Técnica Amaldiçoada - NOVO */}
-        <TecnicaBuilder
-          tecnica={tecnicaAmaldicada}
-          onChange={setTecnicaAmaldicada}
-        />
+        </SectionCollapsible>
 
-        <PainelPericias
+        <SectionCollapsible title="Técnica Amaldiçada">
+          <TecnicaBuilder
+            tecnica={tecnicaAmaldicada}
+            onChange={setTecnicaAmaldicada}
+          />
+        </SectionCollapsible>
+
+        <SectionCollapsible title="Perícias">
+          <PainelPericias
           pericias={pericias}
           nivel={cabecalho.nivel}
           modificadores={modificadoresPericia}
           onChange={setPericias}
         />
+        </SectionCollapsible>
 
-        <HabilidadesTecnicas
+        <SectionCollapsible title="Habilidades e Técnicas">
+          <HabilidadesTecnicas
           tecnicasInatas={tecnicasInatas}
           habilidadesClasse={habilidadesClasse}
           nivel={cabecalho.nivel}
           onTecnicasChange={setTecnicasInatas}
           onHabilidadesChange={setHabilidadesClasse}
         />
+        </SectionCollapsible>
 
-        <InventarioAmaldicado
+        <SectionCollapsible title="Inventário Amaldiçado">
+          <InventarioAmaldicado
           ferramentas={ferramentas}
           onChange={setFerramentas}
         />
+        </SectionCollapsible>
       </main>
     </div>
   )

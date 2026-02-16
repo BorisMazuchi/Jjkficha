@@ -15,6 +15,8 @@ interface FichaModalProps {
     nomePersonagem?: string,
     imagemUrl?: string
   ) => void
+  /** Chamado quando a ficha vinculada ao jogador é carregada — permite sincronizar nome e foto do personagem na party/iniciativa */
+  onDadosCarregados?: (membroId: string, dados: FichaDados) => void
   membroId?: string
 }
 
@@ -24,6 +26,7 @@ export function FichaModal({
   membroNome,
   fichaIdInicial,
   onVincularFicha,
+  onDadosCarregados,
   membroId,
 }: FichaModalProps) {
   const [fichas, setFichas] = useState<
@@ -58,9 +61,15 @@ export function FichaModal({
     }
     setLoading(true)
     carregarFicha(fichaSelecionada)
-      .then((f) => setDados(f))
+      .then((f) => {
+        setDados(f)
+        // Sincronizar nome e foto do personagem na party/iniciativa quando a ficha vinculada é carregada
+        if (f && membroId && onDadosCarregados && fichaSelecionada === fichaIdInicial) {
+          onDadosCarregados(membroId, f)
+        }
+      })
       .finally(() => setLoading(false))
-  }, [fichaSelecionada])
+  }, [fichaSelecionada, membroId, fichaIdInicial, onDadosCarregados])
 
   const handleVincular = () => {
     if (membroId && fichaSelecionada && onVincularFicha) {

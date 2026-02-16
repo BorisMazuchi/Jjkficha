@@ -14,6 +14,7 @@ import {
   salvarSessao,
   SESSAO_INICIAL,
 } from "@/lib/sessaoDb"
+import { carregarFicha } from "@/lib/fichaDb"
 import type {
   PartyMember,
   InitiativeEntry,
@@ -272,6 +273,21 @@ export function TelaMestre() {
       return { ...e, imagemUrl: m?.imagens?.[0] }
     })
   }, [state.entradas, state.membros, state.maldicoes])
+
+  // Ao carregar a sessão, preencher foto dos personagens a partir da ficha vinculada (para aparecer no rastreador)
+  useEffect(() => {
+    if (!state.carregado) return
+    state.membros.forEach((m) => {
+      if (m.fichaId && !m.imagemUrl) {
+        carregarFicha(m.fichaId)
+          .then((f) => {
+            const img = (f?.cabecalho as { imagemPersonagem?: string } | undefined)?.imagemPersonagem
+            if (img) state.updateMembro(m.id, { imagemUrl: img })
+          })
+          .catch(() => {})
+      }
+    })
+  }, [state.carregado, state.membros, state.updateMembro])
 
   // Adicionar maldição vinda do Bestiário só depois da sessão carregar (evita ser sobrescrita pelo load)
   useEffect(() => {
@@ -693,6 +709,21 @@ export function TelaMestre() {
                   ...(nomePersonagem ? { nome: nomePersonagem } : {}),
                   ...(imagemUrl !== undefined ? { imagemUrl } : {}),
                 }
+              : prev
+          )
+        }}
+        onDadosCarregados={(membroId, dados) => {
+          const cabecalho = dados?.cabecalho
+          if (!cabecalho) return
+          const nome = (cabecalho as { nomePersonagem?: string }).nomePersonagem
+          const imagemUrl = (cabecalho as { imagemPersonagem?: string }).imagemPersonagem
+          state.updateMembro(membroId, {
+            ...(nome ? { nome } : {}),
+            ...(imagemUrl !== undefined ? { imagemUrl } : {}),
+          })
+          setFichaModalMembro((prev) =>
+            prev && prev.id === membroId
+              ? { ...prev, ...(nome ? { nome } : {}), ...(imagemUrl !== undefined ? { imagemUrl } : {}) }
               : prev
           )
         }}

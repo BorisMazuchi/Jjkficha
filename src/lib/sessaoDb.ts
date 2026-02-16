@@ -43,6 +43,7 @@ export interface SessaoMestreDados {
   }[]
   votos: {
     id: string
+    dono: string
     tipo: string
     beneficio: string
     maleficio: string

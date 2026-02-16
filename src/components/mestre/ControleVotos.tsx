@@ -8,6 +8,8 @@ export type TipoVoto = "Proprio" | "Emergencial" | "Congenito"
 
 export interface VotoRestricao {
   id: string
+  /** Nome do personagem/jogador dono do voto */
+  dono: string
   tipo: TipoVoto
   beneficio: string
   maleficio: string
@@ -23,6 +25,8 @@ const LABEL_TIPO: Record<TipoVoto, string> = {
 interface ControleVotosProps {
   votos?: VotoRestricao[]
   onVotosChange?: (votos: VotoRestricao[]) => void
+  /** Membros da party para escolher dono do voto (nome exibido no dropdown) */
+  membros?: { id: string; nome: string }[]
   className?: string
 }
 
@@ -31,6 +35,7 @@ const VOTOS_INICIAIS: VotoRestricao[] = []
 export function ControleVotos({
   votos: votosProp = VOTOS_INICIAIS,
   onVotosChange,
+  membros = [],
   className,
 }: ControleVotosProps) {
   const [expandido, setExpandido] = useState(true)
@@ -41,8 +46,10 @@ export function ControleVotos({
   const setVotos = controlandoExternamente ? onVotosChange : setVotosInternos
 
   const adicionar = () => {
+    const donoPadrao = membros.length > 0 ? membros[0].nome : ""
     const novo: VotoRestricao = {
       id: crypto.randomUUID(),
+      dono: donoPadrao,
       tipo: "Proprio",
       beneficio: "",
       maleficio: "",
@@ -89,12 +96,33 @@ export function ControleVotos({
                 Nenhum voto registrado. Adicione para listar benefício e malefício mecânico.
               </p>
             )}
-            {votos.map((v) => (
+            {votos.map((v) => {
+              const dono = v.dono ?? ""
+              return (
               <div
                 key={v.id}
                 className="rounded border border-slate-700/60 bg-slate-800/40 p-2 text-xs"
               >
-                <div className="mb-1.5 flex items-center justify-between gap-2">
+                <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-500 shrink-0">Dono:</span>
+                    <Input
+                      value={dono}
+                      onChange={(e) =>
+                        atualizar(v.id, { dono: e.target.value })
+                      }
+                      placeholder="Nome do personagem"
+                      list={membros.length > 0 ? `voto-dono-${v.id}` : undefined}
+                      className="h-7 w-36 shrink-0 border-slate-600 bg-slate-800/80 text-slate-200"
+                    />
+                    {membros.length > 0 && (
+                      <datalist id={`voto-dono-${v.id}`}>
+                        {membros.map((m) => (
+                          <option key={m.id} value={m.nome} />
+                        ))}
+                      </datalist>
+                    )}
+                  </div>
                   <select
                     value={v.tipo}
                     onChange={(e) =>
@@ -158,7 +186,8 @@ export function ControleVotos({
                   </div>
                 </div>
               </div>
-            ))}
+            )
+            })}
           </div>
           <Button
             type="button"

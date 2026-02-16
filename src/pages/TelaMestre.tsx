@@ -47,7 +47,13 @@ function useMestreState() {
         setTurnoAtual(sessao.turnoAtual)
         setMaldicoes(sessao.maldicoes as Maldicao[])
         setLog(sessao.log as LogEntry[])
-        setVotos((sessao.votos ?? []) as VotoRestricao[])
+        setVotos(
+          (sessao.votos ?? []).map((v) => ({
+            ...v,
+            dono: (v as { dono?: string }).dono ?? "",
+            tipo: (v as VotoRestricao).tipo,
+          })) as VotoRestricao[]
+        )
       }
       setCarregado(true)
     }
@@ -438,6 +444,7 @@ export function TelaMestre() {
           <ControleVotos
             votos={state.votos}
             onVotosChange={state.setVotos}
+            membros={state.membros.map((m) => ({ id: m.id, nome: m.nome }))}
           />
         </section>
 

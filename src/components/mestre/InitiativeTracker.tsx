@@ -94,13 +94,13 @@ export function InitiativeTracker({
               <img
                 src={e.imagemUrl}
                 alt=""
-                className="h-8 w-8 shrink-0 rounded border border-slate-600 object-cover"
+                className="h-10 w-10 shrink-0 rounded-lg border border-slate-600 object-cover"
                 onError={() => onImagemErro(e.imagemUrl!)}
               />
             ) : e.tipo === "jogador" ? (
-              <User className="h-4 w-4 shrink-0 text-cyan-400" />
+              <User className="h-5 w-5 shrink-0 text-cyan-400" />
             ) : (
-              <Ghost className="h-4 w-4 shrink-0 text-red-400" />
+              <Ghost className="h-5 w-5 shrink-0 text-red-400" />
             )}
             <span className="min-w-0 flex-1 truncate font-medium">
               {e.nome}

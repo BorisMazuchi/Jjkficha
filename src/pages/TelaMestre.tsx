@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useEffect, useMemo, useRef } from "react"
 import { PartyMonitor } from "@/components/mestre/PartyMonitor"
 import { InitiativeTracker } from "@/components/mestre/InitiativeTracker"
 import { FichaModal } from "@/components/mestre/FichaModal"
@@ -260,6 +260,19 @@ export function TelaMestre() {
 
   const mostrarSecao = (aba: AbaMobile) => abaMobile === aba
 
+  // Entradas de iniciativa com fotos preenchidas a partir da party / maldições (para exibir no rastreador)
+  const entradasComFotos = useMemo(() => {
+    return state.entradas.map((e) => {
+      if (e.imagemUrl) return e
+      if (e.tipo === "jogador") {
+        const m = state.membros.find((m) => m.id === e.id)
+        return { ...e, imagemUrl: m?.imagemUrl ?? undefined }
+      }
+      const m = state.maldicoes.find((m) => m.id === e.id)
+      return { ...e, imagemUrl: m?.imagens?.[0] }
+    })
+  }, [state.entradas, state.membros, state.maldicoes])
+
   // Adicionar maldição vinda do Bestiário só depois da sessão carregar (evita ser sobrescrita pelo load)
   useEffect(() => {
     const addFromBestiario = (location.state as { addMaldicaoFromBestiario?: Maldicao } | null)
@@ -383,7 +396,7 @@ export function TelaMestre() {
           )}
         >
           <InitiativeTracker
-            entradas={state.entradas}
+            entradas={entradasComFotos}
             turnoAtual={state.turnoAtual}
             onReorder={state.setEntradas}
             onTurnoChange={state.setTurnoAtual}

@@ -31,6 +31,7 @@ export interface SessaoMestreDados {
     grau?: string
     defesa?: number
     descricao?: string
+    imagens?: string[]
     ataques?: { id: string; nome: string; dano: string; tipo?: string; descricao?: string }[]
     feiticos?: { id: string; nome: string; custoPE: number; descricao?: string; alcance?: string }[]
   }[]

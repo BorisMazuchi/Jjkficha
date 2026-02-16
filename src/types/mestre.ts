@@ -46,6 +46,8 @@ export interface Maldicao {
   grau?: string
   defesa?: number
   descricao?: string
+  /** URLs ou data URLs (base64) das imagens da maldição */
+  imagens?: string[]
   ataques?: AtaqueMaldicao[]
   feiticos?: FeiticoMaldicao[]
 }

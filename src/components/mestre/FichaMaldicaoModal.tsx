@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { Maldicao, AtaqueMaldicao, FeiticoMaldicao } from "@/types/mestre"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { X, Plus, Trash2, Swords, Zap } from "lucide-react"
+import { X, Plus, Trash2, Swords, Zap, ImagePlus } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface FichaMaldicaoModalProps {
@@ -23,8 +23,11 @@ export function FichaMaldicaoModal({
   const [grau, setGrau] = useState(maldicao.grau ?? "")
   const [defesa, setDefesa] = useState<string>(String(maldicao.defesa ?? ""))
   const [descricao, setDescricao] = useState(maldicao.descricao ?? "")
+  const [imagens, setImagens] = useState<string[]>(maldicao.imagens ?? [])
+  const [urlImagem, setUrlImagem] = useState("")
   const [ataques, setAtaques] = useState<AtaqueMaldicao[]>(maldicao.ataques ?? [])
   const [feiticos, setFeiticos] = useState<FeiticoMaldicao[]>(maldicao.feiticos ?? [])
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isOpen) {
@@ -33,6 +36,7 @@ export function FichaMaldicaoModal({
       setGrau(maldicao.grau ?? "")
       setDefesa(maldicao.defesa != null ? String(maldicao.defesa) : "")
       setDescricao(maldicao.descricao ?? "")
+      setImagens(maldicao.imagens ?? [])
       setAtaques(maldicao.ataques ?? [])
       setFeiticos(maldicao.feiticos ?? [])
     }
@@ -41,8 +45,31 @@ export function FichaMaldicaoModal({
   const addAtaque = () => {
     setAtaques((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), nome: "", dano: "", tipo: "" },
+      { id: crypto.randomUUID(), nome: "", dano: "", tipo: "", descricao: "" },
     ])
+  }
+
+  const addImagemByUrl = (url: string) => {
+    const trimmed = url.trim()
+    if (!trimmed) return
+    setImagens((prev) => [...prev, trimmed])
+    setUrlImagem("")
+  }
+
+  const addImagemByFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !file.type.startsWith("image/")) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      if (dataUrl) setImagens((prev) => [...prev, dataUrl])
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ""
+  }
+
+  const removeImagem = (index: number) => {
+    setImagens((prev) => prev.filter((_, i) => i !== index))
   }
 
   const updateAtaque = (id: string, patch: Partial<AtaqueMaldicao>) => {
@@ -82,6 +109,7 @@ export function FichaMaldicaoModal({
       grau: grau || undefined,
       defesa: defesaNum !== undefined && !Number.isNaN(defesaNum) ? defesaNum : undefined,
       descricao: descricao || undefined,
+      imagens: imagens.length ? imagens : undefined,
       ataques: ataques.length ? ataques : undefined,
       feiticos: feiticos.length ? feiticos : undefined,
     })
@@ -171,6 +199,78 @@ export function FichaMaldicaoModal({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-sm font-bold text-cyan-400">
+                <ImagePlus className="h-4 w-4" />
+                Imagens
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                <Input
+                  placeholder="URL da imagem"
+                  value={urlImagem}
+                  onChange={(e) => setUrlImagem(e.target.value)}
+                  className="h-8 w-44 border-slate-600 bg-slate-800 text-xs"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      addImagemByUrl(urlImagem)
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={() => addImagemByUrl(urlImagem)}
+                >
+                  Adicionar URL
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={addImagemByFile}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="h-8 text-xs"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  Enviar arquivo
+                </Button>
+              </div>
+            </div>
+            {imagens.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {imagens.map((src, i) => (
+                  <div key={i} className="relative group">
+                    <img
+                      src={src}
+                      alt=""
+                      className="h-20 w-20 rounded border border-slate-600 object-cover"
+                      onError={(e) => {
+                        ;(e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' fill='%23475569'%3E%3Crect width='80' height='80'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='10'%3E?%3C/text%3E%3C/svg%3E"
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImagem(i)}
+                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-600 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="Remover imagem"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-cyan-400">
                 <Swords className="h-4 w-4" />
                 Ataques
               </h3>
@@ -178,39 +278,51 @@ export function FichaMaldicaoModal({
                 <Plus className="mr-1 h-3 w-3" /> Ataque
               </Button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {ataques.map((a) => (
                 <div
                   key={a.id}
-                  className="flex flex-wrap items-center gap-2 rounded border border-slate-700 bg-slate-800/50 p-2"
+                  className="rounded border border-slate-700 bg-slate-800/50 p-2 space-y-2"
                 >
-                  <Input
-                    placeholder="Nome"
-                    value={a.nome}
-                    onChange={(e) => updateAtaque(a.id, { nome: e.target.value })}
-                    className="h-8 w-32 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Input
-                    placeholder="Dano (ex: 2d6+3)"
-                    value={a.dano}
-                    onChange={(e) => updateAtaque(a.id, { dano: e.target.value })}
-                    className="h-8 w-28 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Input
-                    placeholder="Tipo"
-                    value={a.tipo ?? ""}
-                    onChange={(e) => updateAtaque(a.id, { tipo: e.target.value })}
-                    className="h-8 w-24 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-red-400"
-                    onClick={() => removeAtaque(a.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      placeholder="Nome"
+                      value={a.nome}
+                      onChange={(e) => updateAtaque(a.id, { nome: e.target.value })}
+                      className="h-8 w-32 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Input
+                      placeholder="Dano (ex: 2d6+3)"
+                      value={a.dano}
+                      onChange={(e) => updateAtaque(a.id, { dano: e.target.value })}
+                      className="h-8 w-28 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Input
+                      placeholder="Tipo"
+                      value={a.tipo ?? ""}
+                      onChange={(e) => updateAtaque(a.id, { tipo: e.target.value })}
+                      className="h-8 w-24 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 text-slate-400 hover:text-red-400"
+                      onClick={() => removeAtaque(a.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div>
+                    <label className="mb-0.5 block text-xs text-slate-500">Descrição do ataque</label>
+                    <textarea
+                      placeholder="Efeito, condições, observações..."
+                      value={a.descricao ?? ""}
+                      onChange={(e) => updateAtaque(a.id, { descricao: e.target.value })}
+                      rows={2}
+                      className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1.5 text-xs text-slate-200"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -226,49 +338,55 @@ export function FichaMaldicaoModal({
                 <Plus className="mr-1 h-3 w-3" /> Feitiço
               </Button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {feiticos.map((f) => (
                 <div
                   key={f.id}
-                  className="flex flex-wrap items-center gap-2 rounded border border-slate-700 bg-slate-800/50 p-2"
+                  className="rounded border border-slate-700 bg-slate-800/50 p-2 space-y-2"
                 >
-                  <Input
-                    placeholder="Nome"
-                    value={f.nome}
-                    onChange={(e) => updateFeitico(f.id, { nome: e.target.value })}
-                    className="h-8 w-36 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Input
-                    type="number"
-                    min={0}
-                    placeholder="PE"
-                    value={f.custoPE || ""}
-                    onChange={(e) =>
-                      updateFeitico(f.id, { custoPE: parseInt(e.target.value) || 0 })
-                    }
-                    className="h-8 w-14 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Input
-                    placeholder="Alcance (ex: 9m)"
-                    value={f.alcance ?? ""}
-                    onChange={(e) => updateFeitico(f.id, { alcance: e.target.value })}
-                    className="h-8 w-20 border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Input
-                    placeholder="Efeito / descrição"
-                    value={f.descricao ?? ""}
-                    onChange={(e) => updateFeitico(f.id, { descricao: e.target.value })}
-                    className="h-8 flex-1 min-w-[120px] border-slate-600 bg-slate-800 text-sm"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-red-400"
-                    onClick={() => removeFeitico(f.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Input
+                      placeholder="Nome"
+                      value={f.nome}
+                      onChange={(e) => updateFeitico(f.id, { nome: e.target.value })}
+                      className="h-8 w-36 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Input
+                      type="number"
+                      min={0}
+                      placeholder="PE"
+                      value={f.custoPE || ""}
+                      onChange={(e) =>
+                        updateFeitico(f.id, { custoPE: parseInt(e.target.value) || 0 })
+                      }
+                      className="h-8 w-14 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Input
+                      placeholder="Alcance (ex: 9m)"
+                      value={f.alcance ?? ""}
+                      onChange={(e) => updateFeitico(f.id, { alcance: e.target.value })}
+                      className="h-8 w-20 border-slate-600 bg-slate-800 text-sm"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 text-slate-400 hover:text-red-400"
+                      onClick={() => removeFeitico(f.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div>
+                    <label className="mb-0.5 block text-xs text-slate-500">Descrição do feitiço</label>
+                    <textarea
+                      placeholder="Efeito, CD, condições, observações..."
+                      value={f.descricao ?? ""}
+                      onChange={(e) => updateFeitico(f.id, { descricao: e.target.value })}
+                      rows={2}
+                      className="w-full rounded border border-slate-600 bg-slate-800 px-2 py-1.5 text-xs text-slate-200"
+                    />
+                  </div>
                 </div>
               ))}
             </div>

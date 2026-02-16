@@ -1,24 +1,48 @@
 import { cn } from "@/lib/utils"
 import type { PartyMember } from "@/types/mestre"
-import { Shield, Zap, Plus, Minus, FileText } from "lucide-react"
+import { Shield, Zap, Plus, Minus, FileText, UserPlus, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface PartyMonitorProps {
   membros: PartyMember[]
   onUpdateMembro: (id: string, dados: Partial<PartyMember>) => void
+  onAddMembro?: () => void
+  onRemoveMembro?: (id: string) => void
   onAbrirFicha?: (membro: PartyMember) => void
 }
 
 export function PartyMonitor({
   membros,
   onUpdateMembro,
+  onAddMembro,
+  onRemoveMembro,
   onAbrirFicha,
 }: PartyMonitorProps) {
   return (
     <div className="space-y-2">
-      <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
-        <Shield className="h-4 w-4" />
-        Party Monitor
-      </h3>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+          <Shield className="h-4 w-4" />
+          Party Monitor
+        </h3>
+        {onAddMembro && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={onAddMembro}
+            className="border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+          >
+            <UserPlus className="mr-1.5 h-4 w-4" />
+            Adicionar jogador
+          </Button>
+        )}
+      </div>
+      {membros.length === 0 && (
+        <p className="rounded-lg border border-dashed border-slate-600 bg-slate-800/30 py-6 text-center text-sm text-slate-500">
+          Nenhum jogador na party. Clique em &quot;Adicionar jogador&quot; para começar e depois vincule a ficha de cada um pelo ícone da ficha.
+        </p>
+      )}
       <div className="flex gap-3 overflow-x-auto pb-2">
         {membros.map((m) => (
           <PartyCard
@@ -26,6 +50,7 @@ export function PartyMonitor({
             membro={m}
             onUpdate={(d) => onUpdateMembro(m.id, d)}
             onAbrirFicha={onAbrirFicha ? () => onAbrirFicha(m) : undefined}
+            onRemove={onRemoveMembro ? () => onRemoveMembro(m.id) : undefined}
           />
         ))}
       </div>
@@ -37,10 +62,12 @@ function PartyCard({
   membro,
   onUpdate,
   onAbrirFicha,
+  onRemove,
 }: {
   membro: PartyMember
   onUpdate: (d: Partial<PartyMember>) => void
   onAbrirFicha?: () => void
+  onRemove?: () => void
 }) {
   const pvPct = membro.pvMax > 0 ? (membro.pvAtual / membro.pvMax) * 100 : 0
   const pePct = membro.peMax > 0 ? (membro.peAtual / membro.peMax) * 100 : 0
@@ -60,25 +87,43 @@ function PartyCard({
       )}
     >
       <div className="mb-2 flex items-center justify-between gap-1">
-        <span className="min-w-0 flex-1 truncate font-medium text-slate-100">{membro.nome}</span>
+        <input
+          type="text"
+          value={membro.nome}
+          onChange={(e) => onUpdate({ nome: e.target.value })}
+          className="min-w-0 flex-1 truncate rounded border-0 bg-transparent font-medium text-slate-100 outline-none focus:ring-1 focus:ring-cyan-500/50"
+          placeholder="Nome"
+        />
         <span className="shrink-0 text-xs text-slate-500">Nv.{membro.nivel} {membro.grau}</span>
-        {onAbrirFicha && (
-          <div className="flex shrink-0 items-center gap-0.5">
-            {membro.fichaId && (
-              <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400" title="Ficha vinculada">
-                Ficha ✓
-              </span>
-            )}
+        <div className="flex shrink-0 items-center gap-0.5">
+          {onAbrirFicha && (
+            <>
+              {membro.fichaId && (
+                <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[10px] font-medium text-cyan-400" title="Ficha vinculada">
+                  Ficha ✓
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={onAbrirFicha}
+                className="rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
+                title={membro.fichaId ? "Abrir/alterar ficha vinculada" : "Vincular ou abrir ficha do jogador"}
+              >
+                <FileText className="h-4 w-4" />
+              </button>
+            </>
+          )}
+          {onRemove && (
             <button
               type="button"
-              onClick={onAbrirFicha}
-              className="rounded p-1 text-slate-500 transition-colors hover:bg-cyan-500/20 hover:text-cyan-400"
-              title={membro.fichaId ? "Abrir/alterar ficha vinculada" : "Vincular ou abrir ficha do jogador"}
+              onClick={onRemove}
+              className="rounded p-1 text-slate-500 transition-colors hover:bg-red-500/20 hover:text-red-400"
+              title="Remover da party"
             >
-              <FileText className="h-4 w-4" />
+              <Trash2 className="h-4 w-4" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="space-y-2">

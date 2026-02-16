@@ -175,6 +175,37 @@ function useMestreState() {
     [membros, updateMembro, addLog]
   )
 
+  const addMembro = useCallback(() => {
+    const novo: PartyMember = {
+      id: crypto.randomUUID(),
+      nome: "Novo jogador",
+      nivel: 1,
+      grau: "4º",
+      pvAtual: 10,
+      pvMax: 10,
+      peAtual: 10,
+      peMax: 10,
+      defesa: 10,
+      energiaTemporaria: false,
+      condicoes: [],
+    }
+    setMembros((prev) => [...prev, novo])
+    addLog({ tipo: "info", texto: `${novo.nome} adicionado à party` })
+  }, [addLog])
+
+  const removeMembro = useCallback(
+    (id: string) => {
+      setMembros((prev) => prev.filter((m) => m.id !== id))
+      setEntradas((prev) => prev.filter((e) => e.id !== id))
+      addLog({
+        tipo: "info",
+        texto: "Jogador removido da party",
+        alvo: membros.find((m) => m.id === id)?.nome,
+      })
+    },
+    [membros, addLog]
+  )
+
   return {
     membros,
     entradas,
@@ -192,6 +223,8 @@ function useMestreState() {
     addCondicaoMembro,
     removeCondicaoMembro,
     syncIniciativaFromMembros,
+    addMembro,
+    removeMembro,
   }
 }
 
@@ -281,7 +314,9 @@ export function TelaMestre() {
           <PartyMonitor
             membros={state.membros}
             onUpdateMembro={state.updateMembro}
-            onAbrirFicha={(m) => setFichaModalMembro(m)}
+            onAddMembro={state.addMembro}
+            onRemoveMembro={state.removeMembro}
+            onAbrirFicha={(m) => setFichaModalMembro(state.membros.find((x) => x.id === m.id) ?? m)}
           />
         </section>
 
@@ -428,10 +463,18 @@ export function TelaMestre() {
         isOpen={fichaModalMembro != null}
         onClose={() => setFichaModalMembro(null)}
         membroNome={fichaModalMembro?.nome ?? ""}
-        fichaIdInicial={fichaModalMembro?.fichaId}
+        fichaIdInicial={fichaModalMembro?.fichaId ?? undefined}
         membroId={fichaModalMembro?.id}
-        onVincularFicha={(membroId, fichaId) => {
-          state.updateMembro(membroId, { fichaId })
+        onVincularFicha={(membroId, fichaId, nomePersonagem) => {
+          state.updateMembro(membroId, {
+            fichaId,
+            ...(nomePersonagem ? { nome: nomePersonagem } : {}),
+          })
+          setFichaModalMembro((prev) =>
+            prev && prev.id === membroId
+              ? { ...prev, fichaId, ...(nomePersonagem ? { nome: nomePersonagem } : {}) }
+              : prev
+          )
         }}
       />
     </div>

@@ -9,7 +9,7 @@ interface FichaModalProps {
   onClose: () => void
   membroNome: string
   fichaIdInicial?: string | null
-  onVincularFicha?: (membroId: string, fichaId: string) => void
+  onVincularFicha?: (membroId: string, fichaId: string, nomePersonagem?: string) => void
   membroId?: string
 }
 
@@ -59,7 +59,7 @@ export function FichaModal({
 
   const handleVincular = () => {
     if (membroId && fichaSelecionada && onVincularFicha) {
-      onVincularFicha(membroId, fichaSelecionada)
+      onVincularFicha(membroId, fichaSelecionada, dados?.cabecalho?.nomePersonagem)
     }
   }
 

@@ -8,6 +8,7 @@ import { PainelCondicoes } from "@/components/mestre/PainelCondicoes"
 import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
 import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
+import { TabuleiroContent } from "@/components/vtt/TabuleiroContent"
 import { DiceRoller } from "@/components/DiceRoller"
 import {
   carregarSessao,
@@ -22,7 +23,7 @@ import type {
 } from "@/types/mestre"
 import type { VotoRestricao } from "@/components/mestre/ControleVotos"
 import { cn } from "@/lib/utils"
-import { Eye, FileText, Link2, BookOpen, Swords, Minus } from "lucide-react"
+import { Eye, FileText, Link2, BookOpen, Swords, Minus, LayoutGrid, ExternalLink } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { SiteHeader } from "@/components/layout/SiteHeader"
 
@@ -248,7 +249,7 @@ function useMestreState() {
 
 const danoRapido = [5, 10, 15, 20, 25]
 
-type AbaMobile = "party" | "iniciativa" | "bestiario" | "paineis"
+type AbaMobile = "party" | "iniciativa" | "bestiario" | "grid" | "paineis"
 
 export function TelaMestre() {
   const state = useMestreState()
@@ -334,6 +335,7 @@ export function TelaMestre() {
               ["party", "Party"],
               ["iniciativa", "Iniciativa"],
               ["bestiario", "Bestiário"],
+              ["grid", "Grid"],
               ["paineis", "Condições / Regras"],
             ] as [AbaMobile, string][]
           ).map(([id, label]) => (
@@ -400,6 +402,46 @@ export function TelaMestre() {
               })
             }}
           />
+        </section>
+
+        {/* Grid de combate - sincronizado com entradas da iniciativa */}
+        <section
+          className={cn(
+            "col-span-full min-h-[320px] rounded-xl border p-4 transition-all duration-500 lg:min-h-[360px]",
+            !mostrarSecao("grid") && "hidden lg:block",
+            state.modoPanico
+              ? "border-rose-500/30 bg-black/30"
+              : "border-[var(--color-border)] bg-[var(--color-bg-card)]"
+          )}
+        >
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-cyan-400">
+              <LayoutGrid className="h-4 w-4" />
+              Grid de combate
+            </h3>
+            <button
+              type="button"
+              onClick={() => navigate("/tabuleiro")}
+              className="flex items-center gap-1.5 rounded border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2.5 py-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-colors hover:bg-[var(--color-border)] hover:text-[var(--color-text)]"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              Abrir tabuleiro completo
+            </button>
+          </div>
+          <div className="flex min-h-[280px] flex-1 flex-col overflow-hidden rounded-lg">
+            <TabuleiroContent
+              embedded
+              entradas={state.entradas}
+              turnoAtual={state.turnoAtual}
+              onMoveEntry={(id, pos) =>
+                state.setEntradas((prev) =>
+                  prev.map((e) => (e.id === id ? { ...e, posicao: pos } : e))
+                )
+              }
+              onSelectTurn={state.setTurnoAtual}
+              className="min-h-0 flex-1"
+            />
+          </div>
         </section>
 
         <section

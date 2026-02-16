@@ -21,9 +21,16 @@ export function PainelCondicoes({
   onAddCondicao,
   onRemoveCondicao,
 }: PainelCondicoesProps) {
+  const [expandidoId, setExpandidoId] = useState<string | null>(null)
   const [outroMembroId, setOutroMembroId] = useState<string | null>(null)
   const [outroNome, setOutroNome] = useState("")
   const [grupoAberto, setGrupoAberto] = useState<Record<string, GrupoCondicao | null>>({})
+
+  const toggleExpandido = (membroId: string) => {
+    setExpandidoId((prev) => (prev === membroId ? null : membroId))
+    if (outroMembroId) setOutroMembroId(null)
+    setOutroNome("")
+  }
 
   const toggleGrupo = (membroId: string, grupo: GrupoCondicao) => {
     setGrupoAberto((prev) => ({
@@ -47,131 +54,178 @@ export function PainelCondicoes({
         <AlertTriangle className="h-4 w-4" />
         Painel de Condições
       </h3>
-      <p className="mb-3 text-[10px] text-slate-500">
+      <p className="mb-2 text-[10px] text-slate-500">
         <BookOpen className="mr-0.5 inline h-3 w-3" />
         Livro v2.5 — Cap. 12, p.317–319
       </p>
 
-      <div className="space-y-4 overflow-y-auto">
-        {membros.map((m) => (
-          <div
-            key={m.id}
-            className="rounded-lg border border-slate-700/80 bg-slate-800/50 p-3"
-          >
-            <div className="mb-2 text-sm font-medium text-slate-200">
-              {m.nome}
-            </div>
-
-            {(Object.keys(CONDICOES_POR_GRUPO) as GrupoCondicao[]).map((grupo) => {
-              const condicoes = CONDICOES_POR_GRUPO[grupo]
-              const aberto = grupoAberto[m.id] === grupo
-              return (
-                <div key={grupo} className="mb-1">
-                  <button
-                    type="button"
-                    onClick={() => toggleGrupo(m.id, grupo)}
-                    className="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-xs font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-300"
-                  >
-                    {aberto ? (
-                      <ChevronDown className="h-3.5 w-3.5 shrink-0" />
-                    ) : (
-                      <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+      <div className="flex flex-col gap-1 overflow-y-auto">
+        {membros.map((m) => {
+          const expandido = expandidoId === m.id
+          const temCondicoes = m.condicoes.length > 0
+          return (
+            <div
+              key={m.id}
+              className="rounded-lg border border-slate-700/80 bg-slate-800/50 overflow-hidden"
+            >
+              {/* Linha compacta: nome + badges + expandir */}
+              <button
+                type="button"
+                onClick={() => toggleExpandido(m.id)}
+                className={cn(
+                  "flex w-full items-center gap-2 px-2.5 py-1.5 text-left transition-colors",
+                  "hover:bg-slate-700/40",
+                  expandido && "bg-slate-700/50"
+                )}
+              >
+                {expandido ? (
+                  <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                ) : (
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                )}
+                <span className="min-w-0 truncate text-sm font-medium text-slate-200">
+                  {m.nome}
+                </span>
+                {temCondicoes && (
+                  <span className="flex flex-1 flex-wrap justify-end gap-0.5">
+                    {m.condicoes.slice(0, 5).map((c) => (
+                      <span
+                        key={c}
+                        className="rounded bg-amber-500/25 px-1.5 py-0.5 text-[10px] font-medium text-amber-400 ring-1 ring-amber-500/40"
+                        title={c}
+                      >
+                        {ehCondicaoOutro(c) ? c.replace(/^Outro: /, "") : c}
+                      </span>
+                    ))}
+                    {m.condicoes.length > 5 && (
+                      <span className="rounded bg-slate-600/50 px-1.5 py-0.5 text-[10px] text-slate-400">
+                        +{m.condicoes.length - 5}
+                      </span>
                     )}
-                    {grupo}
-                  </button>
-                  {aberto && (
-                    <div className="ml-2 mt-1 flex flex-wrap gap-1 border-l border-slate-700/80 pl-2">
-                      {condicoes.map((c) => {
-                        const ativo = m.condicoes.includes(c.nome)
-                        return (
-                          <button
-                            key={c.nome}
-                            type="button"
-                            title={`${c.descricao} (Livro ${c.pagina})`}
-                            onClick={() =>
-                              ativo
-                                ? onRemoveCondicao(m.id, c.nome)
-                                : onAddCondicao(m.id, c.nome)
-                            }
-                            className={cn(
-                              "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-                              ativo
-                                ? "bg-amber-500/30 text-amber-400 ring-1 ring-amber-500/50"
-                                : "bg-slate-700/50 text-slate-500 hover:bg-slate-600/50 hover:text-slate-400"
-                            )}
-                          >
-                            {c.nome}
-                          </button>
-                        )
-                      })}
+                  </span>
+                )}
+              </button>
+
+              {/* Conteúdo expandido: grupos + Outro */}
+              {expandido && (
+                <div className="border-t border-slate-700/80 p-2 pt-1">
+                  {(Object.keys(CONDICOES_POR_GRUPO) as GrupoCondicao[]).map((grupo) => {
+                    const condicoes = CONDICOES_POR_GRUPO[grupo]
+                    const aberto = grupoAberto[m.id] === grupo
+                    return (
+                      <div key={grupo} className="mb-1">
+                        <button
+                          type="button"
+                          onClick={() => toggleGrupo(m.id, grupo)}
+                          className="flex w-full items-center gap-1 rounded px-1 py-0.5 text-left text-xs font-medium text-slate-400 hover:bg-slate-700/50 hover:text-slate-300"
+                        >
+                          {aberto ? (
+                            <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+                          ) : (
+                            <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+                          )}
+                          {grupo}
+                        </button>
+                        {aberto && (
+                          <div className="ml-2 mt-1 flex flex-wrap gap-1 border-l border-slate-700/80 pl-2">
+                            {condicoes.map((c) => {
+                              const ativo = m.condicoes.includes(c.nome)
+                              return (
+                                <button
+                                  key={c.nome}
+                                  type="button"
+                                  title={`${c.descricao} (Livro ${c.pagina})`}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    ativo
+                                      ? onRemoveCondicao(m.id, c.nome)
+                                      : onAddCondicao(m.id, c.nome)
+                                  }}
+                                  className={cn(
+                                    "rounded px-2 py-0.5 text-xs font-medium transition-colors",
+                                    ativo
+                                      ? "bg-amber-500/30 text-amber-400 ring-1 ring-amber-500/50"
+                                      : "bg-slate-700/50 text-slate-500 hover:bg-slate-600/50 hover:text-slate-400"
+                                  )}
+                                >
+                                  {c.nome}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setOutroMembroId(m.id)}
+                      className="rounded px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-600/50 hover:text-slate-400"
+                    >
+                      Outro
+                    </button>
+                  </div>
+                  {outroMembroId === m.id && (
+                    <div className="mt-2 flex gap-2">
+                      <Input
+                        value={outroNome}
+                        onChange={(e) => setOutroNome(e.target.value)}
+                        placeholder="Nome da condição"
+                        className="h-8 flex-1 border-slate-600 bg-slate-800 text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") aplicarOutro(m.id)
+                          if (e.key === "Escape") {
+                            setOutroMembroId(null)
+                            setOutroNome("")
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-8 bg-[var(--color-accent-red)] hover:opacity-90"
+                        onClick={() => aplicarOutro(m.id)}
+                      >
+                        Aplicar
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="h-8"
+                        onClick={() => {
+                          setOutroMembroId(null)
+                          setOutroNome("")
+                        }}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  )}
+                  {m.condicoes.filter(ehCondicaoOutro).length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {m.condicoes.filter(ehCondicaoOutro).map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onRemoveCondicao(m.id, c)
+                          }}
+                          className="rounded bg-amber-500/20 px-2 py-0.5 text-xs text-amber-400 ring-1 ring-amber-500/50 hover:bg-amber-500/30"
+                        >
+                          {c.replace(/^Outro: /, "")} ×
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
-              )
-            })}
-
-            <div className="mt-2 flex flex-wrap gap-1">
-              <button
-                type="button"
-                onClick={() => setOutroMembroId(m.id)}
-                className="rounded px-2 py-0.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-600/50 hover:text-slate-400"
-              >
-                Outro
-              </button>
+              )}
             </div>
-            {outroMembroId === m.id && (
-              <div className="mt-2 flex gap-2">
-                <Input
-                  value={outroNome}
-                  onChange={(e) => setOutroNome(e.target.value)}
-                  placeholder="Nome da condição"
-                  className="h-8 flex-1 border-slate-600 bg-slate-800 text-sm"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") aplicarOutro(m.id)
-                    if (e.key === "Escape") {
-                      setOutroMembroId(null)
-                      setOutroNome("")
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-8 bg-[var(--color-accent-red)] hover:opacity-90"
-                  onClick={() => aplicarOutro(m.id)}
-                >
-                  Aplicar
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  className="h-8"
-                  onClick={() => {
-                    setOutroMembroId(null)
-                    setOutroNome("")
-                  }}
-                >
-                  Cancelar
-                </Button>
-              </div>
-            )}
-            {m.condicoes.filter(ehCondicaoOutro).length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {m.condicoes.filter(ehCondicaoOutro).map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => onRemoveCondicao(m.id, c)}
-                    className="rounded bg-amber-500/20 px-2 py-0.5 text-xs text-amber-400 ring-1 ring-amber-500/50 hover:bg-amber-500/30"
-                  >
-                    {c.replace(/^Outro: /, "")} ×
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

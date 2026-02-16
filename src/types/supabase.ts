@@ -16,6 +16,7 @@ export interface FichaDados {
     origemCla: string
     xpAtual?: number
     xpProximoNivel?: number
+    imagemPersonagem?: string
   }
   atributos: Record<string, number>
   bonusDefesaClasse: number
@@ -51,6 +52,7 @@ export interface FichaDados {
     nome: string
     descricao: string
     funcionamentoBasico: string
+    imagem?: string
     feiticos: unknown[]
   }
   // Campos existentes

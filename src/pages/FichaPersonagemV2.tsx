@@ -178,6 +178,7 @@ export function FichaPersonagem() {
             nome: tecnicaAmaldicada.nome,
             descricao: tecnicaAmaldicada.descricao,
             funcionamentoBasico: tecnicaAmaldicada.funcionamentoBasico,
+            imagem: tecnicaAmaldicada.imagem,
             feiticos: tecnicaAmaldicada.feiticos,
           }
         : undefined,

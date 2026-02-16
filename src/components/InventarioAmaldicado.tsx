@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { FerramentaAmaldicada, Grau } from "@/types/ficha"
+import { ImagePicker } from "@/components/ImagePicker"
 import { Plus, Trash2 } from "lucide-react"
 
 const GRAUS: Grau[] = ["4º", "3º", "2º", "1º", "Especial"]
@@ -116,6 +117,12 @@ export function InventarioAmaldicado({
                   />
                 </div>
               </div>
+              <ImagePicker
+                label="Imagem da ferramenta (URL ou arquivo — aceita GIF)"
+                value={f.imagem}
+                onChange={(url) => atualizar(f.id, { imagem: url || undefined })}
+                previewSize={64}
+              />
             </div>
           ))}
         </div>

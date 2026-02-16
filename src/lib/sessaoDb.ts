@@ -14,6 +14,7 @@ export interface SessaoMestreDados {
     energiaTemporaria: boolean
     condicoes: string[]
     fichaId?: string | null
+    imagemUrl?: string | null
   }[]
   entradas: {
     id: string

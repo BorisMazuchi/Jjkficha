@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { CabeçalhoFicha, Grau } from "@/types/ficha"
+import { ImagePicker } from "@/components/ImagePicker"
 
 interface CabecalhoFichaProps {
   dados: CabeçalhoFicha
@@ -85,6 +86,15 @@ export function CabecalhoFicha({ dados, onChange }: CabecalhoFichaProps) {
             value={dados.origemCla}
             onChange={(e) => onChange({ origemCla: e.target.value })}
             placeholder="Ex: Técnica Amaldiçoada Inata, Clã Gojo"
+          />
+        </div>
+
+        <div className="border-t border-[#2a2a4a] pt-4">
+          <ImagePicker
+            label="Imagem do personagem (URL ou arquivo — aceita GIF)"
+            value={dados.imagemPersonagem}
+            onChange={(url) => onChange({ imagemPersonagem: url || undefined })}
+            previewSize={96}
           />
         </div>
 

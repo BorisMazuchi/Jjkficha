@@ -17,6 +17,7 @@ import type {
   TipoAcao,
   AreaEfeito,
 } from "@/types/especializacao"
+import { ImagePicker } from "@/components/ImagePicker"
 import { Plus, Trash2, Zap, Edit3, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -43,6 +44,7 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
       descricao: "",
       funcionamentoBasico: "",
       feiticos: [],
+      imagem: undefined,
     }
   )
   const [editandoFeitico, setEditandoFeitico] = useState<string | null>(null)
@@ -147,6 +149,13 @@ export function TecnicaBuilder({ tecnica, onChange }: TecnicaBuilderProps) {
               ser moldadas em armas ou usadas para prender inimigos."
             </p>
           </div>
+
+          <ImagePicker
+            label="Imagem da técnica (URL ou arquivo — aceita GIF)"
+            value={tecnicaAtual.imagem}
+            onChange={(url) => atualizarTecnica({ imagem: url || undefined })}
+            previewSize={80}
+          />
         </div>
 
         {/* Lista de Feitiços */}

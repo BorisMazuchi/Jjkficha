@@ -9,7 +9,12 @@ interface FichaModalProps {
   onClose: () => void
   membroNome: string
   fichaIdInicial?: string | null
-  onVincularFicha?: (membroId: string, fichaId: string, nomePersonagem?: string) => void
+  onVincularFicha?: (
+    membroId: string,
+    fichaId: string,
+    nomePersonagem?: string,
+    imagemUrl?: string
+  ) => void
   membroId?: string
 }
 
@@ -59,7 +64,13 @@ export function FichaModal({
 
   const handleVincular = () => {
     if (membroId && fichaSelecionada && onVincularFicha) {
-      onVincularFicha(membroId, fichaSelecionada, dados?.cabecalho?.nomePersonagem)
+      const cabecalho = dados?.cabecalho as { nomePersonagem?: string; imagemPersonagem?: string } | undefined
+      onVincularFicha(
+        membroId,
+        fichaSelecionada,
+        cabecalho?.nomePersonagem,
+        cabecalho?.imagemPersonagem
+      )
     }
   }
 
@@ -141,6 +152,11 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
 
   const mod = (val: number) => Math.floor((val - 10) / 2)
 
+  const imagemPersonagem = (c as { imagemPersonagem?: string }).imagemPersonagem
+  const imagemTecnica = dados.tecnicaAmaldicada
+    ? (dados.tecnicaAmaldicada as { imagem?: string }).imagem
+    : undefined
+
   return (
     <div className="space-y-6 text-sm">
       <section>
@@ -148,6 +164,18 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
           Cabeçalho
         </h3>
         <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+          {(imagemPersonagem && (
+            <div className="mb-3">
+              <img
+                src={imagemPersonagem}
+                alt="Personagem"
+                className="h-24 w-24 rounded-lg border border-slate-600 object-cover"
+                onError={(e) => {
+                  ;(e.target as HTMLImageElement).style.display = "none"
+                }}
+              />
+            </div>
+          )) || null}
           <div className="grid grid-cols-2 gap-2">
             <span className="text-slate-500">Personagem:</span>
             <span>{c.nomePersonagem || "—"}</span>
@@ -224,12 +252,24 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
         </div>
       </section>
 
-      {(dados.tecnicasInatas?.length > 0 || dados.habilidadesClasse?.length > 0) && (
+      {(imagemTecnica || dados.tecnicasInatas?.length > 0 || dados.habilidadesClasse?.length > 0) && (
         <section>
           <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
-            Habilidades e Técnicas
+            Técnica Inata / Habilidades
           </h3>
           <div className="space-y-2 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+            {imagemTecnica && (
+              <div className="mb-2">
+                <img
+                  src={imagemTecnica}
+                  alt="Técnica inata"
+                  className="h-20 w-20 rounded-lg border border-slate-600 object-cover"
+                  onError={(e) => {
+                    ;(e.target as HTMLImageElement).style.display = "none"
+                  }}
+                />
+              </div>
+            )}
             {(dados.tecnicasInatas ?? []).map((h: unknown, i: number) => (
               <div key={i} className="flex justify-between text-xs">
                 <span>{(h as { nome?: string }).nome || "—"}</span>
@@ -276,13 +316,28 @@ function FichaResumo({ dados }: { dados: FichaDados }) {
           <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
             Inventário Amaldiçoado
           </h3>
-          <div className="space-y-2 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
-            {(dados.ferramentas ?? []).map((f: unknown, i: number) => (
-              <div key={i} className="text-xs">
-                <span className="font-medium">{(f as { nome?: string }).nome}</span>{" "}
-                ({(f as { grau?: string }).grau}) — {(f as { dano?: string }).dano}
-              </div>
-            ))}
+          <div className="space-y-3 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+            {(dados.ferramentas ?? []).map((f: unknown, i: number) => {
+              const ferramenta = f as { nome?: string; grau?: string; dano?: string; imagem?: string }
+              return (
+                <div key={i} className="flex flex-wrap items-start gap-2 text-xs">
+                  {ferramenta.imagem && (
+                    <img
+                      src={ferramenta.imagem}
+                      alt=""
+                      className="h-14 w-14 shrink-0 rounded border border-slate-600 object-cover"
+                      onError={(e) => {
+                        ;(e.target as HTMLImageElement).style.display = "none"
+                      }}
+                    />
+                  )}
+                  <div>
+                    <span className="font-medium">{ferramenta.nome}</span>{" "}
+                    ({ferramenta.grau}) — {ferramenta.dano}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </section>
       )}

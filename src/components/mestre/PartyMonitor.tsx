@@ -86,6 +86,18 @@ function PartyCard({
         membro.energiaTemporaria && "ring-1 ring-amber-400/40"
       )}
     >
+      {(membro.imagemUrl && (
+        <div className="mb-2 flex justify-center">
+          <img
+            src={membro.imagemUrl}
+            alt=""
+            className="h-14 w-14 rounded-lg border border-cyan-900/60 object-cover"
+            onError={(e) => {
+              ;(e.target as HTMLImageElement).style.display = "none"
+            }}
+          />
+        </div>
+      )) || null}
       <div className="mb-2 flex items-center justify-between gap-1">
         <input
           type="text"

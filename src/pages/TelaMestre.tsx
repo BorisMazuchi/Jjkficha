@@ -637,14 +637,20 @@ export function TelaMestre() {
         membroNome={fichaModalMembro?.nome ?? ""}
         fichaIdInicial={fichaModalMembro?.fichaId ?? undefined}
         membroId={fichaModalMembro?.id}
-        onVincularFicha={(membroId, fichaId, nomePersonagem) => {
+        onVincularFicha={(membroId, fichaId, nomePersonagem, imagemUrl) => {
           state.updateMembro(membroId, {
             fichaId,
             ...(nomePersonagem ? { nome: nomePersonagem } : {}),
+            ...(imagemUrl !== undefined ? { imagemUrl } : {}),
           })
           setFichaModalMembro((prev) =>
             prev && prev.id === membroId
-              ? { ...prev, fichaId, ...(nomePersonagem ? { nome: nomePersonagem } : {}) }
+              ? {
+                  ...prev,
+                  fichaId,
+                  ...(nomePersonagem ? { nome: nomePersonagem } : {}),
+                  ...(imagemUrl !== undefined ? { imagemUrl } : {}),
+                }
               : prev
           )
         }}

@@ -12,6 +12,8 @@ export interface CabeçalhoFicha {
   xpAtual?: number
   /** XP necessário para próximo nível */
   xpProximoNivel?: number
+  /** URL ou data URL (base64) da imagem do personagem (aceita GIF) */
+  imagemPersonagem?: string
 }
 
 export interface Atributos {
@@ -65,6 +67,8 @@ export interface FerramentaAmaldicada {
   grau: Grau
   dano: string
   propriedades: string
+  /** URL ou data URL da imagem da ferramenta (aceita GIF) */
+  imagem?: string
 }
 // Re-exportar tipos de especializacao para compatibilidade
 export type {

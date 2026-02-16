@@ -12,6 +12,8 @@ export interface PartyMember {
   condicoes: string[]
   /** ID da ficha no Supabase, para o mestre abrir a ficha completa */
   fichaId?: string | null
+  /** URL da imagem do personagem (vinda da ficha vinculada, para exibir no card) */
+  imagemUrl?: string | null
 }
 
 export interface InitiativeEntry {

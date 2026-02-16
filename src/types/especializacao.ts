@@ -41,6 +41,8 @@ export interface TecnicaAmaldicada {
   nome: string
   descricao: string
   funcionamentoBasico: string // Texto livre da técnica
+  /** URL ou data URL da imagem da técnica inata (aceita GIF) */
+  imagem?: string
   feiticos: Feitico[]
 }
 

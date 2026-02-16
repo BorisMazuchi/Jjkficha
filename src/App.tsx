@@ -3,7 +3,6 @@ import { Home } from "@/pages/Home"
 import { FichaPersonagem } from "@/pages/FichaPersonagemV2"
 import { ListagemFichas } from "@/pages/ListagemFichas"
 import { TelaMestre } from "@/pages/TelaMestre"
-import { TabuleiroCombate } from "@/pages/TabuleiroCombate"
 import { Bestiario } from "@/pages/Bestiario"
 
 function App() {
@@ -15,7 +14,6 @@ function App() {
         <Route path="/ficha" element={<FichaPersonagem />} />
         <Route path="/mestre" element={<TelaMestre />} />
         <Route path="/bestiario" element={<Bestiario />} />
-        <Route path="/tabuleiro" element={<TabuleiroCombate />} />
       </Routes>
     </BrowserRouter>
   )

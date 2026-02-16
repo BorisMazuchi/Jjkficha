@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom"
-import { FileText, BookOpen, LayoutGrid, Swords, Plus } from "lucide-react"
+import { FileText, BookOpen, LayoutGrid, Plus } from "lucide-react"
 import { SiteHeader } from "@/components/layout/SiteHeader"
 import { Button } from "@/components/ui/button"
 
 const LINKS = [
   { to: "/fichas", label: "Fichas", icon: FileText, desc: "Listar e editar fichas de personagem" },
   { to: "/bestiario", label: "Bestiário", icon: BookOpen, desc: "Maldições e criaturas" },
-  { to: "/mestre", label: "Mestre", icon: LayoutGrid, desc: "Party, iniciativa, condições e tabuleiro" },
-  { to: "/tabuleiro", label: "Tabuleiro", icon: Swords, desc: "Grid de combate (sincronizado com a sessão)" },
+  { to: "/mestre", label: "Mestre", icon: LayoutGrid, desc: "Party, iniciativa, condições e regras" },
 ] as const
 
 export function Home() {

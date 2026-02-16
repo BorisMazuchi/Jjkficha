@@ -9,7 +9,6 @@ import { PainelRegrasRapidas } from "@/components/mestre/PainelRegrasRapidas"
 import { ControleVotos } from "@/components/mestre/ControleVotos"
 import { LogCombate } from "@/components/mestre/LogCombate"
 import { DiceRoller } from "@/components/DiceRoller"
-import { TabuleiroContent } from "@/components/vtt/TabuleiroContent"
 import {
   carregarSessao,
   salvarSessao,
@@ -249,7 +248,7 @@ function useMestreState() {
 
 const danoRapido = [5, 10, 15, 20, 25]
 
-type AbaMobile = "party" | "iniciativa" | "bestiario" | "tabuleiro" | "paineis"
+type AbaMobile = "party" | "iniciativa" | "bestiario" | "paineis"
 
 export function TelaMestre() {
   const state = useMestreState()
@@ -335,7 +334,6 @@ export function TelaMestre() {
               ["party", "Party"],
               ["iniciativa", "Iniciativa"],
               ["bestiario", "Bestiário"],
-              ["tabuleiro", "Tabuleiro"],
               ["paineis", "Condições / Regras"],
             ] as [AbaMobile, string][]
           ).map(([id, label]) => (
@@ -460,30 +458,6 @@ export function TelaMestre() {
                 alvo: m.nome,
               })
             }}
-          />
-        </section>
-
-        {/* Tabuleiro de combate - grid integrado */}
-        <section
-          className={cn(
-            "col-span-full min-h-[360px] transition-all duration-500",
-            !mostrarSecao("tabuleiro") && "hidden lg:block",
-            state.modoPanico
-              ? "border-rose-500/30"
-              : "border-cyan-900/60"
-          )}
-        >
-          <TabuleiroContent
-            embedded
-            className="h-full min-h-[360px]"
-            entradas={state.entradas}
-            turnoAtual={state.turnoAtual}
-            onMoveEntry={(id, pos) => {
-              state.setEntradas((prev) =>
-                prev.map((e) => (e.id === id ? { ...e, posicao: pos } : e))
-              )
-            }}
-            onSelectTurn={state.setTurnoAtual}
           />
         </section>
 

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { Home, FileText, BookOpen, LayoutGrid, Swords, ExternalLink } from "lucide-react"
+import { Home, FileText, BookOpen, LayoutGrid, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /** URL do Livro de Regras (PDF). Deixe vazio ou defina para o arquivo em /public ou URL externa. */
@@ -10,7 +10,6 @@ const NAV = [
   { to: "/fichas", label: "Fichas", icon: FileText },
   { to: "/bestiario", label: "Bestiário", icon: BookOpen },
   { to: "/mestre", label: "Mestre", icon: LayoutGrid },
-  { to: "/tabuleiro", label: "Tabuleiro", icon: Swords },
 ] as const
 
 interface SiteHeaderProps {
